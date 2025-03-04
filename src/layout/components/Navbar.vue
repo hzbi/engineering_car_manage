@@ -95,19 +95,19 @@ const lastLoginTime = async () => {
 }
 
 onMounted(() => {
-    lastLoginTime()
+    // lastLoginTime()
 })
 
 watch(
     () => router.currentRoute.value.path,
     (newValue, oldValue) => {
-        lastLoginTime()
+        // lastLoginTime()
     },
     { immediate: true } // 初始化之后立即调用。
 )
 
 setInterval(() => {
-    lastLoginTime()
+    // lastLoginTime()
 }, 1000 * 60)
 </script>
 

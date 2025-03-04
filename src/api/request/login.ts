@@ -12,7 +12,7 @@ export default () => {
     const loginFormRef = ref<InstanceType<typeof ElForm>>()
     const codeUrl = ref<string>('')
     const loginForm = ref<any>({
-        username: 'admin',
+        username: 'superAdmin',
         password: 'admin123',
         rememberMe: false,
         code: '',

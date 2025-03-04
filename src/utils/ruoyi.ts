@@ -1,9 +1,9 @@
-﻿import lodash from "lodash";
+﻿import lodash from 'lodash'
 /**
  * 通用ts方法封装处理
  * Copyright (c) 2019 ruoyi
  */
-const baseURL = import.meta.env.VITE_APP_BASE_API;
+const baseURL = import.meta.env.VITE_APP_BASE_API
 
 /**
  * 日期格式化
@@ -13,36 +13,36 @@ const baseURL = import.meta.env.VITE_APP_BASE_API;
  * @returns
  */
 export const parseTime = (time: string | number | Date, pattern: string) => {
-	if (!time) {
-		return null;
-	}
-	const format = pattern || "{y}-{m}-{d} {h}:{i}:{s}";
-	let date;
-	if (typeof time === "object") {
-		date = time;
-	} else {
-		if (typeof time === "string" && /^[0-9]+$/.test(time)) {
-			time = parseInt(time);
-		} else if (typeof time === "string") {
-			time = time.replace(new RegExp(/-/gm), "/");
-		}
-		// prettier-ignore
-		if (typeof time === "number" && time.toString().length === 10) {
+    if (!time) {
+        return null
+    }
+    const format = pattern || '{y}-{m}-{d} {h}:{i}:{s}'
+    let date
+    if (typeof time === 'object') {
+        date = time
+    } else {
+        if (typeof time === 'string' && /^[0-9]+$/.test(time)) {
+            time = parseInt(time)
+        } else if (typeof time === 'string') {
+            time = time.replace(new RegExp(/-/gm), '/')
+        }
+        // prettier-ignore
+        if (typeof time === "number" && time.toString().length === 10) {
             time = time * 1000;
         }
-		date = new Date(time);
-	}
-	const formatObj = {
-		y: date.getFullYear(),
-		m: date.getMonth() + 1,
-		d: date.getDate(),
-		h: date.getHours(),
-		i: date.getMinutes(),
-		s: date.getSeconds(),
-		a: date.getDay(),
-	};
-	// prettier-ignore
-	const time_str = format.replace(/{(y|m|d|h|i|s|a)+}/g, (result: string | any[], key: string) => {
+        date = new Date(time)
+    }
+    const formatObj = {
+        y: date.getFullYear(),
+        m: date.getMonth() + 1,
+        d: date.getDate(),
+        h: date.getHours(),
+        i: date.getMinutes(),
+        s: date.getSeconds(),
+        a: date.getDay()
+    }
+    // prettier-ignore
+    const time_str = format.replace(/{(y|m|d|h|i|s|a)+}/g, (result: string | any[], key: string) => {
         let value = formatObj[key];
         // Note: getDay() returns 0 on Sunday
         if (key === "a") {
@@ -53,8 +53,8 @@ export const parseTime = (time: string | number | Date, pattern: string) => {
         }
         return value || 0;
     });
-	return time_str;
-};
+    return time_str
+}
 
 /**
  * 日期时间截取
@@ -64,23 +64,23 @@ export const parseTime = (time: string | number | Date, pattern: string) => {
  */
 export const dateTimeSub = (dateTime: any) => {
     if (!dateTime) {
-        return "";
+        return ''
     }
-	if (dateTime instanceof String) {
-		if (dateTime.length > 10) {
-			return dateTime.substring(0, 10);
-		} else {
-			return dateTime;
-		}
-	} else {
-		const str = dateTime.toString();
-		if (dateTime.length > 10) {
-			return str.substring(0, 10);
-		} else {
-			return str;
-		}
-	}
-};
+    if (dateTime instanceof String) {
+        if (dateTime.length > 10) {
+            return dateTime.substring(0, 10)
+        } else {
+            return dateTime
+        }
+    } else {
+        const str = dateTime.toString()
+        if (dateTime.length > 10) {
+            return str.substring(0, 10)
+        } else {
+            return str
+        }
+    }
+}
 
 /**
  * 表单重置
@@ -88,8 +88,8 @@ export const dateTimeSub = (dateTime: any) => {
  * @param {string} formRef
  */
 export const resetForm = (formRef: any) => {
-	formRef.value?.resetFields();
-};
+    formRef.value?.resetFields()
+}
 
 /**
  * 清除表格选中
@@ -97,8 +97,8 @@ export const resetForm = (formRef: any) => {
  * @param tableRef 表格ref
  */
 export const cleanTableSelection = (tableRef: any) => {
-    tableRef.value?.clearSelection();
-};
+    tableRef.value?.clearSelection()
+}
 
 /**
  * 设置表格行是否为选中状态
@@ -113,10 +113,9 @@ export const setTableRowSelected = (tableRef: any, row: any, selected: boolean) 
     tableRef.value?.toggleRowSelection(row, selected);
 };
 
-
 /**
  * 添加日期范围
- * 
+ *
  * @param params
  * @param dateRange
  * @param propName
@@ -153,26 +152,22 @@ export const addDateRange = (params: any, dateRange: any[], propName: string) =>
  * @param separator
  * @returns
  */
-export const selectDictLabel = (
-	datas: any,
-	value: string | undefined,
-	separator: undefined
-) => {
-	if (!value || !datas) {
-		return "";
-	}
-	let actions: any = [];
-	Object.keys(datas).some((key) => {
-		if (datas[key].dictValue == "" + value) {
-			actions.push(datas[key].dictLabel);
-			return true;
-		}
-	});
-	if (actions.length === 0) {
-		actions.push(value);
-	}
-	return actions.join("");
-};
+export const selectDictLabel = (datas: any, value: string | undefined, separator: undefined) => {
+    if (!value || !datas) {
+        return ''
+    }
+    let actions: any = []
+    Object.keys(datas).some((key) => {
+        if (datas[key].dictValue == '' + value) {
+            actions.push(datas[key].dictLabel)
+            return true
+        }
+    })
+    if (actions.length === 0) {
+        actions.push(value)
+    }
+    return actions.join('')
+}
 
 /**
  * 回显数据字典（字符串数组）
@@ -182,26 +177,22 @@ export const selectDictLabel = (
  * @param separator
  * @returns
  */
-export const selectDictLabels = (
-	datas: any,
-	value: string | undefined,
-	separator: undefined
-) => {
-	if (value === undefined || !datas) {
-		return "";
-	}
-	let actions: any = [];
-	var currentSeparator = undefined === separator ? "," : separator;
-	var temp = value.split(currentSeparator);
-	Object.keys(value.split(currentSeparator)).some((val) => {
-		Object.keys(datas).some((key) => {
-			if (datas[key].dictValue == "" + temp[val]) {
-				actions.push(datas[key].dictLabel + currentSeparator);
-			}
-		});
-	});
-	return actions.join("").substring(0, actions.join("").length - 1);
-};
+export const selectDictLabels = (datas: any, value: string | undefined, separator: undefined) => {
+    if (value === undefined || !datas) {
+        return ''
+    }
+    let actions: any = []
+    var currentSeparator = undefined === separator ? ',' : separator
+    var temp = value.split(currentSeparator)
+    Object.keys(value.split(currentSeparator)).some((val) => {
+        Object.keys(datas).some((key) => {
+            if (datas[key].dictValue == '' + temp[val]) {
+                actions.push(datas[key].dictLabel + currentSeparator)
+            }
+        })
+    })
+    return actions.join('').substring(0, actions.join('').length - 1)
+}
 
 /**
  *  通用下载方法
@@ -209,11 +200,11 @@ export const selectDictLabels = (
  * @param fileName 文件名称
  */
 export const download = (fileName: string) => {
-	// prettier-ignore
-	console.log("通用下载方法，文件名", fileName);
-	// prettier-ignore
-	window.location.href = baseURL + "/common/download?fileName=" + encodeURI(fileName) + "&delete=" + true;
-};
+    // prettier-ignore
+    console.log("通用下载方法，文件名", fileName);
+    // prettier-ignore
+    window.location.href = baseURL + "/common/download?fileName=" + encodeURI(fileName) + "&delete=" + true;
+}
 
 /**
  * 字符串格式化(%s )
@@ -222,19 +213,19 @@ export const download = (fileName: string) => {
  * @returns
  */
 export const sprintf = (str: string) => {
-	let args: any[];
-	let flag = true;
-	let i = 1;
-	str = str.replace(/%s/g, function () {
-		var arg = args[i++];
-		if (typeof arg === "undefined") {
-			flag = false;
-			return "";
-		}
-		return arg;
-	});
-	return flag ? str : "";
-};
+    let args: any[]
+    let flag = true
+    let i = 1
+    str = str.replace(/%s/g, function () {
+        var arg = args[i++]
+        if (typeof arg === 'undefined') {
+            flag = false
+            return ''
+        }
+        return arg
+    })
+    return flag ? str : ''
+}
 
 /**
  * 转换字符串，undefined,null等转化为""
@@ -243,10 +234,10 @@ export const sprintf = (str: string) => {
  * @returns
  */
 export function praseStrEmpty(str: string) {
-	if (!str || str == "undefined" || str == "null") {
-		return "";
-	}
-	return str;
+    if (!str || str == 'undefined' || str == 'null') {
+        return ''
+    }
+    return str
 }
 
 // 数据合并
@@ -325,40 +316,40 @@ export const handleTree = (data: any, id: any, parentId: any, children: any) => 
  * @param {*} params  参数
  */
 export function tansParams(params: { [x: string]: any }) {
-	let result = "";
-	for (const propName of Object.keys(params)) {
-		const value = params[propName];
-		var part = encodeURIComponent(propName) + "=";
-		if (value !== null && value !== "" && typeof value !== "undefined") {
-			if (typeof value === "object") {
-				for (const key of Object.keys(value)) {
-					// prettier-ignore
-					if (value[key] !== null && value !== "" && typeof value[key] !== "undefined") {
+    let result = ''
+    for (const propName of Object.keys(params)) {
+        const value = params[propName]
+        var part = encodeURIComponent(propName) + '='
+        if (value !== null && value !== '' && typeof value !== 'undefined') {
+            if (typeof value === 'object') {
+                for (const key of Object.keys(value)) {
+                    // prettier-ignore
+                    if (value[key] !== null && value !== "" && typeof value[key] !== "undefined") {
                         let params = propName + "[" + key + "]";
                         var subPart = encodeURIComponent(params) + "=";
                         result += subPart + encodeURIComponent(value[key]) + "&";
                     }
-				}
-			} else {
-				result += part + encodeURIComponent(value) + "&";
-			}
-		}
-	}
-	return result;
+                }
+            } else {
+                result += part + encodeURIComponent(value) + '&'
+            }
+        }
+    }
+    return result
 }
 
 // 验证是否为blob格式
 export const blobValidate = async (data: any) => {
-	let b = false;
-	try {
-		const text = await data.text();
-		JSON.parse(text);
-		b = false;
-	} catch (error) {
-		b = true;
-	}
-	return b;
-};
+    let b = false
+    try {
+        const text = await data.text()
+        JSON.parse(text)
+        b = false
+    } catch (error) {
+        b = true
+    }
+    return b
+}
 
 /**
  * 判断字母是否是大写
@@ -367,35 +358,35 @@ export const blobValidate = async (data: any) => {
  * @returns
  */
 export const isUpCase = (str: any) => {
-	if (!str) {
-		return false;
-	}
-	let bool = false;
-	const strCode = str.charCodeAt();
-	// 大写
-	if (strCode >= 65 && strCode <= 90) {
-		bool = false;
-	} else if (strCode >= 97 && strCode <= 122) {
-		// 小写
-		bool = true;
-	} else {
-		console.error(`不是字母`);
-		throw new Error(`不是字母`);
-	}
-	return bool;
-};
+    if (!str) {
+        return false
+    }
+    let bool = false
+    const strCode = str.charCodeAt()
+    // 大写
+    if (strCode >= 65 && strCode <= 90) {
+        bool = false
+    } else if (strCode >= 97 && strCode <= 122) {
+        // 小写
+        bool = true
+    } else {
+        console.error(`不是字母`)
+        throw new Error(`不是字母`)
+    }
+    return bool
+}
 
 // 返回项目路径
 export const getNormalPath = (p: string) => {
-	if (p.length === 0 || !p || p == "undefined") {
-		return p;
-	}
-	let res = p.replace("//", "/");
-	if (res[res.length - 1] === "/") {
-		return res.slice(0, res.length - 1);
-	}
-	return res;
-};
+    if (p.length === 0 || !p || p == 'undefined') {
+        return p
+    }
+    let res = p.replace('//', '/')
+    if (res[res.length - 1] === '/') {
+        return res.slice(0, res.length - 1)
+    }
+    return res
+}
 
 /**
  * 通用防抖
@@ -420,5 +411,5 @@ export const lodashFunc = (callback: Function, wait: number, type?: any, options
  * @returns
  */
 export const getRadomForArr = <T>(arr: Array<T>) => {
-	return arr[Math.floor(Math.random() * arr.length)];
-};
+    return arr[Math.floor(Math.random() * arr.length)]
+}

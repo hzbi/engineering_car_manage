@@ -13,7 +13,7 @@
     </div>
 </template>
 <script setup lang="ts">
-import { toRefs, computed, defineProps } from 'vue'
+import { toRefs, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import useAppStore from '@/store/modules/app'
 
