@@ -348,7 +348,7 @@ const submitFileForm = () => {
 getPageList()
 </script>
 
-<style lang="scss" scope>
+<style lang="scss" scoped>
 .el-dialog {
     .el-form {
         .el-input {

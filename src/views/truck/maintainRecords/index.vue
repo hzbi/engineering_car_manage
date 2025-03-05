@@ -2,13 +2,15 @@
     <div class="app-container">
         <el-form :model="queryParams" ref="queryFormRef" :inline="true" v-show="showSearch">
             <el-form-item label="卡车编号" prop="carId">
-                <el-input v-model="queryParams.carId" placeholder="请输入卡车编号" clearable @keyup.enter.native="handleQuery" />
+                <el-input v-model="queryParams.carId" placeholder="请输入卡车编号" clearable style="width: 200px" @keyup.enter.native="handleQuery" />
             </el-form-item>
             <el-form-item label="工地名称" prop="siteName">
-                <el-input v-model="queryParams.siteName" placeholder="请输入工地名称" clearable @keyup.enter.native="handleQuery" />
+                <el-select v-model="queryParams.siteId" placeholder="请选择" filterable clearable style="width: 200px" @keyup.enter.native="handleQuery">
+                    <el-option v-for="dict in siteOptions" :key="dict.siteId" :label="dict.siteName" :value="dict.siteId" />
+                </el-select>
             </el-form-item>
             <el-form-item label="维护类型" prop="maintenanceType">
-                <el-select v-model="queryParams.maintenanceType" placeholder="请选择维护类型" clearable>
+                <el-select v-model="queryParams.maintenanceType" placeholder="请选择维护类型" filterable clearable style="width: 200px" @keyup.enter.native="handleQuery">
                     <el-option v-for="dict in maintenance_type" :key="dict.value" :label="dict.label" :value="dict.value" />
                 </el-select>
             </el-form-item>
@@ -90,45 +92,47 @@
                     <el-date-picker clearable v-model="form.maintenanceTime" type="date" value-format="YYYY-MM-DD" placeholder="选择时间"></el-date-picker>
                 </el-form-item>
                 <el-form-item label="卡车编号:" prop="carId">
-                    <el-select v-model="form.carId" placeholder="请选择汽车编号" filterable>
+                    <el-select v-model="form.carId" placeholder="请选择" filterable>
                         <el-option v-for="dict in truckOptions" :key="dict.carId" :label="dict.carId" :value="dict.carId"></el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="工地名称:" prop="siteName">
-                    <el-input v-model="form.siteName" placeholder="请输入工地名称" />
+                <el-form-item label="工地名称:" prop="siteId">
+                    <el-select v-model="form.siteId" placeholder="请选择" filterable clearable>
+                        <el-option v-for="dict in siteOptions" :key="dict.siteId" :label="dict.siteName" :value="dict.siteId" />
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="维护类型:" prop="maintenanceType">
-                    <el-select v-model="form.maintenanceType" placeholder="请选择维护类型">
+                    <el-select v-model="form.maintenanceType" placeholder="请选择">
                         <el-option v-for="dict in maintenance_type" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="油耗:" prop="oilConsumption">
-                    <el-input v-model="form.oilConsumption" placeholder="请输入油耗" />
+                    <el-input v-model="form.oilConsumption" placeholder="请输入" />
                 </el-form-item>
                 <el-form-item label="公里数:" prop="kilometres">
-                    <el-input v-model="form.kilometres" placeholder="请输入公里数" />
+                    <el-input v-model="form.kilometres" placeholder="请输入" />
                 </el-form-item>
                 <el-form-item label="详细说明:" prop="remark">
-                    <el-input v-model="form.remark" type="textarea" rows="5" placeholder="请输入详细说明" />
+                    <el-input v-model="form.remark" type="textarea" rows="5" placeholder="请输入" />
                 </el-form-item>
                 <el-form-item label="维修方式:" prop="maintenanceMode">
                     <el-radio-group v-model="form.maintenanceMode">
-                        <el-radio :value="0" label="内部人员维修"></el-radio>
-                        <el-radio :value="1" label="外部维修商维修"></el-radio>
+                        <el-radio label="0">内部人员维修</el-radio>
+                        <el-radio label="1">外部维修商维修</el-radio>
                     </el-radio-group>
                 </el-form-item>
                 <template v-if="form.maintenanceMode == 0">
                     <el-form-item label="保养人员:" prop="maintenanceProvider">
-                        <el-input v-model="form.maintenanceProvider" placeholder="请输入保养人员" />
+                        <el-input v-model="form.maintenanceProvider" placeholder="请输入" />
                     </el-form-item>
                 </template>
                 <template v-if="form.maintenanceMode == 1">
                     <el-form-item label="维修商:" prop="maintenanceProvider">
-                        <el-input v-model="form.maintenanceProvider" placeholder="请输入维修商" />
+                        <el-input v-model="form.maintenanceProvider" placeholder="请输入" />
                     </el-form-item>
                 </template>
                 <el-form-item label="下次维护日期:" prop="nextTime">
-                    <el-date-picker clearable v-model="form.nextTime" type="date" value-format="yyyy-MM-dd" placeholder="选择下次维护日期"></el-date-picker>
+                    <el-date-picker clearable v-model="form.nextTime" type="date" value-format="YYYY-MM-DD" placeholder="选择日期"></el-date-picker>
                 </el-form-item>
             </el-form>
             <template #footer>
@@ -163,11 +167,11 @@
                 <el-form-item label="详细说明:" prop="remark">
                     <span>{{ form.remark }}</span>
                 </el-form-item>
-                <el-form-item label="货币单位:" prop="carWeight">
-                    <el-input v-model="form.carWeight" placeholder="请输入货币单位" />
+                <el-form-item label="货币单位:" prop="monetaryUnit">
+                    <el-input v-model="form.monetaryUnit" placeholder="请输入" />
                 </el-form-item>
-                <el-form-item label="花费:" prop="carWeight">
-                    <el-input v-model="form.carWeight" placeholder="请输入花费" />
+                <el-form-item label="花费:" prop="amount">
+                    <el-input v-model="form.amount" placeholder="请输入" />
                 </el-form-item>
                 <el-form-item label="维修方式:" prop="maintenanceMode">
                     <span>{{ form.maintenanceMode == 0 ? '内部人员维修' : '外部维修商维修' }}</span>
@@ -234,126 +238,141 @@
                 </tbody>
             </table>
             <el-divider content-position="left">配件使用记录</el-divider>
-            <el-table stripe border v-loading="loading" :data="maintenanceList" @selection-change="handleSelectionChange">
-                <el-table-column type="selection" width="50" align="center" />
+            <el-row :gutter="10" class="mb8">
+                <el-col :span="1.5">
+                    <el-button type="primary" plain icon="plus" size="small" @click="handleAddAccessoryUse" v-hasPermi="['system:user:add']">新增</el-button>
+                </el-col>
+            </el-row>
+            <el-table stripe border v-loading="loading" :data="accessoryUseData">
                 <el-table-column type="index" width="80" label="序号" align="center" />
-                <el-table-column label="日期" align="center" prop="maintenanceTime" width="180">
+                <el-table-column label="配件类型" align="center" prop="accessoryType" width="180">
                     <template #default="scope">
-                        <span>{{ parseTime(scope.row.maintenanceTime, '{y}-{m}-{d}') }}</span>
+                        <dict-tag :options="accessory_type" :value="scope.row.accessoryType" />
                     </template>
                 </el-table-column>
-                <el-table-column label="卡车编号" align="center" prop="carId"></el-table-column>
-                <el-table-column label="工地名称" align="center" prop="siteName"></el-table-column>
-                <el-table-column label="维护类型" align="center" prop="maintenanceType">
-                    <template #default="scope">
-                        <dict-tag :options="maintenance_type" :value="scope.row.maintenanceType" />
-                    </template>
-                </el-table-column>
-                <el-table-column label="油耗" align="center" prop="oilConsumption"></el-table-column>
-                <el-table-column label="公里数" align="center" prop="kilometres"></el-table-column>
-                <el-table-column label="详细说明" align="center" prop="remark"></el-table-column>
-                <el-table-column label="货币单位" align="center" prop="monetaryUnit"></el-table-column>
-                <el-table-column label="花费" align="center" prop="amount"></el-table-column>
-                <el-table-column label="维修商" align="center" prop="maintenanceProvider">
-                    <template #default="scope">
-                        <span>{{ scope.row.maintenanceMode == 1 ? scope.row.maintenanceProvider : '' }}</span>
-                    </template>
-                </el-table-column>
-                <el-table-column label="保养人员" align="center" prop="maintenanceProvider">
-                    <template #default="scope">
-                        <span>{{ scope.row.maintenanceMode == 0 ? scope.row.maintenanceProvider : '' }}</span>
-                    </template>
-                </el-table-column>
-                <el-table-column label="下次维护日期" align="center" prop="nextTime" width="180">
-                    <template #default="scope">
-                        <span>{{ parseTime(scope.row.nextTime, '{y}-{m}-{d}') }}</span>
-                    </template>
-                </el-table-column>
+                <el-table-column label="配件名称" align="center" prop="accessoryName"></el-table-column>
+                <el-table-column label="数量" align="center" prop="num"></el-table-column>
+                <el-table-column label="用途" align="center" prop="useing"></el-table-column>
+                <el-table-column label="供应商" align="center" prop="supplier"></el-table-column>
+                <el-table-column label="备注" align="center" prop="remark"></el-table-column>
                 <el-table-column label="创建人" align="center" prop="createBy"></el-table-column>
                 <el-table-column label="创建时间" align="center" prop="createTime" width="200"></el-table-column>
                 <el-table-column label="操作" align="center" class-name="small-padding fixed-width" min-width="200" fixed="right">
                     <template #default="scope">
-                        <el-button type="text" @click="handleInfo(scope.row)" v-hasPermi="['system:log:edit']">详情</el-button>
-                        <el-button type="text" @click="handleUpdate(scope.row)" v-hasPermi="['system:log:edit']">编辑</el-button>
-                        <el-button type="text" @click="handleDelete(scope.row)" v-hasPermi="['system:log:remove']">删除</el-button>
-                        <el-button type="text" @click="handlePrice(scope.row)" v-hasPermi="['system:log:edit']">价格维护</el-button>
+                        <el-button type="text" @click="handleUpdateAccessoryUse(scope.row)" v-hasPermi="['system:log:edit']">编辑</el-button>
+                        <el-button type="text" @click="handleDeleteAccessoryUse(scope.row)" v-hasPermi="['system:log:remove']">删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
         </el-drawer>
-        <!-- <el-dialog :title="title" v-model="open" width="800px" append-to-body>
-            <el-form ref="formRef" :model="form" :rules="rules" label-width="auto">
-                <el-form-item label="日期" prop="maintenanceTime">
-                    <el-date-picker clearable v-model="form.maintenanceTime" type="date" value-format="yyyy-MM-dd" placeholder="选择时间"></el-date-picker>
+
+        <!-- 添加或修改配件使用对话框 -->
+        <el-dialog :title="titleAccessoryUse" v-model="openAccessoryUse" width="800px" append-to-body>
+            <el-form ref="formRefAccessoryUse" :model="formAccessoryUse" :rules="rulesAccessoryUse" label-width="auto">
+                <el-form-item label="日期:" prop="maintenanceTime">
+                    {{ formAccessoryUse.maintenanceTime ? parseTime(new Date(form.maintenanceTime), '{y}-{m}-{d}') : '' }}
                 </el-form-item>
-                <el-form-item label="卡车编号" prop="carId">
-                    <el-select v-model="form.carId" placeholder="请选择汽车编号" filterable>
-                        <el-option v-for="dict in truckOptions" :key="dict.carId" :label="dict.carId" :value="dict.carId"></el-option>
+                <el-form-item label="工地名称:" prop="siteName">
+                    {{ formAccessoryUse.siteName }}
+                </el-form-item>
+                <el-form-item label="卡车编号:" prop="carId">
+                    {{ formAccessoryUse.carId }}
+                </el-form-item>
+                <el-form-item label="配件类型:" prop="accessoryType">
+                    <el-select v-model="formAccessoryUse.accessoryType" placeholder="请选择" @change="handleChangeAccessoryType" clearable>
+                        <el-option v-for="dict in accessory_type" :key="dict.value" :label="dict.label" :value="dict.value" />
                     </el-select>
                 </el-form-item>
-                <el-form-item label="工地名称" prop="siteName">
-                    <el-input v-model="form.siteName" placeholder="请输入工地名称" />
-                </el-form-item>
-                <el-form-item label="维护类型" prop="maintenanceType">
-                    <el-select v-model="form.maintenanceType" placeholder="请选择维护类型">
-                        <el-option v-for="dict in maintenance_type" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
+                <el-form-item label="配件名称:" prop="accessoryId">
+                    <el-select v-model="formAccessoryUse.accessoryId" placeholder="请选择" @change="handleChangeAccessoryId" clearable>
+                        <el-option v-for="dict in accessoryStockOptions" :key="dict.id" :label="dict.accessoryName" :value="dict.id" />
                     </el-select>
                 </el-form-item>
-                <el-form-item label="油耗" prop="oilConsumption">
-                    <el-input v-model="form.oilConsumption" placeholder="请输入油耗" />
+                <el-form-item label="供应商:" prop="supplier">
+                    <el-input v-model="formAccessoryUse.supplier" placeholder="请输入" disabled />
                 </el-form-item>
-                <el-form-item label="公里数" prop="kilometres">
-                    <el-input v-model="form.kilometres" placeholder="请输入公里数" />
+                <el-form-item label="数量:" prop="num">
+                    <el-input v-model="formAccessoryUse.num" placeholder="请输入" />
                 </el-form-item>
-                <el-form-item label="详细说明" prop="remark">
-                    <el-input v-model="form.remark" type="textarea" rows="5" placeholder="请输入详细说明" />
+                <el-form-item label="用途:" prop="useing">
+                    <el-input v-model="formAccessoryUse.useing" type="textarea" rows="5" placeholder="请输入" />
                 </el-form-item>
-                <el-form-item label="维修方式" prop="maintenanceMode">
-                    <el-radio-group v-model="form.maintenanceMode">
-                        <el-radio :value="0" label="内部人员维修"></el-radio>
-                        <el-radio :value="1" label="外部维修商维修"></el-radio>
-                    </el-radio-group>
+                <el-form-item label="备注:" prop="remark">
+                    <el-input v-model="formAccessoryUse.remark" type="textarea" rows="5" placeholder="请输入" />
                 </el-form-item>
-                <template v-if="form.maintenanceMode == 0">
-                    <el-form-item label="保养人员" prop="maintenanceProvider">
-                        <el-input v-model="form.maintenanceProvider" placeholder="请输入保养人员" />
-                    </el-form-item>
-                </template>
-                <template v-if="form.maintenanceMode == 1">
-                    <el-form-item label="维修商" prop="maintenanceProvider">
-                        <el-input v-model="form.maintenanceProvider" placeholder="请输入维修商" />
-                    </el-form-item>
-                </template>
-                <el-form-item label="下次维护日期" prop="nextTime">
-                    <el-date-picker clearable v-model="form.nextTime" type="date" value-format="yyyy-MM-dd" placeholder="选择下次维护日期"></el-date-picker>
+                <el-form-item label="出库人员:" prop="createBy">
+                    <el-input v-model="formAccessoryUse.createBy" placeholder="请输入" />
                 </el-form-item>
             </el-form>
             <template #footer>
                 <div class="dialog-footer">
-                    <el-button type="primary" @click="submitForm">确 定</el-button>
-                    <el-button @click="cancel">取 消</el-button>
+                    <el-button type="primary" @click="submitFormAccessoryUse">确 定</el-button>
+                    <el-button @click="cancelAccessoryUse">取 消</el-button>
                 </div>
             </template>
-        </el-dialog> -->
+        </el-dialog>
+
+        <!-- 列表导入对话框 -->
+        <el-dialog :title="upload.title" v-model="upload.open" width="400px" append-to-body @close="cleanUploadRef()">
+            <!-- prettier-ignore -->
+            <el-upload
+				ref="uploadRef"
+				:limit="1"
+				accept=".xlsx, .xls"
+				:headers="upload.headers"
+				:action="upload.url + '?updateSupport=' + upload.updateSupport"
+				:disabled="upload.isUploading"
+				:on-progress="handleFileUploadProgress"
+				:on-success="handleFileSuccess"
+				:auto-upload="false"
+				drag
+			>
+				<i class="upload"></i>
+				<div class="el-upload__text">
+					将文件拖到此处，或
+					<em>点击上传</em>
+				</div>
+                <!-- prettier-ignore -->
+				<div class="el-upload__tip" style="color:red" slot="tip">提示：仅允许导入“xls”或“xlsx”格式文件！</div>
+			</el-upload>
+            <template #footer>
+                <div class="dialog-footer">
+                    <!-- prettier-ignore -->
+                    <el-button type="primary" @click="submitFileForm">确 定</el-button>
+                    <!-- prettier-ignore -->
+                    <el-button @click="upload.open = false">取 消</el-button>
+                </div>
+            </template>
+        </el-dialog>
     </div>
 </template>
 
 <script setup name="Maintenance" lang="ts">
-import { listLog, getLog, delLog, addLog, updateLog } from '@/api/truck/maintainRecords'
-import { listInfo } from '@/api/truck/truckInfo'
+import { getMaintainRecordsList, getMaintainRecordsInfo, addMaintainRecords, updateMaintainRecords, delMaintainRecords } from '@/api/truck/maintainRecords'
+import { getSiteList } from '@/api/site/siteManage'
+import { getTruckList } from '@/api/truck/truckInfo'
+import { getAccessoryStockList } from '@/api/truck/accessoryStock'
+import { getAccessoryUseList, getAccessoryUseInfo, addAccessoryUse, updateAccessoryUse, delAccessoryUse } from '@/api/truck/accessoryUse'
 import { ref, reactive, toRefs, getCurrentInstance } from 'vue'
-import { ElForm, ElTable } from 'element-plus'
+import { ElForm, ElTable, ElUpload } from 'element-plus'
+import { getToken } from '@/utils/auth'
+const baseURL = import.meta.env.VITE_APP_BASE_API
 
 const { proxy } = getCurrentInstance() as any
 
 const queryFormRef = ref<InstanceType<typeof ElForm>>()
 
-const { maintenance_type } = proxy.useDict('maintenance_type')
+const formRef = ref<InstanceType<typeof ElForm>>()
+
+const formRefAccessoryUse = ref<InstanceType<typeof ElForm>>()
+
+const { maintenance_type, accessory_type } = proxy.useDict('maintenance_type', 'accessory_type')
 
 const maintenanceList = ref([])
 const open = ref(false)
 const openPrice = ref(false)
 const openInfo = ref(false)
+const openAccessoryUse = ref(false)
 const loading = ref(true)
 const showSearch = ref(true)
 const ids = ref([])
@@ -361,36 +380,85 @@ const single = ref(true)
 const multiple = ref(true)
 const total = ref(0)
 const title = ref('')
+const titleAccessoryUse = ref('')
 
 const data = reactive({
-    form: {},
     queryParams: {
         pageNum: 1,
         pageSize: 10,
+        carId: null,
+        siteId: null,
+        maintenanceType: null
+    },
+    form: {
+        id: null,
         maintenanceTime: null,
         carId: null,
         siteId: null,
         siteName: null,
         maintenanceType: null,
-        maintenanceMode: null,
         oilConsumption: null,
         kilometres: null,
+        maintenanceMode: null,
         maintenanceProvider: null,
         nextTime: null,
         monetaryUnit: null,
-        amount: null
+        amount: null,
+        remark: null
     },
-    rules: {}
+    rules: {
+        maintenanceTime: [{ required: true, message: '请选择', trigger: 'blur' }],
+        carId: [{ required: true, message: '请选择', trigger: 'blur' }],
+        siteId: [{ required: true, message: '请选择', trigger: 'blur' }],
+        maintenanceType: [{ required: true, message: '请输入', trigger: 'blur' }],
+        oilConsumption: [{ required: true, message: '请输入', trigger: 'blur' }],
+        kilometres: [{ required: true, message: '请输入', trigger: 'blur' }],
+        maintenanceMode: [{ required: true, message: '请选择', trigger: 'change' }],
+        maintenanceProvider: [{ required: true, message: '请输入', trigger: 'blur' }],
+        monetaryUnit: [{ required: true, message: '请输入', trigger: 'blur' }],
+        amount: [{ required: true, message: '请输入', trigger: 'blur' }]
+    }
 })
 
 const { queryParams, form, rules }: any = toRefs(data)
 
+const dataAccessoryUse = reactive({
+    formAccessoryUse: {
+        id: null,
+        maintenanceId: null,
+        maintenanceTime: null,
+        siteId: null,
+        siteName: null,
+        carId: null,
+        accessoryType: null,
+        accessoryId: null,
+        accessoryName: null,
+        supplier: null,
+        num: null,
+        useing: null,
+        remark: null,
+        createBy: null
+    },
+    rulesAccessoryUse: {
+        maintenanceTime: [{ required: true, message: '请输入', trigger: 'blur' }],
+        siteName: [{ required: true, message: '请输入', trigger: 'blur' }],
+        carId: [{ required: true, message: '请输入', trigger: 'blur' }],
+        accessoryType: [{ required: true, message: '请选择', trigger: 'change' }],
+        accessoryId: [{ required: true, message: '请选择', trigger: 'change' }],
+        supplier: [{ required: true, message: '请输入', trigger: 'change' }],
+        num: [{ required: true, message: '请输入', trigger: 'change' }],
+        createBy: [{ required: true, message: '请输入', trigger: 'blur' }]
+    }
+})
+
+const { formAccessoryUse, rulesAccessoryUse }: any = toRefs(dataAccessoryUse)
+
 /** 查询维护记录管理列表 */
 const getPageList = () => {
     loading.value = true
-    listLog(queryParams.value).then((response: any) => {
-        maintenanceList.value = response.rows
-        total.value = parseInt(response.total)
+    getMaintainRecordsList(queryParams.value).then((res: any) => {
+        maintenanceList.value = res.rows
+        total.value = parseInt(res.total)
         loading.value = false
     })
 }
@@ -398,8 +466,36 @@ const getPageList = () => {
 const truckOptions = ref([]) as any
 
 const getTruckOption = () => {
-    listInfo({}).then((response: any) => {
-        truckOptions.value = response.rows
+    getTruckList({}).then((res: any) => {
+        truckOptions.value = res.rows
+    })
+}
+
+const siteOptions = ref([]) as any
+
+const getSiteOptions = () => {
+    getSiteList({}).then((res: any) => {
+        siteOptions.value = res.rows
+    })
+}
+
+getSiteOptions()
+
+const accessoryStockOptions = ref([]) as any
+
+const getAccessoryStockOptions = (value: any) => {
+    getAccessoryStockList({ accessoryType: value }).then((res: any) => {
+        accessoryStockOptions.value = res.rows
+    })
+}
+
+getSiteOptions()
+
+const accessoryUseData = ref([]) as any
+
+const getAccessoryUseData = (carId: any) => {
+    getAccessoryUseList({ carId }).then((res: any) => {
+        accessoryUseData.value = res.rows
     })
 }
 
@@ -407,32 +503,13 @@ const getTruckOption = () => {
 const cancel = () => {
     open.value = false
     openPrice.value = false
-    reset()
+    openInfo.value = false
+    formRef.value?.resetFields()
 }
 
-// 表单重置
-const reset = () => {
-    form.value = {
-        id: null,
-        maintenanceTime: null,
-        carId: null,
-        siteId: null,
-        siteName: null,
-        maintenanceType: null,
-        maintenanceMode: null,
-        oilConsumption: null,
-        kilometres: null,
-        maintenanceProvider: null,
-        nextTime: null,
-        monetaryUnit: null,
-        amount: null,
-        createBy: null,
-        createTime: null,
-        updateBy: null,
-        updateTime: null,
-        remark: null
-    }
-    proxy.resetForm('formRef')
+const cancelAccessoryUse = () => {
+    openAccessoryUse.value = false
+    formRefAccessoryUse.value?.resetFields()
 }
 
 /** 搜索按钮操作 */
@@ -457,10 +534,9 @@ const handleSelectionChange = (selection: any) => {
 
 /** 详情按钮操作 */
 const handleInfo = (row: any) => {
-    // reset()
     const id = row.id
-    getTruckOption()
-    getLog(id).then((response) => {
+    getAccessoryUseData(row.carId)
+    getMaintainRecordsInfo(id).then((response) => {
         form.value = response.data
         openInfo.value = true
         title.value = '维护记录详情'
@@ -469,7 +545,7 @@ const handleInfo = (row: any) => {
 
 /** 新增按钮操作 */
 const handleAdd = () => {
-    reset()
+    formRef.value?.resetFields()
     open.value = true
     title.value = '新增维护记录'
     getTruckOption()
@@ -477,11 +553,11 @@ const handleAdd = () => {
 
 /** 修改按钮操作 */
 const handleUpdate = (row: any) => {
-    reset()
+    formRef.value?.resetFields()
     const id = row.id
     getTruckOption()
-    getLog(id).then((response) => {
-        form.value = response.data
+    getMaintainRecordsInfo(id).then((res) => {
+        form.value = res.data
         open.value = true
         title.value = '编辑维护记录'
     })
@@ -489,10 +565,10 @@ const handleUpdate = (row: any) => {
 
 /** 价格维护按钮操作 */
 const handlePrice = (row: any) => {
-    reset()
+    formRef.value?.resetFields()
     const id = row.id
     getTruckOption()
-    getLog(id).then((response) => {
+    getMaintainRecordsInfo(id).then((response) => {
         form.value = response.data
         openPrice.value = true
         title.value = '价格维护'
@@ -503,16 +579,22 @@ const handlePrice = (row: any) => {
 const submitForm = () => {
     proxy.$refs['formRef'].validate((valid: any) => {
         if (valid) {
+            if (form.value.siteId) {
+                const result = siteOptions.value.filter((item: any) => item.siteId == form.value.siteId)
+                form.value.siteName = result.length > 0 ? result[0].siteName : ''
+            }
             if (form.value.id != null) {
-                updateLog(form.value).then(() => {
+                updateMaintainRecords(form.value).then(() => {
                     proxy.$modal.msgSuccess('修改成功')
                     open.value = false
+                    openPrice.value = false
                     getPageList()
                 })
             } else {
-                addLog(form.value).then(() => {
+                addMaintainRecords(form.value).then(() => {
                     proxy.$modal.msgSuccess('新增成功')
                     open.value = false
+                    openPrice.value = false
                     getPageList()
                 })
             }
@@ -525,10 +607,84 @@ const handleDelete = (row: any) => {
     proxy.$modal
         .confirm('是否确认删除维护记录管理编号为"' + row.id + '"的数据项？')
         .then(() => {
-            return delLog(row.id)
+            return delMaintainRecords(row.id)
         })
         .then(() => {
             getPageList()
+            proxy.$modal.msgSuccess('删除成功')
+        })
+        .catch(() => {})
+}
+
+/** 详情-新增配件使用 */
+const handleAddAccessoryUse = () => {
+    formAccessoryUse.value = {
+        maintenanceId: form.value.id,
+        maintenanceTime: form.value.maintenanceTime,
+        siteId: form.value.siteId,
+        siteName: form.value.siteName,
+        carId: form.value.carId
+    }
+    titleAccessoryUse.value = '新增配件使用'
+    openAccessoryUse.value = true
+}
+
+/** 详情-更新配件使用 */
+const handleUpdateAccessoryUse = (row: any) => {
+    formRefAccessoryUse.value?.resetFields()
+    const id = row.id
+    getAccessoryUseInfo(id).then((res) => {
+        Object.keys(formAccessoryUse.value).forEach((item) => {
+            formAccessoryUse.value[item] = res.data[item]
+        })
+        openAccessoryUse.value = true
+        titleAccessoryUse.value = '编辑配件使用'
+    })
+}
+
+const handleChangeAccessoryType = (value: any) => {
+    getAccessoryStockOptions(value)
+    formAccessoryUse.value.accessoryId = ''
+    formAccessoryUse.value.accessoryName = ''
+    formAccessoryUse.value.supplier = ''
+}
+
+const handleChangeAccessoryId = (value: any) => {
+    const result = accessoryStockOptions.value.filter((item: any) => item.id == value)
+    formAccessoryUse.value.accessoryName = result.length > 0 ? result[0].accessoryName : ''
+    formAccessoryUse.value.supplier = result.length > 0 ? result[0].supplier : ''
+}
+
+/** 详情-提交按钮 */
+const submitFormAccessoryUse = () => {
+    proxy.$refs['formRefAccessoryUse'].validate((valid: any) => {
+        if (valid) {
+            if (formAccessoryUse.value.id != null) {
+                updateAccessoryUse({ ...formAccessoryUse.value, relevance: 0 }).then(() => {
+                    proxy.$modal.msgSuccess('修改成功')
+                    openAccessoryUse.value = false
+                    getAccessoryUseData(formAccessoryUse.value.carId)
+                })
+            } else {
+                addAccessoryUse({ ...formAccessoryUse.value, relevance: 0 }).then(() => {
+                    proxy.$modal.msgSuccess('新增成功')
+                    openAccessoryUse.value = false
+                    getAccessoryUseData(formAccessoryUse.value.carId)
+                })
+            }
+        }
+    })
+}
+
+/** 详情-删除按钮 */
+const handleDeleteAccessoryUse = (row: any) => {
+    proxy.$modal
+        .confirm('是否确认删除此数据项？')
+        .then(() => {
+            return delAccessoryUse({ id: row.id, time: form.value.maintenanceTime })
+        })
+        .then(() => {
+            getAccessoryUseData(form.value.carId)
             proxy.$modal.msgSuccess('删除成功')
         })
         .catch(() => {})
@@ -539,10 +695,62 @@ const handleExport = () => {
     proxy.download('truck/maintenance/export', {}, `log_${new Date().getTime()}.xlsx`)
 }
 
+const uploadRef = ref<InstanceType<typeof ElUpload>>()
+// 用户导入参数
+const upload = ref<any>({
+    // 是否显示弹出层（用户导入）
+    open: false,
+    // 弹出层标题（用户导入）
+    title: '',
+    // 是否禁用上传
+    isUploading: false,
+    // 是否更新已经存在的用户数据
+    updateSupport: 0,
+    // 设置上传的请求头部
+    headers: { Authorization: 'Bearer ' + getToken() },
+    // 上传的地址
+    url: baseURL + '/carInfo/import'
+})
+
+/** 导入按钮操作 */
+const handleImport = () => {
+    upload.value.title = '数据导入'
+    upload.value.open = true
+}
+
+/**
+ * 清除上传控件选中文件
+ */
+const cleanUploadRef = () => {
+    uploadRef.value?.clearFiles()
+    upload.value.updateSupport = 0
+}
+
+// 文件上传中处理
+const handleFileUploadProgress = (event: any, file: any, fileList: any) => {
+    upload.value.isUploading = true
+}
+
+// 文件上传成功处理
+const handleFileSuccess = (response: any, file: any, fileList: any) => {
+    upload.value.open = false
+    upload.isUploading = false
+    cleanUploadRef()
+    proxy.$alert(response.msg, '导入结果', {
+        dangerouslyUseHTMLString: true
+    })
+    getPageList()
+}
+
+// 提交上传文件
+const submitFileForm = () => {
+    proxy.$refs.uploadRef.submit()
+}
+
 getPageList()
 </script>
 
-<style lang="scss" scope>
+<style lang="scss" scoped>
 .el-dialog {
     .el-form {
         .el-input {
@@ -560,9 +768,20 @@ getPageList()
 
     th,
     td {
-        border: 1px solid black;
+        border: 1px solid #ebeef5;
         padding: 8px;
-        text-align: left;
+        text-align: center;
+        color: #606266;
+        font-size: 14px;
+
+        &:nth-child(odd) {
+            background: #f8f8f9;
+            min-width: 10%;
+        }
+
+        &:nth-child(even) {
+            min-width: calc(70% / 3);
+        }
     }
 }
 </style>

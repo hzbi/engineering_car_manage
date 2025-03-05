@@ -5,7 +5,7 @@ import request from '@/utils/request'
  *
  * @param {object} query
  */
-export const listLog = (query: any) => {
+export const getMaintainRecordsList = (query: any) => {
     return request({
         url: '/truck/maintenance/list',
         method: 'get',
@@ -18,7 +18,7 @@ export const listLog = (query: any) => {
  *
  * @param {string} id
  */
-export const getLog = (id: any) => {
+export const getMaintainRecordsInfo = (id: any) => {
     return request({
         url: `/truck/maintenance/${id}`,
         method: 'get'
@@ -30,7 +30,7 @@ export const getLog = (id: any) => {
  *
  * @param {object} data
  */
-export const addLog = (data: any) => {
+export const addMaintainRecords = (data: any) => {
     return request({
         url: '/truck/maintenance/add',
         method: 'post',
@@ -43,7 +43,7 @@ export const addLog = (data: any) => {
  *
  * @param {object} data
  */
-export const updateLog = (data: any) => {
+export const updateMaintainRecords = (data: any) => {
     return request({
         url: '/truck/maintenance/edit',
         method: 'put',
@@ -56,7 +56,7 @@ export const updateLog = (data: any) => {
  *
  * @param {string} id
  */
-export const delLog = (id: any) => {
+export const delMaintainRecords = (id: any) => {
     return request({
         url: `/truck/maintenance/${id}`,
         method: 'delete'

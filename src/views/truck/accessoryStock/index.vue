@@ -9,8 +9,8 @@
                     <el-option v-for="dict in accessory_type" :key="dict.value" :label="dict.label" :value="dict.value" />
                 </el-select>
             </el-form-item>
-            <el-form-item label="工地名称" prop="siteName">
-                <el-select v-model="queryParams.siteName" placeholder="请选择" clearable style="width: 200px">
+            <el-form-item label="工地名称" prop="siteId">
+                <el-select v-model="queryParams.siteId" placeholder="请选择" clearable style="width: 200px">
                     <el-option v-for="dict in siteOptions" :key="dict.siteId" :label="dict.siteName" :value="dict.siteId" />
                 </el-select>
             </el-form-item>
@@ -149,26 +149,29 @@
         <!-- 车辆信息详情对话框 -->
         <el-dialog :title="title" v-model="openInfo" width="800px" append-to-body>
             <el-form ref="infoRef" :model="form" :rules="rules" label-width="auto">
-                <el-form-item label="编号:" prop="carId">
-                    <span>{{ form.carId }}</span>
+                <el-form-item label="配件名称:" prop="accessoryName">
+                    <span>{{ form.accessoryName }}</span>
                 </el-form-item>
-                <el-form-item label="车牌号:" prop="carNumber">
-                    <span>{{ form.carNumber }}</span>
+                <el-form-item label="工地名称:" prop="siteName">
+                    <span>{{ form.siteName }}</span>
                 </el-form-item>
-                <el-form-item label="车型:" prop="carType">
-                    <dict-tag :options="accessory_type" :value="form.carType" />
+                <el-form-item label="配件类型:" prop="accessoryType">
+                    <dict-tag :options="accessory_type" :value="form.accessoryType" />
                 </el-form-item>
-                <el-form-item label="吨位:" prop="carWeight">
-                    <span>{{ form.carWeight }}</span>
+                <el-form-item label="供应商:" prop="supplier">
+                    <span>{{ form.supplier }}</span>
                 </el-form-item>
-                <el-form-item label="制造日期:" prop="carCreateTime">
-                    <span>{{ form.carCreateTime ? parseTime(new Date(form.carCreateTime), '{y}-{m}-{d}') : '' }}</span>
+                <el-form-item label="价格:" prop="price">
+                    <span>{{ form.price }}</span>
                 </el-form-item>
-                <el-form-item label="年检日期:" prop="carInspectionTime">
-                    <span>{{ form.carInspectionTime ? parseTime(new Date(form.carInspectionTime), '{y}-{m}-{d}') : '' }}</span>
+                <el-form-item label="数量:" prop="num">
+                    <span>{{ form.num }}</span>
                 </el-form-item>
-                <el-form-item label="状态:" prop="carStatus">
-                    <dict-tag :options="truck_status" :value="form.carStatus" />
+                <el-form-item label="入库日期:" prop="time">
+                    <span>{{ form.time }}</span>
+                </el-form-item>
+                <el-form-item label="入库人员:" prop="by">
+                    <span>{{ form.by }}</span>
                 </el-form-item>
                 <el-form-item label="备注:" prop="remark">
                     <span>{{ form.remark }}</span>
@@ -214,7 +217,7 @@ const data = reactive({
         pageSize: 10,
         accessoryName: null,
         accessoryType: null,
-        siteName: null,
+        siteId: null,
         carWeight: null,
         carStatus: null,
         carCreateTime: null,
@@ -333,6 +336,10 @@ const handleUpdate = (row: any) => {
 const submitForm = () => {
     proxy.$refs['infoRef'].validate((valid: any) => {
         if (valid) {
+            if (form.value.siteId) {
+                const result = siteOptions.value.filter((item: any) => item.siteId == form.value.siteId)
+                form.value.siteName = result.length > 0 ? result[0].siteName : ''
+            }
             if (form.value.id != null) {
                 updateAccessoryStock(form.value).then(() => {
                     proxy.$modal.msgSuccess('修改成功')
@@ -340,10 +347,6 @@ const submitForm = () => {
                     getPageList()
                 })
             } else {
-                if (form.value.siteId) {
-                    const result = siteOptions.value.filter((item: any) => item.siteId == form.value.siteId)
-                    form.value.siteName = result.length > 0 ? result[0].siteName : ''
-                }
                 addAccessoryStock(form.value).then(() => {
                     proxy.$modal.msgSuccess('新增成功')
                     open.value = false
@@ -370,7 +373,7 @@ const handleDelete = (row: any) => {
 
 /** 导出按钮操作 */
 const handleExport = () => {
-    proxy.download('carInfo/export', {}, `info_${new Date().getTime()}.xlsx`)
+    proxy.download('truck/Accessory/export', {}, `info_${new Date().getTime()}.xlsx`)
 }
 
 const uploadRef = ref<InstanceType<typeof ElUpload>>()
@@ -428,7 +431,7 @@ const submitFileForm = () => {
 getPageList()
 </script>
 
-<style lang="scss" scope>
+<style lang="scss" scoped>
 .el-dialog {
     .el-form {
         .el-input {

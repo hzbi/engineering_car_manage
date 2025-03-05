@@ -5,7 +5,7 @@ import request from '@/utils/request'
  *
  * @param {object} query
  */
-export const listAccessory = (query: any) => {
+export const getAccessoryUseList = (query: any) => {
     return request({
         url: '/truck/AccessoryUse/list',
         method: 'get',
@@ -18,9 +18,9 @@ export const listAccessory = (query: any) => {
  *
  * @param {string} id
  */
-export const getLog = (id) => {
+export const getAccessoryUseInfo = (id: any) => {
     return request({
-        url: '/system/log/' + id,
+        url: `/truck/AccessoryUse/${id}`,
         method: 'get'
     })
 }
@@ -30,9 +30,9 @@ export const getLog = (id) => {
  *
  * @param {object} data
  */
-export const addLog = (data) => {
+export const addAccessoryUse = (data: any) => {
     return request({
-        url: '/system/log/add',
+        url: '/truck/AccessoryUse/add',
         method: 'post',
         data: data
     })
@@ -43,9 +43,9 @@ export const addLog = (data) => {
  *
  * @param {object} data
  */
-export const updateLog = (data) => {
+export const updateAccessoryUse = (data: any) => {
     return request({
-        url: '/system/log/edit',
+        url: '/truck/AccessoryUse/edit',
         method: 'put',
         data: data
     })
@@ -54,11 +54,12 @@ export const updateLog = (data) => {
 /**
  * 删除配件使用
  *
- * @param {string} id
+ * @param {string} data
  */
-export const delLog = (id) => {
+export const delAccessoryUse = (data: any) => {
     return request({
-        url: '/system/log/' + id,
-        method: 'delete'
+        url: `/truck/AccessoryUse/delete`,
+        method: 'post',
+        data: data
     })
 }

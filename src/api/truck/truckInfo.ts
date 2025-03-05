@@ -5,7 +5,7 @@ import request from '@/utils/request'
  *
  * @param {object} query
  */
-export const listInfo = (query: any) => {
+export const getTruckList = (query: any) => {
     return request({
         url: '/carInfo/list',
         method: 'get',
@@ -18,7 +18,7 @@ export const listInfo = (query: any) => {
  *
  * @param {string} id
  */
-export const getInfo = (id: any) => {
+export const getTruckInfo = (id: any) => {
     return request({
         url: `/carInfo/${id}`,
         method: 'get'
@@ -30,7 +30,7 @@ export const getInfo = (id: any) => {
  *
  * @param {object} data
  */
-export const addInfo = (data: any) => {
+export const addTruck = (data: any) => {
     return request({
         url: '/carInfo/insertCarInfo',
         method: 'post',
@@ -43,7 +43,7 @@ export const addInfo = (data: any) => {
  *
  * @param {object} data
  */
-export const updateInfo = (data: any) => {
+export const updateTruck = (data: any) => {
     return request({
         url: '/carInfo/updateCarInfo',
         method: 'post',
@@ -56,7 +56,7 @@ export const updateInfo = (data: any) => {
  *
  * @param {string} id
  */
-export const delInfo = (id: any) => {
+export const delTruck = (id: any) => {
     return request({
         url: `/carInfo/${id}`,
         method: 'delete'
