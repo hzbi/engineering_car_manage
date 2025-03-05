@@ -115,7 +115,7 @@
                     <span>{{ form.carNumber }}</span>
                 </el-form-item>
                 <el-form-item label="车型:" prop="carType">
-                    <dict-tag :options="truck_type" :value="form.carType" />
+                    <dict-tag :options="driver_sex" :value="form.carType" />
                 </el-form-item>
                 <el-form-item label="吨位:" prop="carWeight">
                     <span>{{ form.carWeight }}</span>
@@ -127,7 +127,7 @@
                     <span>{{ form.carInspectionTime ? parseTime(new Date(form.carInspectionTime), '{y}-{m}-{d}') : '' }}</span>
                 </el-form-item>
                 <el-form-item label="状态:" prop="carStatus">
-                    <dict-tag :options="truck_status" :value="form.carStatus" />
+                    <dict-tag :options="driver_sex" :value="form.carStatus" />
                 </el-form-item>
                 <el-form-item label="备注:" prop="remark">
                     <span>{{ form.remark }}</span>
@@ -280,7 +280,7 @@ const handleSelectionChange = (selection: any) => {
 const handleInfo = (row: any) => {
     formRef.value?.resetFields()
     const id = row.id
-    getTruckInfo(id).then((response: any) => {
+    getDriverInfo(id).then((response: any) => {
         form.value = response.data
         openInfo.value = true
         title.value = '车辆信息详情'
@@ -298,7 +298,7 @@ const handleAdd = () => {
 const handleUpdate = (row: any) => {
     formRef.value?.resetFields()
     const id = row.id
-    getTruckInfo(id).then((response: any) => {
+    getDriverInfo(id).then((response: any) => {
         form.value = response.data
         open.value = true
         title.value = '编辑车辆信息'
@@ -331,7 +331,7 @@ const handleDelete = (row: any) => {
     proxy.$modal
         .confirm('是否确认删除车辆信息编号为"' + row.id + '"的数据项？')
         .then(() => {
-            return delTruck(row.id)
+            return delDriver(row.id)
         })
         .then(() => {
             getPageList()
@@ -384,12 +384,11 @@ const handleFileUploadProgress = (event: any, file: any, fileList: any) => {
 // 文件上传成功处理
 const handleFileSuccess = (response: any, file: any, fileList: any) => {
     upload.value.open = false
-    upload.isUploading = false
-    cleanUploadRef(response)
-    console.log()
-    // proxy.$alert(response.msg, '导入结果', {
-    //     dangerouslyUseHTMLString: true
-    // })
+    upload.value.isUploading = false
+    cleanUploadRef()
+    proxy.$alert(response.msg, '导入结果', {
+        dangerouslyUseHTMLString: true
+    })
     getPageList()
 }
 
