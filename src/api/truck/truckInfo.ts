@@ -62,3 +62,16 @@ export const delTruck = (id: any) => {
         method: 'delete'
     })
 }
+
+/**
+ *  获取没有司机的车辆
+ *
+ * @param {object} data
+ */
+export const getTruckByNoDrive = (data: any) => {
+    return request({
+        url: '/carInfo/selectCarByNoDrive',
+        method: 'post',
+        data: data
+    })
+}

@@ -2,10 +2,10 @@
     <div class="app-container">
         <el-form :model="queryParams" ref="queryFormRef" :inline="true" v-show="showSearch">
             <el-form-item label="车牌号" prop="carNumber">
-                <el-input v-model="queryParams.carNumber" placeholder="请输入车牌号" clearable style="width: 200px" @keyup.enter="handleQuery" />
+                <el-input v-model="queryParams.carNumber" placeholder="请输入" clearable style="width: 200px" @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="车型" prop="carType">
-                <el-select v-model="queryParams.carType" placeholder="请选择车型" clearable style="width: 200px" @keyup.enter.native="handleQuery">
+                <el-select v-model="queryParams.carType" placeholder="请选择" clearable style="width: 200px" @keyup.enter.native="handleQuery">
                     <el-option v-for="dict in truck_type" :key="dict.value" :label="dict.label" :value="dict.value" />
                 </el-select>
             </el-form-item>
@@ -28,32 +28,32 @@
         <el-table stripe border v-loading="loading" :data="infoList" @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="50" align="center" />
             <el-table-column type="index" width="80" label="序号" align="center" />
-            <el-table-column label="编号" align="center" prop="carId"></el-table-column>
-            <el-table-column label="车牌号" align="center" prop="carNumber"></el-table-column>
-            <el-table-column label="车型" align="center" prop="carType">
+            <el-table-column label="编号" align="center" prop="carId" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column label="车牌号" align="center" prop="carNumber" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column label="车型" align="center" prop="carType" min-width="120" show-overflow-tooltip>
                 <template #default="scope">
                     <dict-tag :options="truck_type" :value="scope.row.carType" />
                 </template>
             </el-table-column>
-            <el-table-column label="吨位" align="center" prop="carWeight"></el-table-column>
-            <el-table-column label="车辆制造日期" align="center" prop="carCreateTime" width="180">
+            <el-table-column label="吨位" align="center" prop="carWeight" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column label="车辆制造日期" align="center" prop="carCreateTime" min-width="120" show-overflow-tooltip>
                 <template #default="scope">
                     <span>{{ scope.row.carCreateTime ? parseTime(new Date(scope.row.carCreateTime), '{y}-{m}-{d}') : '' }}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="年检日期" align="center" prop="carInspectionTime" width="180">
+            <el-table-column label="年检日期" align="center" prop="carInspectionTime" min-width="120" show-overflow-tooltip>
                 <template #default="scope">
                     <span>{{ scope.row.carInspectionTime ? parseTime(new Date(scope.row.carInspectionTime), '{y}-{m}-{d}') : '' }}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="备注" align="center" prop="remark"></el-table-column>
-            <el-table-column label="状态" align="center" prop="carStatus">
+            <el-table-column label="备注" align="center" prop="remark" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column label="状态" align="center" prop="carStatus" min-width="120" show-overflow-tooltip>
                 <template #default="scope">
                     <dict-tag :options="truck_status" :value="scope.row.carStatus" />
                 </template>
             </el-table-column>
-            <el-table-column label="创建人" align="center" prop="createBy"></el-table-column>
-            <el-table-column label="创建时间" align="center" prop="createTime" width="200"></el-table-column>
+            <el-table-column label="创建人" align="center" prop="createBy" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column label="创建时间" align="center" prop="createTime" min-width="120" show-overflow-tooltip></el-table-column>
             <el-table-column label="操作" align="center" class-name="small-padding fixed-width" min-width="200" fixed="right">
                 <template #default="scope">
                     <el-button type="text" @click="handleInfo(scope.row)" v-hasPermi="['system:info:edit']">详情</el-button>
@@ -83,10 +83,10 @@
                     <el-input v-model="form.carWeight" placeholder="请输入" />
                 </el-form-item>
                 <el-form-item label="制造日期:" prop="carCreateTime">
-                    <el-date-picker clearable v-model="form.carCreateTime" type="date" value-format="YYYY-MM-DD" placeholder="选择日期"></el-date-picker>
+                    <el-date-picker clearable v-model="form.carCreateTime" type="date" value-format="YYYY-MM-DD" placeholder="选择日期" style="width: 300px"></el-date-picker>
                 </el-form-item>
                 <el-form-item label="年检日期:" prop="carInspectionTime">
-                    <el-date-picker clearable v-model="form.carInspectionTime" type="date" value-format="YYYY-MM-DD" placeholder="选择日期"></el-date-picker>
+                    <el-date-picker clearable v-model="form.carInspectionTime" type="date" value-format="YYYY-MM-DD" placeholder="选择日期" style="width: 300px"></el-date-picker>
                 </el-form-item>
                 <el-form-item label="状态:" prop="carStatus">
                     <el-select v-model="form.carStatus" placeholder="请选择">
@@ -177,7 +177,7 @@
 
 <script setup name="Info" lang="ts">
 import { getTruckList, getTruckInfo, addTruck, updateTruck, delTruck } from '@/api/truck/truckInfo'
-import { ref, reactive, toRefs, getCurrentInstance } from 'vue'
+import { ref, reactive, toRefs, getCurrentInstance, nextTick } from 'vue'
 import { ElForm, ElTable, ElUpload } from 'element-plus'
 import { getToken } from '@/utils/auth'
 const baseURL = import.meta.env.VITE_APP_BASE_API
@@ -222,11 +222,11 @@ const data = reactive({
     rules: {
         carId: [{ required: true, message: '请输入', trigger: 'blur' }],
         carNumber: [{ required: true, message: '请输入', trigger: 'blur' }],
-        carType: [{ required: true, message: '请选择', trigger: 'change' }],
+        carType: [{ required: true, message: '请选择', trigger: 'blur' }],
         carWeight: [{ required: true, message: '请输入', trigger: 'blur' }],
         carCreateTime: [{ required: true, message: '请输入', trigger: 'blur' }],
         carInspectionTime: [{ required: true, message: '请输入', trigger: 'blur' }],
-        carStatus: [{ required: true, message: '请选择', trigger: 'change' }]
+        carStatus: [{ required: true, message: '请选择', trigger: 'blur' }]
     }
 })
 
@@ -235,9 +235,9 @@ const { queryParams, form, rules }: any = toRefs(data)
 /** 查询配件使用列表 */
 const getPageList = () => {
     loading.value = true
-    getTruckList(queryParams.value).then((response: any) => {
-        infoList.value = response.rows
-        total.value = parseInt(response.total)
+    getTruckList(queryParams.value).then((res: any) => {
+        infoList.value = res.rows
+        total.value = parseInt(res.total)
         loading.value = false
     })
 }
@@ -247,12 +247,6 @@ const cancel = () => {
     open.value = false
     openInfo.value = false
     formRef.value?.resetFields()
-}
-
-// 表单重置
-const reset = () => {
-    form.value = {}
-    proxy.resetForm('formRef')
 }
 
 /** 搜索按钮操作 */
@@ -278,30 +272,30 @@ const handleSelectionChange = (selection: any) => {
 
 /** 详情按钮操作 */
 const handleInfo = (row: any) => {
+    openInfo.value = true
+    title.value = '详情'
     formRef.value?.resetFields()
     const id = row.id
-    getTruckInfo(id).then((response: any) => {
-        form.value = response.data
-        openInfo.value = true
-        title.value = '车辆信息详情'
+    getTruckInfo(id).then((res: any) => {
+        form.value = res.data
     })
 }
 
 /** 新增按钮操作 */
 const handleAdd = () => {
-    formRef.value?.resetFields()
     open.value = true
-    title.value = '新增车辆信息'
+    title.value = '新增'
+    formRef.value?.resetFields()
 }
 
 /** 修改按钮操作 */
 const handleUpdate = (row: any) => {
+    open.value = true
+    title.value = '编辑'
     formRef.value?.resetFields()
     const id = row.id
-    getTruckInfo(id).then((response: any) => {
-        form.value = response.data
-        open.value = true
-        title.value = '编辑车辆信息'
+    getTruckInfo(id).then((res: any) => {
+        form.value = res.data
     })
 }
 
@@ -329,7 +323,7 @@ const submitForm = () => {
 /** 删除按钮操作 */
 const handleDelete = (row: any) => {
     proxy.$modal
-        .confirm('是否确认删除车辆信息编号为"' + row.id + '"的数据项？')
+        .confirm('是否确认删除此数据项？')
         .then(() => {
             return delTruck(row.id)
         })
@@ -382,11 +376,11 @@ const handleFileUploadProgress = (event: any, file: any, fileList: any) => {
 }
 
 // 文件上传成功处理
-const handleFileSuccess = (response: any, file: any, fileList: any) => {
+const handleFileSuccess = (res: any, file: any, fileList: any) => {
     upload.value.open = false
     upload.value.isUploading = false
     cleanUploadRef()
-    proxy.$alert(response.msg, '导入结果', {
+    proxy.$alert(res.msg, '导入结果', {
         dangerouslyUseHTMLString: true
     })
     getPageList()
@@ -404,10 +398,13 @@ getPageList()
 .el-dialog {
     .el-form {
         .el-input {
-            width: 500px;
+            width: 300px;
         }
         .el-textarea {
-            width: 500px;
+            width: 300px;
+        }
+        .el-select {
+            width: 300px;
         }
     }
 }

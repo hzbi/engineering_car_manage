@@ -22,12 +22,12 @@
 
         <el-table stripe border v-loading="loading" :data="tableData">
             <el-table-column type="index" width="80" label="序号" align="center" />
-            <el-table-column label="工地编码" align="center" prop="siteId"></el-table-column>
-            <el-table-column label="工地名称" align="center" prop="siteName"></el-table-column>
-            <el-table-column label="地址" align="center" prop="siteAddress"></el-table-column>
-            <el-table-column label="联系人" align="center" prop="contactPerson"></el-table-column>
-            <el-table-column label="联系方式" align="center" prop="contactPhone"></el-table-column>
-            <el-table-column label="状态" align="center" prop="status">
+            <el-table-column label="工地编码" align="center" prop="siteId" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column label="工地名称" align="center" prop="siteName" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column label="地址" align="center" prop="siteAddress" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column label="联系人" align="center" prop="contactPerson" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column label="联系方式" align="center" prop="contactPhone" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column label="状态" align="center" prop="status" min-width="120" show-overflow-tooltip>
                 <template #default="scope">
                     <dict-tag :options="site_status" :value="scope.row.status" />
                 </template>
@@ -277,7 +277,7 @@ const submitForm = () => {
 /** 删除按钮操作 */
 const handleDelete = (row: any) => {
     proxy.$modal
-        .confirm('是否确认删除工地编号为"' + row.id + '"的数据项？')
+        .confirm('是否确认删除此数据项？')
         .then(() => {
             return delSite(row.id)
         })
@@ -332,7 +332,7 @@ const handleFileUploadProgress = (event: any, file: any, fileList: any) => {
 // 文件上传成功处理
 const handleFileSuccess = (response: any, file: any, fileList: any) => {
     upload.value.open = false
-    upload.isUploading = false
+    upload.value.isUploading = false
     cleanUploadRef()
     proxy.$alert(response.msg, '导入结果', {
         dangerouslyUseHTMLString: true
@@ -352,10 +352,13 @@ getPageList()
 .el-dialog {
     .el-form {
         .el-input {
-            width: 500px;
+            width: 300px;
         }
         .el-textarea {
-            width: 500px;
+            width: 300px;
+        }
+        .el-select {
+            width: 300px;
         }
     }
 }

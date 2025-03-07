@@ -1,8 +1,8 @@
 <template>
     <div class="app-container">
-        <el-row :gutter="20">
+        <el-row :gutter="24">
             <!--用户数据-->
-            <el-col :span="20" :xs="24">
+            <el-col :span="24" :xs="24">
                 <transition name="fade">
                     <el-form :model="queryParams" ref="queryFormRef" :inline="true" v-show="showSearch">
                         <el-form-item label="用户名称" prop="userName">
@@ -111,7 +111,7 @@
                             <span>{{ parseTime(scope.row.createTime) }}</span>
                         </template>
                     </el-table-column>
-                    <el-table-column label="操作" width="200" align="center" class-name="small-padding fixed-width">
+                    <el-table-column label="操作" min-width="200" fixed="right" align="center" class-name="small-padding fixed-width">
                         <template #default="scope">
                             <!-- prettier-ignore -->
                             <el-link

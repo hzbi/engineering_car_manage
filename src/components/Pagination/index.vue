@@ -93,6 +93,8 @@ export default defineComponent({
 .pagination-container {
     background: #fff;
     padding: 32px 16px;
+    display: flex;
+    justify-content: right;
 }
 .pagination-container.hidden {
     display: none;

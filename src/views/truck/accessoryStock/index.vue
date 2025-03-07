@@ -14,11 +14,11 @@
                     <el-option v-for="dict in siteOptions" :key="dict.siteId" :label="dict.siteName" :value="dict.siteId" />
                 </el-select>
             </el-form-item>
-            <el-form-item label="开始日期" prop="carNumber">
-                <el-input v-model="queryParams.carNumber" placeholder="请输入" clearable style="width: 200px" @keyup.enter="handleQuery" />
+            <el-form-item label="开始日期" prop="startTime">
+                <el-date-picker clearable v-model="queryParams.startTime" type="date" value-format="YYYY-MM-DD" placeholder="选择时间"></el-date-picker>
             </el-form-item>
-            <el-form-item label="结束日期" prop="carNumber">
-                <el-input v-model="queryParams.carNumber" placeholder="请输入" clearable style="width: 200px" @keyup.enter="handleQuery" />
+            <el-form-item label="结束日期" prop="endTime">
+                <el-date-picker clearable v-model="queryParams.endTime" type="date" value-format="YYYY-MM-DD" placeholder="选择时间"></el-date-picker>
             </el-form-item>
             <form-search @reset="resetQuery" @search="handleQuery" />
         </el-form>
@@ -39,36 +39,210 @@
         <el-table stripe border v-loading="loading" :data="tableData" @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="50" align="center" />
             <el-table-column type="index" width="80" label="序号" align="center" />
-            <el-table-column label="配件名称" align="center" prop="accessoryName"></el-table-column>
-            <el-table-column label="工地名称" align="center" prop="siteName"></el-table-column>
-            <el-table-column label="配件类型" align="center" prop="accessoryType">
+            <el-table-column label="配件名称" align="center" prop="accessoryName" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column label="工地名称" align="center" prop="siteName" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column label="配件类型" align="center" prop="accessoryType" min-width="120" show-overflow-tooltip>
                 <template #default="scope">
                     <dict-tag :options="accessory_type" :value="scope.row.accessoryType" />
                 </template>
             </el-table-column>
-            <el-table-column label="供应商" align="center" prop="supplier"></el-table-column>
-            <el-table-column label="价格" align="center" prop="price"></el-table-column>
-            <el-table-column label="入库数量" align="center" prop="num"></el-table-column>
-            <el-table-column label="剩余数量" align="center" prop="outNum"></el-table-column>
-            <el-table-column label="入库日期" align="center" prop="time" width="180">
+            <el-table-column label="供应商" align="center" prop="supplier" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column label="价格" align="center" prop="price" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column label="入库数量" align="center" prop="num" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column label="剩余数量" align="center" prop="outNum" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column label="入库日期" align="center" prop="time" min-width="120" show-overflow-tooltip>
                 <template #default="scope">
                     <span>{{ scope.row.time ? parseTime(new Date(scope.row.time), '{y}-{m}-{d}') : '' }}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="入库人员" align="center" prop="by"></el-table-column>
-            <el-table-column label="备注" align="center" prop="remark"></el-table-column>
-            <el-table-column label="创建人" align="center" prop="createBy"></el-table-column>
-            <el-table-column label="创建时间" align="center" prop="createTime" width="200"></el-table-column>
+            <el-table-column label="入库人员" align="center" prop="by" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column label="备注" align="center" prop="remark" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column label="创建人" align="center" prop="createBy" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column label="创建时间" align="center" prop="createTime" min-width="120" show-overflow-tooltip></el-table-column>
             <el-table-column label="操作" align="center" class-name="small-padding fixed-width" min-width="200" fixed="right">
                 <template #default="scope">
                     <el-button type="text" @click="handleInfo(scope.row)" v-hasPermi="['system:info:edit']">详情</el-button>
                     <el-button type="text" @click="handleUpdate(scope.row)" v-hasPermi="['system:info:edit']">编辑</el-button>
                     <el-button type="text" @click="handleDelete(scope.row)" v-hasPermi="['system:info:remove']">删除</el-button>
+                    <el-button type="text" @click="handlePrice(scope.row)" v-hasPermi="['system:log:edit']">价格维护</el-button>
                 </template>
             </el-table-column>
         </el-table>
 
         <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getPageList" />
+
+        <!-- 添加或修改对话框 -->
+        <el-dialog :title="title" v-model="open" width="800px" append-to-body>
+            <el-form ref="formRef" :model="form" :rules="rules" label-width="auto">
+                <el-form-item label="配件名称:" prop="accessoryName">
+                    <el-input v-model="form.accessoryName" placeholder="请输入" clearable />
+                </el-form-item>
+                <el-form-item label="工地名称:" prop="siteId">
+                    <el-select v-model="form.siteId" placeholder="请选择" clearable style="width: 200px">
+                        <el-option v-for="dict in siteOptions" :key="dict.siteId" :label="dict.siteName" :value="dict.siteId" />
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="配件类型:" prop="accessoryType">
+                    <el-select v-model="form.accessoryType" placeholder="请选择" clearable>
+                        <el-option v-for="dict in accessory_type" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="供应商:" prop="supplier">
+                    <el-input v-model="form.supplier" placeholder="请输入" clearable />
+                </el-form-item>
+                <el-form-item label="价格:" prop="price">
+                    <el-input v-model="form.price" placeholder="请输入" clearable />
+                </el-form-item>
+                <el-form-item label="数量:" prop="num">
+                    <el-input v-model="form.num" placeholder="请输入" clearable />
+                </el-form-item>
+                <el-form-item label="入库日期:" prop="time">
+                    <el-date-picker v-model="form.time" type="date" value-format="YYYY-MM-DD" placeholder="选择日期" clearable style="width: 300px"></el-date-picker>
+                </el-form-item>
+                <el-form-item label="入库人员:" prop="by">
+                    <el-input v-model="form.by" placeholder="请输入" clearable />
+                </el-form-item>
+                <el-form-item label="备注:" prop="remark">
+                    <el-input v-model="form.remark" type="textarea" rows="5" placeholder="请输入" clearable />
+                </el-form-item>
+            </el-form>
+            <template #footer>
+                <div class="dialog-footer">
+                    <el-button type="primary" @click="submitForm">确 定</el-button>
+                    <el-button @click="cancel">取 消</el-button>
+                </div>
+            </template>
+        </el-dialog>
+
+        <!-- 价格维护对话框 -->
+        <el-dialog :title="title" v-model="openPrice" width="800px" append-to-body>
+            <el-form ref="formRef" :model="form" :rules="rules" label-width="auto">
+                <el-form-item label="配件名称:" prop="accessoryName">
+                    <span>{{ form.accessoryName }}</span>
+                </el-form-item>
+                <el-form-item label="工地名称:" prop="siteName">
+                    <span>{{ form.siteName }}</span>
+                </el-form-item>
+                <el-form-item label="配件类型:" prop="accessoryType">
+                    <dict-tag :options="accessory_type" :value="form.accessoryType" />
+                </el-form-item>
+                <el-form-item label="供应商:" prop="supplier">
+                    <span>{{ form.supplier }}</span>
+                </el-form-item>
+                <el-form-item label="价格:" prop="price">
+                    <el-input v-model="form.price" placeholder="请输入" clearable />
+                </el-form-item>
+                <el-form-item label="数量:" prop="num">
+                    <span>{{ form.num }}</span>
+                </el-form-item>
+                <el-form-item label="入库日期:" prop="time">
+                    <span>{{ form.time }}</span>
+                </el-form-item>
+                <el-form-item label="入库人员:" prop="by">
+                    <span>{{ form.by }}</span>
+                </el-form-item>
+                <el-form-item label="备注:" prop="remark">
+                    <span>{{ form.remark }}</span>
+                </el-form-item>
+            </el-form>
+            <template #footer>
+                <div class="dialog-footer">
+                    <el-button type="primary" @click="submitForm">确 定</el-button>
+                    <el-button @click="cancel">取 消</el-button>
+                </div>
+            </template>
+        </el-dialog>
+
+        <!-- 详情对话框 -->
+        <el-drawer :title="title" size="80%" v-model="openInfo">
+            <el-divider content-position="left">基本信息</el-divider>
+            <table class="info-table" border="1">
+                <tbody>
+                    <tr>
+                        <td>配件名称</td>
+                        <td>{{ form.accessoryName }}</td>
+                        <td>工地名称</td>
+                        <td>{{ form.siteName }}</td>
+                        <td>配件类型</td>
+                        <td><dict-tag :options="accessory_type" :value="form.accessoryType" /></td>
+                    </tr>
+                    <tr>
+                        <td>供应商</td>
+                        <td>{{ form.supplier }}</td>
+                        <td>价格</td>
+                        <td>{{ form.price }}</td>
+                        <td>入库人员</td>
+                        <td>{{ form.by }}</td>
+                    </tr>
+                    <tr>
+                        <td>入库数量</td>
+                        <td>{{ form.num }}</td>
+                        <td>剩余数量</td>
+                        <td>{{ form.outNum }}</td>
+                        <td>入库日期</td>
+                        <td>{{ form.time }}</td>
+                    </tr>
+                    <tr>
+                        <td>创建人</td>
+                        <td>{{ form.createBy }}</td>
+                        <td>创建时间</td>
+                        <td>{{ form.createTime }}</td>
+                        <td>备注</td>
+                        <td>{{ form.remark }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <el-divider content-position="left">出库记录</el-divider>
+            <el-row :gutter="10" class="mb8">
+                <el-col :span="1.5">
+                    <el-button type="primary" plain icon="plus" size="small" @click="handleAddAccessoryOut" v-hasPermi="['system:user:add']">单独出库</el-button>
+                </el-col>
+            </el-row>
+            <el-table stripe border v-loading="loading" :data="AccessoryOutData">
+                <el-table-column type="index" width="80" label="序号" align="center" />
+                <el-table-column label="出库数量" align="center" prop="num" min-width="120" show-overflow-tooltip></el-table-column>
+                <el-table-column label="出库日期" align="center" prop="putTime" min-width="120" show-overflow-tooltip></el-table-column>
+                <el-table-column label="出库人员" align="center" prop="putBy" min-width="120" show-overflow-tooltip></el-table-column>
+                <el-table-column label="出库类型" align="center" prop="relevance" min-width="120" show-overflow-tooltip>
+                    <template #default="scope">
+                        {{ scope.row.relevance == 0 ? '维修出库' : '单独出库' }}
+                    </template>
+                </el-table-column>
+                <el-table-column label="备注" align="center" prop="remark" min-width="120" show-overflow-tooltip></el-table-column>
+                <el-table-column label="创建人" align="center" prop="createBy" min-width="120" show-overflow-tooltip></el-table-column>
+                <el-table-column label="创建时间" align="center" prop="createTime" min-width="120" show-overflow-tooltip></el-table-column>
+                <el-table-column label="操作" align="center" class-name="small-padding fixed-width" min-width="200" fixed="right">
+                    <template #default="scope">
+                        <el-button type="text" @click="handleUpdateAccessoryOut(scope.row)" v-if="scope.row.relevance == 1" v-hasPermi="['system:log:edit']">编辑</el-button>
+                        <el-button type="text" @click="handleDeleteAccessoryOut(scope.row)" v-if="scope.row.relevance == 1" v-hasPermi="['system:log:remove']">删除</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+        </el-drawer>
+
+        <!-- 添加或修改对话框 -->
+        <el-dialog :title="titleAccessoryOut" v-model="openAccessoryOut" width="800px" append-to-body>
+            <el-form ref="formRefAccessoryOut" :model="formAccessoryOut" :rules="rulesAccessoryOut" label-width="auto">
+                <el-form-item label="数量:" prop="num">
+                    <el-input v-model="formAccessoryOut.num" placeholder="请输入" />
+                </el-form-item>
+                <el-form-item label="出库日期:" prop="putTime">
+                    <el-date-picker v-model="formAccessoryOut.putTime" type="date" value-format="YYYY-MM-DD" placeholder="选择日期" clearable style="width: 300px"></el-date-picker>
+                </el-form-item>
+                <el-form-item label="出库人员:" prop="putBy">
+                    <el-input v-model="formAccessoryOut.putBy" placeholder="请输入" />
+                </el-form-item>
+                <el-form-item label="备注:" prop="remark">
+                    <el-input v-model="formAccessoryOut.remark" type="textarea" rows="5" placeholder="请输入" />
+                </el-form-item>
+            </el-form>
+            <template #footer>
+                <div class="dialog-footer">
+                    <el-button type="primary" @click="submitFormAccessoryOut">确 定</el-button>
+                    <el-button @click="cancelAccessoryOut">取 消</el-button>
+                </div>
+            </template>
+        </el-dialog>
 
         <!-- 列表导入对话框 -->
         <el-dialog :title="upload.title" v-model="upload.open" width="400px" append-to-body @close="cleanUploadRef()">
@@ -102,92 +276,12 @@
                 </div>
             </template>
         </el-dialog>
-
-        <!-- 添加或修改配件库存对话框 -->
-        <el-dialog :title="title" v-model="open" width="800px" append-to-body>
-            <el-form ref="infoRef" :model="form" :rules="rules" label-width="auto">
-                <el-form-item label="配件名称:" prop="accessoryName">
-                    <el-input v-model="form.accessoryName" placeholder="请输入" clearable />
-                </el-form-item>
-                <el-form-item label="工地名称:" prop="siteId">
-                    <el-select v-model="form.siteId" placeholder="请选择" clearable style="width: 200px">
-                        <el-option v-for="dict in siteOptions" :key="dict.siteId" :label="dict.siteName" :value="dict.siteId" />
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="配件类型:" prop="accessoryType">
-                    <el-select v-model="form.accessoryType" placeholder="请选择" clearable>
-                        <el-option v-for="dict in accessory_type" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="供应商:" prop="supplier">
-                    <el-input v-model="form.supplier" placeholder="请输入" clearable />
-                </el-form-item>
-                <el-form-item label="价格:" prop="price">
-                    <el-input v-model="form.price" placeholder="请输入" clearable />
-                </el-form-item>
-                <el-form-item label="数量:" prop="num">
-                    <el-input v-model="form.num" placeholder="请输入" clearable />
-                </el-form-item>
-                <el-form-item label="入库日期:" prop="time">
-                    <el-date-picker v-model="form.time" type="date" value-format="YYYY-MM-DD" placeholder="选择日期" clearable></el-date-picker>
-                </el-form-item>
-                <el-form-item label="入库人员:" prop="by">
-                    <el-input v-model="form.by" placeholder="请输入" clearable />
-                </el-form-item>
-                <el-form-item label="备注:" prop="remark">
-                    <el-input v-model="form.remark" type="textarea" rows="5" placeholder="请输入" clearable />
-                </el-form-item>
-            </el-form>
-            <template #footer>
-                <div class="dialog-footer">
-                    <el-button type="primary" @click="submitForm">确 定</el-button>
-                    <el-button @click="cancel">取 消</el-button>
-                </div>
-            </template>
-        </el-dialog>
-
-        <!-- 车辆信息详情对话框 -->
-        <el-dialog :title="title" v-model="openInfo" width="800px" append-to-body>
-            <el-form ref="infoRef" :model="form" :rules="rules" label-width="auto">
-                <el-form-item label="配件名称:" prop="accessoryName">
-                    <span>{{ form.accessoryName }}</span>
-                </el-form-item>
-                <el-form-item label="工地名称:" prop="siteName">
-                    <span>{{ form.siteName }}</span>
-                </el-form-item>
-                <el-form-item label="配件类型:" prop="accessoryType">
-                    <dict-tag :options="accessory_type" :value="form.accessoryType" />
-                </el-form-item>
-                <el-form-item label="供应商:" prop="supplier">
-                    <span>{{ form.supplier }}</span>
-                </el-form-item>
-                <el-form-item label="价格:" prop="price">
-                    <span>{{ form.price }}</span>
-                </el-form-item>
-                <el-form-item label="数量:" prop="num">
-                    <span>{{ form.num }}</span>
-                </el-form-item>
-                <el-form-item label="入库日期:" prop="time">
-                    <span>{{ form.time }}</span>
-                </el-form-item>
-                <el-form-item label="入库人员:" prop="by">
-                    <span>{{ form.by }}</span>
-                </el-form-item>
-                <el-form-item label="备注:" prop="remark">
-                    <span>{{ form.remark }}</span>
-                </el-form-item>
-            </el-form>
-            <template #footer>
-                <div class="dialog-footer">
-                    <el-button @click="cancel">取 消</el-button>
-                </div>
-            </template>
-        </el-dialog>
     </div>
 </template>
 
 <script setup name="Info" lang="ts">
 import { getAccessoryStockList, getAccessoryStockInfo, addAccessoryStock, updateAccessoryStock, delAccessoryStock } from '@/api/truck/accessoryStock'
+import { getAccessoryOutList, getAccessoryOutInfo, addAccessoryOut, updateAccessoryOut, delAccessoryOut } from '@/api/truck/AccessoryOut'
 import { getSiteList } from '@/api/site/siteManage'
 import { ref, reactive, toRefs, getCurrentInstance } from 'vue'
 import { ElForm, ElTable, ElUpload } from 'element-plus'
@@ -198,11 +292,17 @@ const { proxy } = getCurrentInstance() as any
 
 const queryFormRef = ref<InstanceType<typeof ElForm>>()
 
+const formRef = ref<InstanceType<typeof ElForm>>()
+
+const formRefAccessoryOut = ref<InstanceType<typeof ElForm>>()
+
 const { accessory_type, truck_status } = proxy.useDict('accessory_type', 'truck_status')
 
 const tableData = ref([])
 const open = ref(false)
+const openPrice = ref(false)
 const openInfo = ref(false)
+const openAccessoryOut = ref(false)
 const loading = ref(true)
 const showSearch = ref(true)
 const ids = ref([])
@@ -210,6 +310,7 @@ const single = ref(true)
 const multiple = ref(true)
 const total = ref(0)
 const title = ref('')
+const titleAccessoryOut = ref('')
 
 const data = reactive({
     queryParams: {
@@ -218,10 +319,8 @@ const data = reactive({
         accessoryName: null,
         accessoryType: null,
         siteId: null,
-        carWeight: null,
-        carStatus: null,
-        carCreateTime: null,
-        carInspectionTime: null
+        startTime: null,
+        endTime: null
     },
     form: {},
     rules: {
@@ -231,19 +330,39 @@ const data = reactive({
         supplier: [{ required: true, message: '请输入', trigger: 'blur' }],
         price: [{ required: true, message: '请输入', trigger: 'blur' }],
         num: [{ required: true, message: '请输入', trigger: 'blur' }],
-        time: [{ required: true, message: '请选择', trigger: 'change' }],
+        time: [{ required: true, message: '请选择', trigger: 'blur' }],
         by: [{ required: true, message: '请输入', trigger: 'blur' }]
     }
 })
 
 const { queryParams, form, rules }: any = toRefs(data)
 
+const dataAccessoryOut = reactive({
+    formAccessoryOut: {
+        id: null,
+        accessoryType: null,
+        accessoryId: null,
+        accessoryName: null,
+        num: null,
+        putTime: null,
+        putBy: null,
+        remark: null
+    },
+    rulesAccessoryOut: {
+        num: [{ required: true, message: '请输入', trigger: 'blur' }],
+        putTime: [{ required: true, message: '请输入', trigger: 'blur' }],
+        putBy: [{ required: true, message: '请输入', trigger: 'blur' }]
+    }
+})
+
+const { formAccessoryOut, rulesAccessoryOut }: any = toRefs(dataAccessoryOut)
+
 /** 查询配件使用列表 */
 const getPageList = () => {
     loading.value = true
-    getAccessoryStockList(queryParams.value).then((response: any) => {
-        tableData.value = response.rows
-        total.value = parseInt(response.total)
+    getAccessoryStockList(queryParams.value).then((res: any) => {
+        tableData.value = res.rows
+        total.value = parseInt(res.total)
         loading.value = false
     })
 }
@@ -258,28 +377,25 @@ const getSiteOptions = () => {
 
 getSiteOptions()
 
+const AccessoryOutData = ref([]) as any
+
+const getAccessoryOutData = (accessoryId: any) => {
+    getAccessoryOutList({ accessoryId }).then((res: any) => {
+        AccessoryOutData.value = res.rows
+    })
+}
+
 // 取消按钮
 const cancel = () => {
     open.value = false
     openInfo.value = false
-    reset()
+    openPrice.value = false
+    formRef.value?.resetFields()
 }
 
-// 表单重置
-const reset = () => {
-    form.value = {
-        id: null,
-        accessoryName: null,
-        siteName: null,
-        siteId: null,
-        accessoryType: null,
-        price: null,
-        num: null,
-        time: null,
-        by: null,
-        remark: null
-    }
-    proxy.resetForm('infoRef')
+const cancelAccessoryOut = () => {
+    openAccessoryOut.value = false
+    formRefAccessoryOut.value?.resetFields()
 }
 
 /** 搜索按钮操作 */
@@ -305,36 +421,48 @@ const handleSelectionChange = (selection: any) => {
 
 /** 详情按钮操作 */
 const handleInfo = (row: any) => {
-    reset()
+    openInfo.value = true
+    title.value = '详情'
+    formRef.value?.resetFields()
     const id = row.id
-    getAccessoryStockInfo(id).then((response: any) => {
-        form.value = response.data
-        openInfo.value = true
-        title.value = '编辑入库'
+    getAccessoryOutData(row.id)
+    getAccessoryStockInfo(id).then((res: any) => {
+        form.value = res.data
     })
 }
 
 /** 新增按钮操作 */
 const handleAdd = () => {
-    reset()
     open.value = true
-    title.value = '新增入库'
+    title.value = '新增'
+    formRef.value?.resetFields()
 }
 
 /** 修改按钮操作 */
 const handleUpdate = (row: any) => {
-    reset()
+    open.value = true
+    title.value = '编辑'
+    formRef.value?.resetFields()
     const id = row.id
-    getAccessoryStockInfo(id).then((response: any) => {
-        form.value = response.data
-        open.value = true
-        title.value = '编辑入库'
+    getAccessoryStockInfo(id).then((res: any) => {
+        form.value = res.data
+    })
+}
+
+/** 价格维护按钮操作 */
+const handlePrice = (row: any) => {
+    openPrice.value = true
+    title.value = '价格维护'
+    formRef.value?.resetFields()
+    const id = row.id
+    getAccessoryStockInfo(id).then((res: any) => {
+        form.value = res.data
     })
 }
 
 /** 提交按钮 */
 const submitForm = () => {
-    proxy.$refs['infoRef'].validate((valid: any) => {
+    proxy.$refs['formRef'].validate((valid: any) => {
         if (valid) {
             if (form.value.siteId) {
                 const result = siteOptions.value.filter((item: any) => item.siteId == form.value.siteId)
@@ -344,12 +472,14 @@ const submitForm = () => {
                 updateAccessoryStock(form.value).then(() => {
                     proxy.$modal.msgSuccess('修改成功')
                     open.value = false
+                    openPrice.value = false
                     getPageList()
                 })
             } else {
                 addAccessoryStock(form.value).then(() => {
                     proxy.$modal.msgSuccess('新增成功')
                     open.value = false
+                    openPrice.value = false
                     getPageList()
                 })
             }
@@ -360,12 +490,71 @@ const submitForm = () => {
 /** 删除按钮操作 */
 const handleDelete = (row: any) => {
     proxy.$modal
-        .confirm('是否确认删除车辆信息编号为"' + row.id + '"的数据项？')
+        .confirm('是否确认删除此数据项？')
         .then(() => {
             return delAccessoryStock(row.id)
         })
         .then(() => {
             getPageList()
+            proxy.$modal.msgSuccess('删除成功')
+        })
+        .catch(() => {})
+}
+
+/** 详情-新增配件使用 */
+const handleAddAccessoryOut = () => {
+    openAccessoryOut.value = true
+    titleAccessoryOut.value = '出库'
+    formAccessoryOut.value = {
+        accessoryType: form.value.accessoryType,
+        accessoryId: form.value.id,
+        accessoryName: form.value.accessoryName
+    }
+}
+
+/** 详情-更新配件使用 */
+const handleUpdateAccessoryOut = (row: any) => {
+    openAccessoryOut.value = true
+    titleAccessoryOut.value = '编辑'
+    formRefAccessoryOut.value?.resetFields()
+    const id = row.id
+    getAccessoryOutInfo(id).then((res) => {
+        Object.keys(formAccessoryOut.value).forEach((item) => {
+            formAccessoryOut.value[item] = res.data[item]
+        })
+    })
+}
+
+/** 详情-提交按钮 */
+const submitFormAccessoryOut = () => {
+    proxy.$refs['formRefAccessoryOut'].validate((valid: any) => {
+        if (valid) {
+            if (formAccessoryOut.value.id != null) {
+                updateAccessoryOut({ ...formAccessoryOut.value, relevance: 1 }).then(() => {
+                    proxy.$modal.msgSuccess('修改成功')
+                    openAccessoryOut.value = false
+                    getAccessoryOutData(formAccessoryOut.value.accessoryId)
+                })
+            } else {
+                addAccessoryOut({ ...formAccessoryOut.value, relevance: 1 }).then(() => {
+                    proxy.$modal.msgSuccess('新增成功')
+                    openAccessoryOut.value = false
+                    getAccessoryOutData(formAccessoryOut.value.accessoryId)
+                })
+            }
+        }
+    })
+}
+
+/** 详情-删除按钮 */
+const handleDeleteAccessoryOut = (row: any) => {
+    proxy.$modal
+        .confirm('是否确认删除此数据项？')
+        .then(() => {
+            return delAccessoryOut(row.id)
+        })
+        .then(() => {
+            getAccessoryOutData(formAccessoryOut.value.accessoryId)
             proxy.$modal.msgSuccess('删除成功')
         })
         .catch(() => {})
@@ -390,7 +579,7 @@ const upload = ref<any>({
     // 设置上传的请求头部
     headers: { Authorization: 'Bearer ' + getToken() },
     // 上传的地址
-    url: baseURL + '/carInfo/import'
+    url: baseURL + '/truck/Accessory/import'
 })
 
 /** 导入按钮操作 */
@@ -413,11 +602,11 @@ const handleFileUploadProgress = (event: any, file: any, fileList: any) => {
 }
 
 // 文件上传成功处理
-const handleFileSuccess = (response: any, file: any, fileList: any) => {
+const handleFileSuccess = (res: any, file: any, fileList: any) => {
     upload.value.open = false
-    upload.isUploading = false
+    upload.value.isUploading = false
     cleanUploadRef()
-    proxy.$alert(response.msg, '导入结果', {
+    proxy.$alert(res.msg, '导入结果', {
         dangerouslyUseHTMLString: true
     })
     getPageList()
@@ -435,10 +624,36 @@ getPageList()
 .el-dialog {
     .el-form {
         .el-input {
-            width: 500px;
+            width: 300px;
         }
         .el-textarea {
-            width: 500px;
+            width: 300px;
+        }
+        .el-select {
+            width: 300px;
+        }
+    }
+}
+
+.info-table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th,
+    td {
+        border: 1px solid #ebeef5;
+        padding: 8px;
+        text-align: center;
+        color: #606266;
+        font-size: 14px;
+
+        &:nth-child(odd) {
+            background: #f8f8f9;
+            min-width: 10%;
+        }
+
+        &:nth-child(even) {
+            min-width: calc(70% / 3);
         }
     }
 }

@@ -31,27 +31,36 @@
         <el-table stripe border v-loading="loading" :data="tableData" @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="50" align="center" />
             <el-table-column type="index" width="80" label="序号" align="center" />
-            <el-table-column label="姓名" align="center" prop="name"></el-table-column>
-            <el-table-column label="联系方式" align="center" prop="phone"></el-table-column>
-            <el-table-column label="性别" align="center" prop="sex"></el-table-column>
-            <el-table-column label="出生日期" align="center" prop="birthTime"></el-table-column>
-            <el-table-column label="证件号码" align="center" prop="idNum"></el-table-column>
-            <el-table-column label="银行卡号" align="center" prop="bankNum"></el-table-column>
-            <el-table-column label="所属银行" align="center" prop="bank"></el-table-column>
-            <el-table-column label="入职日期" align="center" prop="entryTime"></el-table-column>
-            <el-table-column label="备注" align="center" prop="remark"></el-table-column>
-            <el-table-column label="状态" align="center" prop="status">
+            <el-table-column label="姓名" align="center" prop="name" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column label="联系方式" align="center" prop="phone" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column label="性别" align="center" prop="sex" min-width="120" show-overflow-tooltip>
+                <template #default="scope">
+                    <dict-tag :options="driver_sex" :value="scope.row.sex" />
+                </template>
+            </el-table-column>
+            <el-table-column label="出生日期" align="center" prop="birthTime" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column label="证件号码" align="center" prop="idNum" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column label="银行卡号" align="center" prop="bankNum" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column label="所属银行" align="center" prop="bank" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column label="入职日期" align="center" prop="entryTime" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column label="备注" align="center" prop="remark" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column label="状态" align="center" prop="status" min-width="120" show-overflow-tooltip>
                 <template #default="scope">
                     <dict-tag :options="driver_status" :value="scope.row.status" />
                 </template>
             </el-table-column>
-            <el-table-column label="创建人" align="center" prop="createBy"></el-table-column>
-            <el-table-column label="创建时间" align="center" prop="createTime" width="200"></el-table-column>
-            <el-table-column label="分配车辆" align="center" prop="createTime" width="200"></el-table-column>
+            <el-table-column label="创建人" align="center" prop="createBy" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column label="创建时间" align="center" prop="createTime" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column label="分配车辆" align="center" prop="createTime" min-width="120" show-overflow-tooltip>
+                <template #default="scope">
+                    <el-button v-if="scope.row.carId" type="text" @click="handleAllocate(scope.row)" v-hasPermi="['system:info:edit']">{{ scope.row.carId }}</el-button>
+                    <el-button v-else type="text" @click="handleAllocate(scope.row)" v-hasPermi="['system:info:edit']">分配车辆</el-button>
+                </template>
+            </el-table-column>
             <el-table-column label="操作" align="center" class-name="small-padding fixed-width" min-width="200" fixed="right">
                 <template #default="scope">
                     <el-button type="text" @click="handleInfo(scope.row)" v-hasPermi="['system:info:edit']">详情</el-button>
-                    <el-button type="text" @click="handleUpdate(scope.row)" v-hasPermi="['system:info:edit']">修改</el-button>
+                    <el-button type="text" @click="handleUpdate(scope.row)" v-hasPermi="['system:info:edit']">编辑</el-button>
                     <el-button type="text" @click="handleDelete(scope.row)" v-hasPermi="['system:info:remove']">删除</el-button>
                 </template>
             </el-table-column>
@@ -77,10 +86,10 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="出生日期:" prop="birthTime">
-                    <el-date-picker clearable v-model="form.birthTime" type="date" value-format="YYYY-MM-DD" placeholder="选择日期"></el-date-picker>
+                    <el-date-picker clearable v-model="form.birthTime" type="date" value-format="YYYY-MM-DD" placeholder="选择日期" style="width: 300px"></el-date-picker>
                 </el-form-item>
                 <el-form-item label="入职日期:" prop="entryTime">
-                    <el-date-picker clearable v-model="form.entryTime" type="date" value-format="YYYY-MM-DD" placeholder="选择日期"></el-date-picker>
+                    <el-date-picker clearable v-model="form.entryTime" type="date" value-format="YYYY-MM-DD" placeholder="选择日期" style="width: 300px"></el-date-picker>
                 </el-form-item>
                 <el-form-item label="状态:" prop="status">
                     <el-select v-model="form.status" placeholder="请选择">
@@ -105,29 +114,35 @@
             </template>
         </el-dialog>
 
-        <!-- 车辆信息详情对话框 -->
+        <!-- 司机信息详情对话框 -->
         <el-dialog :title="title" v-model="openInfo" width="800px" append-to-body>
             <el-form ref="formRef" :model="form" :rules="rules" label-width="auto">
-                <el-form-item label="编号:" prop="carId">
-                    <span>{{ form.carId }}</span>
+                <el-form-item label="姓名:" prop="name">
+                    <span>{{ form.name }}</span>
                 </el-form-item>
-                <el-form-item label="车牌号:" prop="carNumber">
-                    <span>{{ form.carNumber }}</span>
+                <el-form-item label="联系方式:" prop="phone">
+                    <span>{{ form.phone }}</span>
                 </el-form-item>
-                <el-form-item label="车型:" prop="carType">
-                    <dict-tag :options="driver_sex" :value="form.carType" />
+                <el-form-item label="证件号:" prop="idNum">
+                    <span>{{ form.idNum }}</span>
                 </el-form-item>
-                <el-form-item label="吨位:" prop="carWeight">
-                    <span>{{ form.carWeight }}</span>
+                <el-form-item label="性别:" prop="sex">
+                    <dict-tag :options="driver_sex" :value="form.sex" />
                 </el-form-item>
-                <el-form-item label="制造日期:" prop="carCreateTime">
-                    <span>{{ form.carCreateTime ? parseTime(new Date(form.carCreateTime), '{y}-{m}-{d}') : '' }}</span>
+                <el-form-item label="出生日期:" prop="birthTime">
+                    <span>{{ form.birthTime ? parseTime(new Date(form.birthTime), '{y}-{m}-{d}') : '' }}</span>
                 </el-form-item>
-                <el-form-item label="年检日期:" prop="carInspectionTime">
-                    <span>{{ form.carInspectionTime ? parseTime(new Date(form.carInspectionTime), '{y}-{m}-{d}') : '' }}</span>
+                <el-form-item label="入职日期:" prop="entryTime">
+                    <span>{{ form.entryTime ? parseTime(new Date(form.entryTime), '{y}-{m}-{d}') : '' }}</span>
                 </el-form-item>
-                <el-form-item label="状态:" prop="carStatus">
-                    <dict-tag :options="driver_sex" :value="form.carStatus" />
+                <el-form-item label="状态:" prop="status">
+                    <dict-tag :options="driver_status" :value="form.status" />
+                </el-form-item>
+                <el-form-item label="银行卡号:" prop="bankNum">
+                    <span>{{ form.bankNum }}</span>
+                </el-form-item>
+                <el-form-item label="所属银行:" prop="bank">
+                    <span>{{ form.bank }}</span>
                 </el-form-item>
                 <el-form-item label="备注:" prop="remark">
                     <span>{{ form.remark }}</span>
@@ -135,6 +150,23 @@
             </el-form>
             <template #footer>
                 <div class="dialog-footer">
+                    <el-button @click="cancel">取 消</el-button>
+                </div>
+            </template>
+        </el-dialog>
+
+        <!-- 分配车辆对话框 -->
+        <el-dialog :title="title" v-model="openAllocate" width="500px" append-to-body>
+            <el-form ref="formRef" :model="form" :rules="rules" label-width="auto">
+                <el-form-item prop="carId">
+                    <el-select v-model="form.carId" placeholder="请选择" @change="handleChangeTruck" clearable>
+                        <el-option v-for="dict in truckOptions" :key="dict.carId" :label="dict.carNumber" :value="dict.carId" />
+                    </el-select>
+                </el-form-item>
+            </el-form>
+            <template #footer>
+                <div class="dialog-footer">
+                    <el-button type="primary" @click="submitForm">确 定</el-button>
                     <el-button @click="cancel">取 消</el-button>
                 </div>
             </template>
@@ -152,7 +184,6 @@
 				:disabled="upload.isUploading"
 				:on-progress="handleFileUploadProgress"
 				:on-success="handleFileSuccess"
-                :on-error="handleFileError"
 				:auto-upload="false"
 				drag
 			>
@@ -178,6 +209,7 @@
 
 <script setup name="Info" lang="ts">
 import { getDriverList, getDriverInfo, addDriver, updateDriver, delDriver } from '@/api/driver/driverInfo'
+import { getTruckByNoDrive } from '@/api/truck/truckInfo'
 import { ref, reactive, toRefs, getCurrentInstance } from 'vue'
 import { ElForm, ElTable, ElUpload } from 'element-plus'
 import { getToken } from '@/utils/auth'
@@ -194,6 +226,7 @@ const { driver_sex, driver_status } = proxy.useDict('driver_sex', 'driver_status
 const tableData = ref([])
 const open = ref(false)
 const openInfo = ref(false)
+const openAllocate = ref(false)
 const loading = ref(true)
 const showSearch = ref(true)
 const ids = ref([])
@@ -227,10 +260,10 @@ const data = reactive({
         name: [{ required: true, message: '请输入', trigger: 'blur' }],
         phone: [{ required: true, message: '请输入', trigger: 'blur' }],
         idNum: [{ required: true, message: '请输入', trigger: 'blur' }],
-        sex: [{ required: true, message: '请选择', trigger: 'change' }],
-        birthTime: [{ required: true, message: '请选择', trigger: 'change' }],
-        entryTime: [{ required: true, message: '请选择', trigger: 'change' }],
-        status: [{ required: true, message: '请选择', trigger: 'change' }],
+        sex: [{ required: true, message: '请选择', trigger: 'blur' }],
+        birthTime: [{ required: true, message: '请选择', trigger: 'blur' }],
+        entryTime: [{ required: true, message: '请选择', trigger: 'blur' }],
+        status: [{ required: true, message: '请选择', trigger: 'blur' }],
         bankNum: [{ required: true, message: '请输入', trigger: 'blur' }],
         bank: [{ required: true, message: '请输入', trigger: 'blur' }]
     }
@@ -241,10 +274,19 @@ const { queryParams, form, rules }: any = toRefs(data)
 /** 查询司机列表 */
 const getPageList = () => {
     loading.value = true
-    getDriverList(queryParams.value).then((response: any) => {
-        tableData.value = response.rows
-        total.value = parseInt(response.total)
+    getDriverList(queryParams.value).then((res: any) => {
+        tableData.value = res.rows
+        total.value = parseInt(res.total)
         loading.value = false
+    })
+}
+
+const truckOptions = ref([]) as any
+
+/** 获取没有司机的车辆 */
+const getTruckByNoDriveOptions = () => {
+    getTruckByNoDrive({}).then((res: any) => {
+        truckOptions.value = res.data
     })
 }
 
@@ -252,6 +294,7 @@ const getPageList = () => {
 const cancel = () => {
     open.value = false
     openInfo.value = false
+    openAllocate.value = false
     formRef.value?.resetFields()
 }
 
@@ -278,30 +321,49 @@ const handleSelectionChange = (selection: any) => {
 
 /** 详情按钮操作 */
 const handleInfo = (row: any) => {
+    openInfo.value = true
+    title.value = '详情'
     formRef.value?.resetFields()
     const id = row.id
-    getDriverInfo(id).then((response: any) => {
-        form.value = response.data
-        openInfo.value = true
-        title.value = '车辆信息详情'
+    getDriverInfo(id).then((res: any) => {
+        form.value = res.data
     })
 }
 
 /** 新增按钮操作 */
 const handleAdd = () => {
-    formRef.value?.resetFields()
     open.value = true
-    title.value = '新增司机信息'
+    title.value = '新增'
+    formRef.value?.resetFields()
 }
 
 /** 修改按钮操作 */
 const handleUpdate = (row: any) => {
+    open.value = true
+    title.value = '编辑'
     formRef.value?.resetFields()
     const id = row.id
-    getDriverInfo(id).then((response: any) => {
-        form.value = response.data
-        open.value = true
-        title.value = '编辑车辆信息'
+    getDriverInfo(id).then((res: any) => {
+        Object.keys(form.value).forEach((item) => {
+            form.value[item] = res.data[item]
+        })
+    })
+}
+
+const handleChangeTruck = (value: any) => {
+    const result = truckOptions.value.filter((item: any) => item.carId == value)
+    form.value.carNumber = result.length > 0 ? result[0].carNumber : ''
+}
+
+/** 分配车辆 */
+const handleAllocate = (row: any) => {
+    openAllocate.value = true
+    title.value = '分配车辆'
+    formRef.value?.resetFields()
+    const id = row.id
+    getTruckByNoDriveOptions()
+    getDriverInfo(id).then((res: any) => {
+        form.value = res.data
     })
 }
 
@@ -313,12 +375,14 @@ const submitForm = () => {
                 updateDriver(form.value).then(() => {
                     proxy.$modal.msgSuccess('修改成功')
                     open.value = false
+                    openAllocate.value = false
                     getPageList()
                 })
             } else {
                 addDriver(form.value).then(() => {
                     proxy.$modal.msgSuccess('新增成功')
                     open.value = false
+                    openAllocate.value = false
                     getPageList()
                 })
             }
@@ -329,7 +393,7 @@ const submitForm = () => {
 /** 删除按钮操作 */
 const handleDelete = (row: any) => {
     proxy.$modal
-        .confirm('是否确认删除车辆信息编号为"' + row.id + '"的数据项？')
+        .confirm('是否确认删除此数据项？')
         .then(() => {
             return delDriver(row.id)
         })
@@ -342,7 +406,7 @@ const handleDelete = (row: any) => {
 
 /** 导出按钮操作 */
 const handleExport = () => {
-    proxy.download('carInfo/export', {}, `info_${new Date().getTime()}.xlsx`)
+    proxy.download('truck/Driver/export', {}, `info_${new Date().getTime()}.xlsx`)
 }
 
 const uploadRef = ref<InstanceType<typeof ElUpload>>()
@@ -359,7 +423,7 @@ const upload = ref<any>({
     // 设置上传的请求头部
     headers: { Authorization: 'Bearer ' + getToken() },
     // 上传的地址
-    url: baseURL + '/carInfo/import'
+    url: baseURL + '/truck/Driver/import'
 })
 
 /** 导入按钮操作 */
@@ -382,17 +446,15 @@ const handleFileUploadProgress = (event: any, file: any, fileList: any) => {
 }
 
 // 文件上传成功处理
-const handleFileSuccess = (response: any, file: any, fileList: any) => {
+const handleFileSuccess = (res: any, file: any, fileList: any) => {
     upload.value.open = false
     upload.value.isUploading = false
     cleanUploadRef()
-    proxy.$alert(response.msg, '导入结果', {
+    proxy.$alert(res.msg, '导入结果', {
         dangerouslyUseHTMLString: true
     })
     getPageList()
 }
-
-const handleFileError = () => {}
 
 // 提交上传文件
 const submitFileForm = () => {
@@ -406,10 +468,13 @@ getPageList()
 .el-dialog {
     .el-form {
         .el-input {
-            width: 500px;
+            width: 300px;
         }
         .el-textarea {
-            width: 500px;
+            width: 300px;
+        }
+        .el-select {
+            width: 300px;
         }
     }
 }

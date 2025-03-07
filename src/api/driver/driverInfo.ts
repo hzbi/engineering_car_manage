@@ -62,3 +62,16 @@ export const delDriver = async (id: any) => {
         method: 'delete'
     })
 }
+
+/**
+ *  获取司机和卡车
+ *
+ * @param {object} data
+ */
+export const getDriverAndTruck = async (data: any) => {
+    return await request({
+        url: '/truck/Driver/getDriverAndCar',
+        method: 'get',
+        data: data
+    })
+}
