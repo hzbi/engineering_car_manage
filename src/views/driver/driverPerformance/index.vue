@@ -67,28 +67,28 @@
                     <el-date-picker clearable v-model="form.workloadTime" type="date" value-format="YYYY-MM-DD" placeholder="选择日期" style="width: 300px"></el-date-picker>
                 </el-form-item>
                 <el-form-item label="司机姓名:" prop="carId">
-                    <el-select v-model="form.carId" placeholder="请选择" @change="handleChangeName">
+                    <el-select v-model="form.carId" placeholder="请选择" @change="handleChangeName" clearable>
                         <el-option v-for="dict in driverAndTruckOptions" :key="dict.carId" :label="dict.name" :value="dict.carId" />
                     </el-select>
                 </el-form-item>
                 <el-form-item label="卡车编号:" prop="carId">
-                    <el-input v-model="form.carId" placeholder="请输入" disabled />
+                    <el-input v-model="form.carId" placeholder="请输入" disabled clearable />
                 </el-form-item>
                 <el-form-item label="表现评分(总分10分):" prop="performanceScore">
-                    <el-select v-model="form.performanceScore" placeholder="请选择">
+                    <el-select v-model="form.performanceScore" placeholder="请选择" clearable>
                         <el-option v-for="dict in performance" :key="dict.value" :label="dict.label" :value="dict.value" />
                     </el-select>
                 </el-form-item>
                 <el-form-item label="违规类型:" prop="violationType">
-                    <el-select v-model="form.violationType" placeholder="请选择">
+                    <el-select v-model="form.violationType" placeholder="请选择" clearable>
                         <el-option v-for="dict in violation_type" :key="dict.value" :label="dict.label" :value="dict.value" />
                     </el-select>
                 </el-form-item>
                 <el-form-item label="偷窃行为记录:" prop="log">
-                    <el-input v-model="form.log" type="textarea" rows="5" placeholder="请输入" />
+                    <el-input v-model="form.log" type="textarea" rows="5" placeholder="请输入" clearable />
                 </el-form-item>
                 <el-form-item label="备注:" prop="remark">
-                    <el-input v-model="form.remark" type="textarea" rows="5" placeholder="请输入" />
+                    <el-input v-model="form.remark" type="textarea" rows="5" placeholder="请输入" clearable />
                 </el-form-item>
             </el-form>
             <template #footer>

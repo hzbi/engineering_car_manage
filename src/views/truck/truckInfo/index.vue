@@ -49,7 +49,7 @@
             <el-table-column label="备注" align="center" prop="remark" min-width="120" show-overflow-tooltip></el-table-column>
             <el-table-column label="状态" align="center" prop="carStatus" min-width="120" show-overflow-tooltip>
                 <template #default="scope">
-                    <dict-tag :options="truck_status" :value="scope.row.carStatus" />
+                    <dict-tag :options="a" :value="scope.row.carStatus" />
                 </template>
             </el-table-column>
             <el-table-column label="创建人" align="center" prop="createBy" min-width="120" show-overflow-tooltip></el-table-column>
@@ -69,18 +69,18 @@
         <el-dialog :title="title" v-model="open" width="800px" append-to-body>
             <el-form ref="formRef" :model="form" :rules="rules" label-width="auto">
                 <el-form-item label="编号:" prop="carId">
-                    <el-input v-model="form.carId" placeholder="请输入" />
+                    <el-input v-model="form.carId" placeholder="请输入" clearable />
                 </el-form-item>
                 <el-form-item label="车牌号:" prop="carNumber">
-                    <el-input v-model="form.carNumber" placeholder="请输入" />
+                    <el-input v-model="form.carNumber" placeholder="请输入" clearable />
                 </el-form-item>
                 <el-form-item label="车型:" prop="carType">
-                    <el-select v-model="form.carType" placeholder="请选择">
+                    <el-select v-model="form.carType" placeholder="请选择" clearable>
                         <el-option v-for="dict in truck_type" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="吨位:" prop="carWeight">
-                    <el-input v-model="form.carWeight" placeholder="请输入" />
+                    <el-input v-model="form.carWeight" placeholder="请输入" clearable />
                 </el-form-item>
                 <el-form-item label="制造日期:" prop="carCreateTime">
                     <el-date-picker clearable v-model="form.carCreateTime" type="date" value-format="YYYY-MM-DD" placeholder="选择日期" style="width: 300px"></el-date-picker>
@@ -89,12 +89,12 @@
                     <el-date-picker clearable v-model="form.carInspectionTime" type="date" value-format="YYYY-MM-DD" placeholder="选择日期" style="width: 300px"></el-date-picker>
                 </el-form-item>
                 <el-form-item label="状态:" prop="carStatus">
-                    <el-select v-model="form.carStatus" placeholder="请选择">
+                    <el-select v-model="form.carStatus" placeholder="请选择" clearable>
                         <el-option v-for="dict in truck_status" :key="dict.value" :label="dict.label" :value="dict.value" />
                     </el-select>
                 </el-form-item>
                 <el-form-item label="备注:" prop="remark">
-                    <el-input v-model="form.remark" type="textarea" rows="5" placeholder="请输入" />
+                    <el-input v-model="form.remark" type="textarea" rows="5" placeholder="请输入" clearable />
                 </el-form-item>
             </el-form>
             <template #footer>
@@ -177,7 +177,7 @@
 
 <script setup name="Info" lang="ts">
 import { getTruckList, getTruckInfo, addTruck, updateTruck, delTruck } from '@/api/truck/truckInfo'
-import { ref, reactive, toRefs, getCurrentInstance, nextTick } from 'vue'
+import { ref, reactive, toRefs, getCurrentInstance } from 'vue'
 import { ElForm, ElTable, ElUpload } from 'element-plus'
 import { getToken } from '@/utils/auth'
 const baseURL = import.meta.env.VITE_APP_BASE_API
@@ -189,6 +189,18 @@ const queryFormRef = ref<InstanceType<typeof ElForm>>()
 const formRef = ref<InstanceType<typeof ElForm>>()
 
 const { truck_type, truck_status } = proxy.useDict('truck_type', 'truck_status')
+
+const a = truck_status.value.map((item: any) => {
+    if (item.value == 0) {
+        return {
+            ...item,
+            elTagType: 'info'
+        }
+    } else {
+        return item
+    }
+})
+// console.log(truck_status.map((item)=> if(item.value == 0) return item.elTagType = 'info'))
 
 const infoList = ref([])
 const open = ref(false)
@@ -222,11 +234,11 @@ const data = reactive({
     rules: {
         carId: [{ required: true, message: '请输入', trigger: 'blur' }],
         carNumber: [{ required: true, message: '请输入', trigger: 'blur' }],
-        carType: [{ required: true, message: '请选择', trigger: 'blur' }],
-        carWeight: [{ required: true, message: '请输入', trigger: 'blur' }],
-        carCreateTime: [{ required: true, message: '请输入', trigger: 'blur' }],
-        carInspectionTime: [{ required: true, message: '请输入', trigger: 'blur' }],
-        carStatus: [{ required: true, message: '请选择', trigger: 'blur' }]
+        carType: [{ required: true, message: '请选择', trigger: 'blur' }]
+        // carWeight: [{ required: true, message: '请输入', trigger: 'blur' }],
+        // carCreateTime: [{ required: true, message: '请输入', trigger: 'blur' }],
+        // carInspectionTime: [{ required: true, message: '请输入', trigger: 'blur' }],
+        // carStatus: [{ required: true, message: '请选择', trigger: 'blur' }]
     }
 })
 

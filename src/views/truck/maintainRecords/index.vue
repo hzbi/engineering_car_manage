@@ -54,7 +54,11 @@
             <el-table-column label="油耗" align="center" prop="oilConsumption" min-width="120" show-overflow-tooltip></el-table-column>
             <el-table-column label="公里数" align="center" prop="kilometres" min-width="120" show-overflow-tooltip></el-table-column>
             <el-table-column label="详细说明" align="center" prop="remark" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="货币单位" align="center" prop="monetaryUnit" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column label="货币单位" align="center" prop="monetaryUnit" min-width="120" show-overflow-tooltip>
+                <template #default="scope">
+                    <dict-tag :options="currency_unit_type" :value="scope.row.monetaryUnit" />
+                </template>
+            </el-table-column>
             <el-table-column label="花费" align="center" prop="amount" min-width="120" show-overflow-tooltip></el-table-column>
             <el-table-column label="维修商" align="center" prop="maintenanceProvider" min-width="120" show-overflow-tooltip>
                 <template #default="scope">
@@ -92,7 +96,7 @@
                     <el-date-picker clearable v-model="form.maintenanceTime" type="date" value-format="YYYY-MM-DD" placeholder="选择时间" style="width: 300px"></el-date-picker>
                 </el-form-item>
                 <el-form-item label="卡车编号:" prop="carId">
-                    <el-select v-model="form.carId" placeholder="请选择">
+                    <el-select v-model="form.carId" placeholder="请选择" clearable>
                         <el-option v-for="dict in truckOptions" :key="dict.carId" :label="dict.carId" :value="dict.carId"></el-option>
                     </el-select>
                 </el-form-item>
@@ -102,18 +106,18 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="维护类型:" prop="maintenanceType">
-                    <el-select v-model="form.maintenanceType" placeholder="请选择">
+                    <el-select v-model="form.maintenanceType" placeholder="请选择" clearable>
                         <el-option v-for="dict in maintenance_type" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="油耗:" prop="oilConsumption">
-                    <el-input v-model="form.oilConsumption" placeholder="请输入" />
+                    <el-input v-model="form.oilConsumption" placeholder="请输入" clearable />
                 </el-form-item>
                 <el-form-item label="公里数:" prop="kilometres">
-                    <el-input v-model="form.kilometres" placeholder="请输入" />
+                    <el-input v-model="form.kilometres" placeholder="请输入" clearable />
                 </el-form-item>
                 <el-form-item label="详细说明:" prop="remark">
-                    <el-input v-model="form.remark" type="textarea" rows="5" placeholder="请输入" />
+                    <el-input v-model="form.remark" type="textarea" rows="5" placeholder="请输入" clearable />
                 </el-form-item>
                 <el-form-item label="维修方式:" prop="maintenanceMode">
                     <el-radio-group v-model="form.maintenanceMode">
@@ -123,12 +127,12 @@
                 </el-form-item>
                 <template v-if="form.maintenanceMode == 0">
                     <el-form-item label="保养人员:" prop="maintenanceProvider">
-                        <el-input v-model="form.maintenanceProvider" placeholder="请输入" />
+                        <el-input v-model="form.maintenanceProvider" placeholder="请输入" clearable />
                     </el-form-item>
                 </template>
                 <template v-if="form.maintenanceMode == 1">
                     <el-form-item label="维修商:" prop="maintenanceProvider">
-                        <el-input v-model="form.maintenanceProvider" placeholder="请输入" />
+                        <el-input v-model="form.maintenanceProvider" placeholder="请输入" clearable />
                     </el-form-item>
                 </template>
                 <el-form-item label="下次维护日期:" prop="nextTime">
@@ -168,10 +172,12 @@
                     <span>{{ form.remark }}</span>
                 </el-form-item>
                 <el-form-item label="货币单位:" prop="monetaryUnit">
-                    <el-input v-model="form.monetaryUnit" placeholder="请输入" />
+                    <el-select v-model="form.monetaryUnit" placeholder="请选择" clearable>
+                        <el-option v-for="dict in currency_unit_type" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="花费:" prop="amount">
-                    <el-input v-model="form.amount" placeholder="请输入" />
+                    <el-input v-model="form.amount" placeholder="请输入" clearable />
                 </el-form-item>
                 <el-form-item label="维修方式:" prop="maintenanceMode">
                     <span>{{ form.maintenanceMode == 0 ? '内部人员维修' : '外部维修商维修' }}</span>
@@ -289,19 +295,19 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="供应商:" prop="supplier">
-                    <el-input v-model="formAccessoryUse.supplier" placeholder="请输入" disabled />
+                    <el-input v-model="formAccessoryUse.supplier" placeholder="请输入" disabled clearable />
                 </el-form-item>
                 <el-form-item label="数量:" prop="num">
-                    <el-input v-model="formAccessoryUse.num" placeholder="请输入" />
+                    <el-input v-model="formAccessoryUse.num" placeholder="请输入" clearable />
                 </el-form-item>
                 <el-form-item label="用途:" prop="useing">
-                    <el-input v-model="formAccessoryUse.useing" type="textarea" rows="5" placeholder="请输入" />
+                    <el-input v-model="formAccessoryUse.useing" type="textarea" rows="5" placeholder="请输入" clearable />
                 </el-form-item>
                 <el-form-item label="备注:" prop="remark">
-                    <el-input v-model="formAccessoryUse.remark" type="textarea" rows="5" placeholder="请输入" />
+                    <el-input v-model="formAccessoryUse.remark" type="textarea" rows="5" placeholder="请输入" clearable />
                 </el-form-item>
                 <el-form-item label="出库人员:" prop="putBy">
-                    <el-input v-model="formAccessoryUse.putBy" placeholder="请输入" />
+                    <el-input v-model="formAccessoryUse.putBy" placeholder="请输入" clearable />
                 </el-form-item>
             </el-form>
             <template #footer>
@@ -366,7 +372,7 @@ const formRef = ref<InstanceType<typeof ElForm>>()
 
 const formRefAccessoryUse = ref<InstanceType<typeof ElForm>>()
 
-const { maintenance_type, accessory_type } = proxy.useDict('maintenance_type', 'accessory_type')
+const { maintenance_type, accessory_type, currency_unit_type } = proxy.useDict('maintenance_type', 'accessory_type', 'currency_unit_type')
 
 const maintenanceList = ref([])
 const open = ref(false)

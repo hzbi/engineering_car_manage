@@ -67,12 +67,12 @@
                     <el-date-picker clearable v-model="form.workloadTime" type="date" value-format="YYYY-MM-DD" placeholder="选择日期" style="width: 300px"></el-date-picker>
                 </el-form-item>
                 <el-form-item label="司机姓名:" prop="carId">
-                    <el-select v-model="form.carId" placeholder="请选择" @change="handleChangeName">
+                    <el-select v-model="form.carId" placeholder="请选择" @change="handleChangeName" clearable>
                         <el-option v-for="dict in driverAndTruckOptions" :key="dict.carId" :label="dict.name" :value="dict.carId" />
                     </el-select>
                 </el-form-item>
                 <el-form-item label="卡车编号:" prop="carId">
-                    <el-input v-model="form.carId" placeholder="请输入" disabled />
+                    <el-input v-model="form.carId" placeholder="请输入" disabled clearable />
                 </el-form-item>
                 <el-form-item label="工地名称:" prop="siteId">
                     <el-select v-model="form.siteId" placeholder="请选择" @change="handleChangeSite" clearable>
@@ -87,16 +87,16 @@
                 </el-form-item>
                 <template v-if="form.closeStatus == 0">
                     <el-form-item label="工作时间(小时):" prop="workTime">
-                        <el-input v-model="form.workTime" placeholder="请输入" />
+                        <el-input v-model="form.workTime" placeholder="请输入" clearable />
                     </el-form-item>
                 </template>
                 <template v-if="form.closeStatus == 1">
                     <el-form-item label="车数:" prop="workload">
-                        <el-input v-model="form.workload" placeholder="请输入" />
+                        <el-input v-model="form.workload" placeholder="请输入" clearable />
                     </el-form-item>
                 </template>
                 <el-form-item label="备注:" prop="remark">
-                    <el-input v-model="form.remark" type="textarea" rows="5" placeholder="请输入" />
+                    <el-input v-model="form.remark" type="textarea" rows="5" placeholder="请输入" clearable />
                 </el-form-item>
             </el-form>
             <template #footer>
@@ -175,12 +175,12 @@
                     </el-form-item>
                 </template>
                 <el-form-item label="货币单位:" prop="monetaryUnit">
-                    <el-select v-model="form.monetaryUnit" placeholder="请选择">
+                    <el-select v-model="form.monetaryUnit" placeholder="请选择" clearable>
                         <el-option v-for="dict in currency_unit_type" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="单价:" prop="unitPrice">
-                    <el-input v-model="form.unitPrice" placeholder="请输入" @input="handleCount()" />
+                    <el-input v-model="form.unitPrice" placeholder="请输入" clearable @input="handleCount()" />
                 </el-form-item>
                 <el-form-item label="收费金额:" prop="money">
                     <el-input v-model="form.money" placeholder="请输入" disabled />

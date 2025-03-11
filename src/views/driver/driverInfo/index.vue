@@ -72,16 +72,16 @@
         <el-dialog :title="title" v-model="open" width="800px" append-to-body>
             <el-form ref="formRef" :model="form" :rules="rules" label-width="auto">
                 <el-form-item label="姓名:" prop="name">
-                    <el-input v-model="form.name" placeholder="请输入" />
+                    <el-input v-model="form.name" placeholder="请输入" clearable />
                 </el-form-item>
                 <el-form-item label="联系方式:" prop="phone">
-                    <el-input v-model="form.phone" placeholder="请输入" />
+                    <el-input v-model="form.phone" placeholder="请输入" clearable />
                 </el-form-item>
                 <el-form-item label="证件号:" prop="idNum">
-                    <el-input v-model="form.idNum" placeholder="请输入" />
+                    <el-input v-model="form.idNum" placeholder="请输入" clearable />
                 </el-form-item>
                 <el-form-item label="性别:" prop="sex">
-                    <el-select v-model="form.sex" placeholder="请选择">
+                    <el-select v-model="form.sex" placeholder="请选择" clearable>
                         <el-option v-for="dict in driver_sex" :key="dict.value" :label="dict.label" :value="dict.value" />
                     </el-select>
                 </el-form-item>
@@ -92,18 +92,18 @@
                     <el-date-picker clearable v-model="form.entryTime" type="date" value-format="YYYY-MM-DD" placeholder="选择日期" style="width: 300px"></el-date-picker>
                 </el-form-item>
                 <el-form-item label="状态:" prop="status">
-                    <el-select v-model="form.status" placeholder="请选择">
+                    <el-select v-model="form.status" placeholder="请选择" clearable>
                         <el-option v-for="dict in driver_status" :key="dict.value" :label="dict.label" :value="dict.value" />
                     </el-select>
                 </el-form-item>
                 <el-form-item label="银行卡号:" prop="bankNum">
-                    <el-input v-model="form.bankNum" placeholder="请输入" />
+                    <el-input v-model="form.bankNum" placeholder="请输入" clearable />
                 </el-form-item>
                 <el-form-item label="所属银行:" prop="bank">
-                    <el-input v-model="form.bank" placeholder="请输入" />
+                    <el-input v-model="form.bank" placeholder="请输入" clearable />
                 </el-form-item>
                 <el-form-item label="备注:" prop="remark">
-                    <el-input v-model="form.remark" type="textarea" rows="5" placeholder="请输入" />
+                    <el-input v-model="form.remark" type="textarea" rows="5" placeholder="请输入" clearable />
                 </el-form-item>
             </el-form>
             <template #footer>

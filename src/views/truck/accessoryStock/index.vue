@@ -47,6 +47,11 @@
                 </template>
             </el-table-column>
             <el-table-column label="供应商" align="center" prop="supplier" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column label="货币单位" align="center" prop="monetaryUnit" min-width="120" show-overflow-tooltip>
+                <template #default="scope">
+                    <dict-tag :options="currency_unit_type" :value="scope.row.monetaryUnit" />
+                </template>
+            </el-table-column>
             <el-table-column label="价格" align="center" prop="price" min-width="120" show-overflow-tooltip></el-table-column>
             <el-table-column label="入库数量" align="center" prop="num" min-width="120" show-overflow-tooltip></el-table-column>
             <el-table-column label="剩余数量" align="center" prop="outNum" min-width="120" show-overflow-tooltip></el-table-column>
@@ -78,7 +83,7 @@
                     <el-input v-model="form.accessoryName" placeholder="请输入" clearable />
                 </el-form-item>
                 <el-form-item label="工地名称:" prop="siteId">
-                    <el-select v-model="form.siteId" placeholder="请选择" clearable style="width: 200px">
+                    <el-select v-model="form.siteId" placeholder="请选择" clearable>
                         <el-option v-for="dict in siteOptions" :key="dict.siteId" :label="dict.siteName" :value="dict.siteId" />
                     </el-select>
                 </el-form-item>
@@ -89,9 +94,6 @@
                 </el-form-item>
                 <el-form-item label="供应商:" prop="supplier">
                     <el-input v-model="form.supplier" placeholder="请输入" clearable />
-                </el-form-item>
-                <el-form-item label="价格:" prop="price">
-                    <el-input v-model="form.price" placeholder="请输入" clearable />
                 </el-form-item>
                 <el-form-item label="数量:" prop="num">
                     <el-input v-model="form.num" placeholder="请输入" clearable />
@@ -128,6 +130,11 @@
                 </el-form-item>
                 <el-form-item label="供应商:" prop="supplier">
                     <span>{{ form.supplier }}</span>
+                </el-form-item>
+                <el-form-item label="货币单位:" prop="monetaryUnit">
+                    <el-select v-model="form.monetaryUnit" placeholder="请选择" clearable>
+                        <el-option v-for="dict in currency_unit_type" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="价格:" prop="price">
                     <el-input v-model="form.price" placeholder="请输入" clearable />
@@ -224,16 +231,16 @@
         <el-dialog :title="titleAccessoryOut" v-model="openAccessoryOut" width="800px" append-to-body>
             <el-form ref="formRefAccessoryOut" :model="formAccessoryOut" :rules="rulesAccessoryOut" label-width="auto">
                 <el-form-item label="数量:" prop="num">
-                    <el-input v-model="formAccessoryOut.num" placeholder="请输入" />
+                    <el-input v-model="formAccessoryOut.num" placeholder="请输入" clearable />
                 </el-form-item>
                 <el-form-item label="出库日期:" prop="putTime">
                     <el-date-picker v-model="formAccessoryOut.putTime" type="date" value-format="YYYY-MM-DD" placeholder="选择日期" clearable style="width: 300px"></el-date-picker>
                 </el-form-item>
                 <el-form-item label="出库人员:" prop="putBy">
-                    <el-input v-model="formAccessoryOut.putBy" placeholder="请输入" />
+                    <el-input v-model="formAccessoryOut.putBy" placeholder="请输入" clearable />
                 </el-form-item>
                 <el-form-item label="备注:" prop="remark">
-                    <el-input v-model="formAccessoryOut.remark" type="textarea" rows="5" placeholder="请输入" />
+                    <el-input v-model="formAccessoryOut.remark" type="textarea" rows="5" placeholder="请输入" clearable />
                 </el-form-item>
             </el-form>
             <template #footer>
@@ -281,7 +288,7 @@
 
 <script setup name="Info" lang="ts">
 import { getAccessoryStockList, getAccessoryStockInfo, addAccessoryStock, updateAccessoryStock, delAccessoryStock } from '@/api/truck/accessoryStock'
-import { getAccessoryOutList, getAccessoryOutInfo, addAccessoryOut, updateAccessoryOut, delAccessoryOut } from '@/api/truck/AccessoryOut'
+import { getAccessoryOutList, getAccessoryOutInfo, addAccessoryOut, updateAccessoryOut, delAccessoryOut } from '@/api/truck/accessoryOut'
 import { getSiteList } from '@/api/site/siteManage'
 import { ref, reactive, toRefs, getCurrentInstance } from 'vue'
 import { ElForm, ElTable, ElUpload } from 'element-plus'
@@ -296,7 +303,7 @@ const formRef = ref<InstanceType<typeof ElForm>>()
 
 const formRefAccessoryOut = ref<InstanceType<typeof ElForm>>()
 
-const { accessory_type, truck_status } = proxy.useDict('accessory_type', 'truck_status')
+const { accessory_type, currency_unit_type } = proxy.useDict('accessory_type', 'currency_unit_type')
 
 const tableData = ref([])
 const open = ref(false)
@@ -322,12 +329,24 @@ const data = reactive({
         startTime: null,
         endTime: null
     },
-    form: {},
+    form: {
+        id: null,
+        accessoryName: null,
+        siteId: null,
+        accessoryType: null,
+        supplier: null,
+        monetaryUnit: null,
+        price: null,
+        num: null,
+        time: null,
+        by: null
+    },
     rules: {
         accessoryName: [{ required: true, message: '请输入', trigger: 'blur' }],
         siteId: [{ required: true, message: '请选择', trigger: 'blur' }],
         accessoryType: [{ required: true, message: '请选择', trigger: 'blur' }],
         supplier: [{ required: true, message: '请输入', trigger: 'blur' }],
+        monetaryUnit: [{ required: true, message: '请输入', trigger: 'blur' }],
         price: [{ required: true, message: '请输入', trigger: 'blur' }],
         num: [{ required: true, message: '请输入', trigger: 'blur' }],
         time: [{ required: true, message: '请选择', trigger: 'blur' }],
