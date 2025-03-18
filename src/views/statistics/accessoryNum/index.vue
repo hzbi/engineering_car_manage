@@ -2,7 +2,7 @@
     <div class="app-container">
         <el-form :model="queryParams" ref="queryFormRef" :inline="true" v-show="showSearch">
             <el-form-item label="工地名称:" prop="siteId">
-                <el-select v-model="queryParams.siteId" placeholder="请选择" clearable style="width: 200px" @keyup.enter.native="handleQuery">
+                <el-select v-model="queryParams.siteId" :placeholder="$t('components.select.placeholder')" clearable style="width: 200px">
                     <el-option v-for="dict in siteOptions" :key="dict.siteId" :label="dict.siteName" :value="dict.siteId" />
                 </el-select>
             </el-form-item>
@@ -11,7 +11,7 @@
 
         <el-row :gutter="10" class="mb8">
             <el-col :span="1.5">
-                <el-button type="warning" plain icon="download" size="small" @click="handleExport" v-hasPermi="['system:user:export']">导出</el-button>
+                <el-button type="warning" plain icon="download" size="small" @click="handleExport" v-hasPermi="['system:user:export']">{{ $t('operationButtons.export.label') }}</el-button>
             </el-col>
             <right-toolbar v-model:showSearch="showSearch" @queryTable="getPageList"></right-toolbar>
         </el-row>
@@ -19,7 +19,7 @@
         <div ref="chartRef" style="height: 420px"></div>
 
         <el-table stripe border v-loading="loading" :data="tableData">
-            <el-table-column type="index" width="80" label="序号" align="center" />
+            <el-table-column type="index" width="80" :label="$t('tableColumn.index')" align="center" />
             <el-table-column label="配件类型" align="center" prop="accessoryType" min-width="120" show-overflow-tooltip>
                 <template #default="scope">
                     <dict-tag :options="accessory_type" :value="scope.row.accessoryType" />
@@ -33,11 +33,12 @@
 </template>
 
 <script setup name="Info" lang="ts">
-import { getAccessoryStockList } from '@/api/statistics/accessoryStock'
+import { getAccessoryStockList } from '@/api/statistics/index'
 import { getSiteList } from '@/api/site/siteManage'
 import { ref, reactive, toRefs, getCurrentInstance, onMounted } from 'vue'
 import { ElForm, ElTable } from 'element-plus'
 import * as echarts from 'echarts'
+import { $t } from '@/lang'
 
 const { proxy } = getCurrentInstance() as any
 
@@ -56,10 +57,10 @@ const total = ref(0)
 const data = reactive({
     queryParams: {
         pageNum: 1,
-        pageSize: 1,
+        pageSize: 10,
         year: null,
         mon: null,
-        carId: null,
+        carNumber: null,
         carType: null
     }
 })
@@ -108,7 +109,7 @@ const getPageList = () => {
 const siteOptions = ref([]) as any
 
 const getSiteOptions = () => {
-    getSiteList({}).then((res: any) => {
+    getSiteList({ status: 0 }).then((res: any) => {
         siteOptions.value = res.rows
     })
 }

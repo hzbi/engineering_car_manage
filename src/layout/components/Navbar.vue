@@ -10,19 +10,19 @@
                 <el-dropdown @command="handleCommand" class="right-menu-item hover-effect" trigger="click">
                     <div class="avatar-wrapper">
                         <img :src="userStore.avatar" class="user-avatar" />
-                        <span>{{ $t('navbar.welcome') + userStore.name }}</span>
+                        <span>{{ $t('navbar.welcome') + userStore.nickName }}</span>
                         <el-icon><caret-bottom /></el-icon>
                     </div>
                     <template #dropdown>
                         <el-dropdown-menu>
                             <router-link to="/user/profile">
-                                <el-dropdown-item>个人中心</el-dropdown-item>
+                                <el-dropdown-item>{{ $t('navbar.mine') }}</el-dropdown-item>
                             </router-link>
                             <!-- <el-dropdown-item command="setLayout">
                                 <span>布局设置</span>
                             </el-dropdown-item> -->
                             <el-dropdown-item divided command="logout">
-                                <span>退出登录</span>
+                                <span>{{ $t('navbar.exit') }}</span>
                             </el-dropdown-item>
                         </el-dropdown-menu>
                     </template>
@@ -43,6 +43,7 @@ import useAppStore from '@/store/modules/app'
 import useUserStore from '@/store/modules/user'
 import useSettingsStore from '@/store/modules/settings'
 import request from '@/utils/request'
+import { $t } from '@/lang'
 
 const appStore = useAppStore()
 const userStore = useUserStore()
@@ -66,9 +67,9 @@ function handleCommand(command) {
 }
 function logout() {
     // prettier-ignore
-    ElMessageBox.confirm("确定注销并退出系统吗？", "提示", {
-		confirmButtonText: "确定",
-		cancelButtonText: "取消",
+    ElMessageBox.confirm($t('logout.message.content'), $t('logout.message.title'), {
+		confirmButtonText: $t('components.btn.confirmButton'),
+		cancelButtonText: $t('components.btn.cancelButton'),
 		type: "warning",
 	})
     .then(() => {

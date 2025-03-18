@@ -6,7 +6,7 @@
         <el-form ref="loginFormRef" :model="loginForm" :rules="loginRules" class="login-form">
             <h3 class="title">{{ $t('login.title') }}</h3>
             <el-form-item prop="username">
-                <el-input v-model="loginForm.username" type="text" auto-complete="off" :placeholder="$t('login.username')">
+                <el-input maxlength="100" v-model="loginForm.username" type="text" auto-complete="off" :placeholder="$t('login.username')">
                     <template #prefix>
                         <svg-icon icon-class="user" class="el-input__icon input-icon" />
                     </template>
@@ -14,14 +14,14 @@
             </el-form-item>
 
             <el-form-item prop="password">
-                <el-input v-model="loginForm.password" type="password" auto-complete="off" :placeholder="$t('login.password')" @keyup.enter="handleLogin">
+                <el-input maxlength="100" v-model="loginForm.password" type="password" auto-complete="off" :placeholder="$t('login.password')" @keyup.enter="handleLogin">
                     <template #prefix>
                         <svg-icon icon-class="password" class="el-input__icon input-icon" />
                     </template>
                 </el-input>
             </el-form-item>
             <el-form-item prop="code">
-                <el-input v-model="loginForm.code" auto-complete="off" :placeholder="$t('login.code')" style="width: 55%" @keyup.enter="handleLogin">
+                <el-input maxlength="100" v-model="loginForm.code" auto-complete="off" :placeholder="$t('login.code')" style="width: 55%" @keyup.enter="handleLogin">
                     <template #prefix><svg-icon icon-class="validCode" class="el-input__icon input-icon" /></template>
                 </el-input>
                 <div class="login-code">

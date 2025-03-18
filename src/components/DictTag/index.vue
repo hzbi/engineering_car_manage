@@ -21,6 +21,15 @@ const props = defineProps({
     value: [Number, String, Array]
 })
 
+props.options.map((item) => {
+    if (props.options.length == 2 && item.value == 0) {
+        item.elTagType = 'primary'
+    } else if (props.options.length == 2 && item.value == 1) {
+        item.elTagType = 'info'
+    }
+    return item
+})
+
 const values = computed(() => {
     if (props.value !== null && typeof props.value !== 'undefined') {
         return Array.isArray(props.value) ? props.value : [String(props.value)]

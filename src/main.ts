@@ -31,7 +31,7 @@ import 'highlight.js/styles/vs2015.css'
 // element-plus
 import ElementPlus from 'element-plus'
 import 'element-plus/theme-chalk/index.css'
-import locale from 'element-plus/lib/locale/lang/en'
+import locale from 'element-plus/es/locale/lang/en'
 import i18n from '@/lang/index'
 
 // element-plus icons

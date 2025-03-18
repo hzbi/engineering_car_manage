@@ -5,12 +5,12 @@
             <el-row>
                 <el-col :span="8" :offset="2">
                     <el-form-item label="用户昵称" prop="nickName">
-                        <el-input v-model="form.nickName" disabled />
+                        <el-input maxlength="100" v-model="form.nickName" disabled />
                     </el-form-item>
                 </el-col>
                 <el-col :span="8" :offset="2">
                     <el-form-item label="登录账号" prop="userName">
-                        <el-input v-model="form.userName" disabled />
+                        <el-input maxlength="100" v-model="form.userName" disabled />
                     </el-form-item>
                 </el-col>
             </el-row>
@@ -18,7 +18,7 @@
 
         <h4 class="form-header h4">角色信息</h4>
         <el-table v-loading="loading" :row-key="getRowKey" @row-click="clickRow" ref="roleRef" @selection-change="handleSelectionChange" :data="roles.slice((pageNum - 1) * pageSize, pageNum * pageSize)">
-            <el-table-column label="序号" width="55" type="index" align="center">
+            <el-table-column :label="$t('tableColumn.index')" width="55" type="index" align="center">
                 <template #default="scope">
                     <span>{{ (pageNum - 1) * pageSize + scope.$index + 1 }}</span>
                 </template>

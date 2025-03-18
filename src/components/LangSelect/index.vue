@@ -30,6 +30,7 @@ const language = computed(() => useAppStore().language)
 // 进行语言切换
 const handleSetLanguage = (lang: string) => {
     i18.locale.value = lang
+
     useAppStore().toggleLanguage(lang)
     localStorage.setItem('language', lang)
     window.location.reload()

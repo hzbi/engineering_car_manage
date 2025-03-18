@@ -2,16 +2,16 @@
     <div class="app-container">
         <el-form :model="queryParams" ref="queryFormRef" :inline="true" v-show="showSearch">
             <el-form-item label="年份" prop="year">
-                <el-date-picker v-model="queryParams.year" type="year" value-format="YYYY" placeholder="请输入" clearable style="width: 200px" @keyup.enter="handleQuery" />
+                <el-date-picker v-model="queryParams.year" type="year" value-format="YYYY" :placeholder="$t('components.input.placeholder')" clearable style="width: 200px" @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="月份" prop="mon">
-                <el-date-picker v-model="queryParams.mon" type="month" value-format="MM" placeholder="请输入" clearable style="width: 200px" @keyup.enter="handleQuery" />
+                <el-date-picker v-model="queryParams.mon" type="month" value-format="MM" :placeholder="$t('components.input.placeholder')" clearable style="width: 200px" @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="车牌号" prop="carNumber">
-                <el-input v-model="queryParams.carNumber" placeholder="请输入" clearable style="width: 200px" @keyup.enter="handleQuery" />
+                <el-input maxlength="100" v-model="queryParams.carNumber" :placeholder="$t('components.input.placeholder')" clearable style="width: 200px" @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="车型" prop="carType">
-                <el-select v-model="queryParams.carType" placeholder="请选择" clearable style="width: 200px" @keyup.enter.native="handleQuery">
+                <el-select v-model="queryParams.carType" :placeholder="$t('components.select.placeholder')" clearable style="width: 200px">
                     <el-option v-for="dict in truck_type" :key="dict.value" :label="dict.label" :value="dict.value" />
                 </el-select>
             </el-form-item>
@@ -20,13 +20,13 @@
 
         <el-row :gutter="10" class="mb8">
             <el-col :span="1.5">
-                <el-button type="warning" plain icon="download" size="small" @click="handleExport" v-hasPermi="['system:user:export']">导出</el-button>
+                <el-button type="warning" plain icon="download" size="small" @click="handleExport" v-hasPermi="['system:user:export']">{{ $t('operationButtons.export.label') }}</el-button>
             </el-col>
             <right-toolbar v-model:showSearch="showSearch" @queryTable="getPageList"></right-toolbar>
         </el-row>
 
         <el-table stripe border v-loading="loading" :data="tableData">
-            <el-table-column type="index" width="80" label="序号" align="center" />
+            <el-table-column type="index" width="80" :label="$t('tableColumn.index')" align="center" />
             <el-table-column label="年/月份" align="center" prop="time" min-width="120" show-overflow-tooltip></el-table-column>
             <el-table-column label="车牌号" align="center" prop="carNumber" min-width="120" show-overflow-tooltip></el-table-column>
             <el-table-column label="车型" align="center" prop="carType" min-width="120" show-overflow-tooltip>
@@ -45,7 +45,7 @@
 </template>
 
 <script setup name="Info" lang="ts">
-import { getTruckStatisticsList } from '@/api/statistics/truckStatistics'
+import { getTruckStatisticsList } from '@/api/statistics/index'
 import { ref, reactive, toRefs, getCurrentInstance } from 'vue'
 import { ElForm, ElTable } from 'element-plus'
 

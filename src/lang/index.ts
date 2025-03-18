@@ -26,10 +26,16 @@ app.use(createPinia())
 const getLanguage = () => {
     return useAppStore() && useAppStore().language
 }
+
 const i18n = createI18n({
     legacy: false, // 使用composition API
     locale: getLanguage(), //初始的时候调用这个函数获取pinia中的数据，当然pinia初始数据调用localstorage中存储的数据，或者默认赋值为”zh“
     globalInjection: true, // 表明使用全局t函数
     messages
 })
+
+export const $t = (args: any) => {
+    return i18n.global.t(args)
+}
+
 export default i18n //将i18函数导出

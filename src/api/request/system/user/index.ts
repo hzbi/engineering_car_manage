@@ -3,8 +3,9 @@ import { getlist } from '@/api/system/logininfor'
 import { listUser, getUser, delUser, addUser, updateUser, resetUserPwd, changeUserStatus} from "@/api/system/user";
 import { getToken } from '@/utils/auth'
 import { treeselect } from '@/api/system/dept'
-import { ref, getCurrentInstance, watch, toRefs, nextTick } from 'vue'
+import { ref, getCurrentInstance, watch, toRefs, nextTick, reactive } from 'vue'
 import { ElForm, ElTable, ElUpload, FormItemRule } from 'element-plus'
+import { $t } from '@/lang'
 const baseURL = import.meta.env.VITE_APP_BASE_API
 
 export default () => {
@@ -19,7 +20,7 @@ export default () => {
     const formRef = ref<InstanceType<typeof ElForm>>()
     const pageTableRef = ref<InstanceType<typeof ElTable>>()
     // prettier-ignore
-    const { sys_normal_disable, sys_user_sex } = proxy.useDict("sys_normal_disable", "sys_user_sex");
+    const { sys_normal_disable, sys_user_sex, truck_type, truck_status, site_status } = proxy.useDict('sys_normal_disable', 'sys_user_sex', 'truck_type', 'truck_status', 'site_status')
 
     // 非单个禁用
     const single = ref<boolean>(true)
@@ -121,6 +122,7 @@ export default () => {
         ],
         phonenumber: [
             {
+                required: true,
                 pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
                 message: '请输入正确的手机号码',
                 trigger: 'blur'
@@ -146,6 +148,7 @@ export default () => {
             loading.value = false
         })
     }
+
     /** 查询部门下拉树结构 */
     const getTreeselect = () => {
         treeselect().then((response: any) => {
@@ -325,7 +328,7 @@ export default () => {
                 if (form.value.userId) {
                     updateUser(form.value).then((response: any) => {
                         if (response.code === 200) {
-                            proxy.$modal.msgSuccess('修改成功')
+                            proxy.$modal.msgSuccess($t('components.message.edit'))
                             getPageList()
                             open.value = false
                         }
@@ -334,7 +337,7 @@ export default () => {
                     addUser(form.value)
                         .then((response: any) => {
                             if (response.code === 200) {
-                                proxy.$modal.msgSuccess('新增成功')
+                                proxy.$modal.msgSuccess($t('components.message.add'))
                             }
                         })
                         .finally(() => {
@@ -416,7 +419,8 @@ export default () => {
         upload.isUploading = false
         // proxy.$refs.upload.clearFiles();
         cleanUploadRef()
-        proxy.$alert(response.msg, '导入结果', {
+        proxy.$alert(response.msg, $t('import.result'), {
+            confirmButtonText: $t('components.btn.confirmButton'),
             dangerouslyUseHTMLString: true
         })
         getPageList()
@@ -445,10 +449,57 @@ export default () => {
 
     // prettier-ignore
     return {
-        loading, queryFormRef, formRef, sys_normal_disable, deptTreeRef, single, multiple, showSearch, total, userList, title, deptOptions, open,
-        deptName, dateRange, sys_user_sex, postOptions, roleOptions, form, defaultProps, upload, queryParams, columns, rules, pageTableRef, uploadRef,
-        getPageList, filterNode, handleNodeClick, handleStatusChange,  cancel, handleQuery, resetQuery, handleSelectionChange, statusChange,
-        handleAdd, handleUpdate, handleResetPwd, submitForm, handleDelete, handleExport, handleImport, importTemplate, handleFileUploadProgress,
-        handleFileSuccess, submitFileForm, checkSelected, cleanSelect, cleanUploadRef
-    };
+        loading,
+        queryFormRef,
+        formRef,
+        sys_normal_disable,
+        deptTreeRef,
+        single,
+        multiple,
+        showSearch,
+        total,
+        userList,
+        title,
+        deptOptions,
+        open,
+        deptName,
+        dateRange,
+        sys_user_sex,
+        postOptions,
+        roleOptions,
+        form,
+        defaultProps,
+        upload,
+        queryParams,
+        columns,
+        rules,
+        pageTableRef,
+        uploadRef,
+        getPageList,
+        filterNode,
+        handleNodeClick,
+        handleStatusChange,
+        cancel,
+        handleQuery,
+        resetQuery,
+        handleSelectionChange,
+        statusChange,
+        handleAdd,
+        handleUpdate,
+        handleResetPwd,
+        submitForm,
+        handleDelete,
+        handleExport,
+        handleImport,
+        importTemplate,
+        handleFileUploadProgress,
+        handleFileSuccess,
+        submitFileForm,
+        checkSelected,
+        cleanSelect,
+        cleanUploadRef,
+        truck_type,
+        truck_status,
+        site_status
+    }
 }

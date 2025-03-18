@@ -1,5 +1,5 @@
-import request from "@/utils/request";
-import { praseStrEmpty } from "@/utils/ruoyi";
+import request from '@/utils/request'
+import { praseStrEmpty } from '@/utils/ruoyi'
 
 /**
  * 查询用户列表
@@ -8,12 +8,12 @@ import { praseStrEmpty } from "@/utils/ruoyi";
  * @returns 用户列表
  */
 export const listUser = async (query: any) => {
-	return await request({
-		url: "/system/user/list",
-		method: "get",
-		params: query,
-	});
-};
+    return await request({
+        url: '/system/user/list',
+        method: 'get',
+        params: query
+    })
+}
 
 /**
  * 通过用户ID查询用户详细
@@ -22,11 +22,11 @@ export const listUser = async (query: any) => {
  * @returns 用户信息
  */
 export const getUser = async (userId: any) => {
-	return await request({
-		url: "/system/user/" + praseStrEmpty(userId),
-		method: "get",
-	});
-};
+    return await request({
+        url: '/system/user/' + praseStrEmpty(userId),
+        method: 'get'
+    })
+}
 
 /**
  * 新增用户
@@ -35,12 +35,12 @@ export const getUser = async (userId: any) => {
  * @returns
  */
 export const addUser = async (data: any) => {
-	return await request({
-		url: "/system/user",
-		method: "post",
-		data: data,
-	});
-};
+    return await request({
+        url: '/system/user',
+        method: 'post',
+        data: data
+    })
+}
 
 /**
  * 修改用户
@@ -49,12 +49,12 @@ export const addUser = async (data: any) => {
  * @returns
  */
 export const updateUser = async (data: any) => {
-	return await request({
-		url: "/system/user",
-		method: "put",
-		data: data,
-	});
-};
+    return await request({
+        url: '/system/user',
+        method: 'put',
+        data: data
+    })
+}
 
 /**
  * 删除用户
@@ -63,11 +63,11 @@ export const updateUser = async (data: any) => {
  * @returns
  */
 export const delUser = async (userId: string) => {
-	return await request({
-		url: "/system/user/" + userId,
-		method: "delete",
-	});
-};
+    return await request({
+        url: '/system/user/' + userId,
+        method: 'delete'
+    })
+}
 
 /**
  * 导出用户
@@ -76,12 +76,12 @@ export const delUser = async (userId: string) => {
  * @returns
  */
 export const exportUser = async (query: any) => {
-	return await request({
-		url: "/system/user/export",
-		method: "get",
-		params: query,
-	});
-};
+    return await request({
+        url: '/system/user/export',
+        method: 'get',
+        params: query
+    })
+}
 
 /**
  * 用户密码重置
@@ -91,15 +91,15 @@ export const exportUser = async (query: any) => {
  * @returns
  */
 export const resetUserPwd = async (userId: any, password: any) => {
-	return await request({
-		url: "/system/user/resetPwd",
-		method: "put",
-		data: {
-			userId,
-			password,
-		},
-	});
-};
+    return await request({
+        url: '/system/user/resetPwd',
+        method: 'put',
+        data: {
+            userId,
+            password
+        }
+    })
+}
 
 /**
  * 用户状态修改
@@ -109,15 +109,15 @@ export const resetUserPwd = async (userId: any, password: any) => {
  * @returns
  */
 export const changeUserStatus = async (userId: string, status: string) => {
-	return await request({
-		url: "/system/user/changeStatus",
-		method: "put",
-		data: {
-			userId,
-			status,
-		},
-	});
-};
+    return await request({
+        url: '/system/user/changeStatus',
+        method: 'put',
+        data: {
+            userId,
+            status
+        }
+    })
+}
 
 /**
  * 查询用户个人信息
@@ -125,11 +125,11 @@ export const changeUserStatus = async (userId: string, status: string) => {
  * @returns
  */
 export const getUserProfile = async () => {
-	return await request({
-		url: "/system/user/profile",
-		method: "get",
-	});
-};
+    return await request({
+        url: '/system/user/profile',
+        method: 'get'
+    })
+}
 
 /**
  * 修改用户个人信息
@@ -138,12 +138,12 @@ export const getUserProfile = async () => {
  * @returns
  */
 export const updateUserProfile = async (data: any) => {
-	return await request({
-		url: "/system/user/profile",
-		method: "put",
-		data: data,
-	});
-};
+    return await request({
+        url: '/system/user/profile',
+        method: 'put',
+        data: data
+    })
+}
 
 /**
  * 用户密码重置
@@ -153,15 +153,15 @@ export const updateUserProfile = async (data: any) => {
  * @returns
  */
 export const updateUserPwd = async (oldPassword: any, newPassword: any) => {
-	return await request({
-		url: "/system/user/profile/updatePwd",
-		method: "put",
-		params: {
-			oldPassword,
-			newPassword,
-		},
-	});
-};
+    return await request({
+        url: '/system/user/profile/updatePwd',
+        method: 'put',
+        params: {
+            oldPassword,
+            newPassword
+        }
+    })
+}
 
 /**
  * 用户头像上传
@@ -170,12 +170,12 @@ export const updateUserPwd = async (oldPassword: any, newPassword: any) => {
  * @returns
  */
 export const uploadAvatar = async (data: any) => {
-	return await request({
-		url: "/system/user/profile/avatar",
-		method: "post",
-		data: data,
-	});
-};
+    return await request({
+        url: '/system/user/profile/avatar',
+        method: 'post',
+        data: data
+    })
+}
 
 /**
  * 下载用户导入模板
@@ -183,25 +183,33 @@ export const uploadAvatar = async (data: any) => {
  * @returns
  */
 export const importTemplate = async () => {
-	return await request({
-		url: "/system/user/importTemplate",
-		method: "get",
-	});
-};
+    return await request({
+        url: '/system/user/importTemplate',
+        method: 'get'
+    })
+}
 
 // 查询授权角色
 export const getAuthRole = async (userId: any) => {
-	return await request({
-		url: "/system/user/authRole/" + userId,
-		method: "get",
-	});
-};
+    return await request({
+        url: '/system/user/authRole/' + userId,
+        method: 'get'
+    })
+}
 
 // 保存授权角色
 export const updateAuthRole = async (data: any) => {
-	return await request({
-		url: "/system/user/authRole",
-		method: "put",
-		params: data,
-	});
-};
+    return await request({
+        url: '/system/user/authRole',
+        method: 'put',
+        params: data
+    })
+}
+
+export const updateUserCarSite = async (data: any) => {
+    return await request({
+        url: '/system/user/updateUserCarSite',
+        method: 'put',
+        data: data
+    })
+}

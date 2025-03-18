@@ -9,6 +9,8 @@ import cache from '@/plugins/cache'
 import { saveAs } from 'file-saver'
 import { nanoid } from 'nanoid'
 
+import useAppStore from '@/store/modules/app'
+
 const userAgent = navigator.userAgent
 // prettier-ignore
 // var isIE11 = userAgent.indexOf('Trident') > -1 && userAgent.indexOf('rv:11.0') > -1;
@@ -45,6 +47,9 @@ service.interceptors.request.use(
             // prettier-ignore
             config.headers["Authorization"] = "Bearer " + getToken(); // 让每个请求携带自定义token 请根据实际情况自行修改
         }
+        // config.params = {
+        //     language: useAppStore().language
+        // }
         // get请求映射params参数
         if (config.method === 'get' && config.params) {
             let url = config.url + '?' + tansParams(config.params)
@@ -56,10 +61,10 @@ service.interceptors.request.use(
         if (!isRepeatSubmit &&(config.method === "post" || config.method === "put")) {
             // prettier-ignore
 			const requestObj = {
-				url: config.url,
-				data: typeof config.data === "object" ? JSON.stringify(config.data) : config.data,
-				time: new Date().getTime()
-			};
+                url: config.url,
+                data: typeof config.data === 'object' ? JSON.stringify(config.data) : config.data,
+                time: new Date().getTime()
+            }
             // prettier-ignore
 			const sessionObj = cache.session.getJSON("sessionObj");
              // prettier-ignore

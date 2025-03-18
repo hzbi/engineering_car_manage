@@ -1,24 +1,24 @@
 <template>
     <div class="app-container">
         <el-form :model="queryParams" ref="queryFormRef" :inline="true" v-show="showSearch">
-            <el-form-item label="配件名称" prop="accessoryName">
-                <el-input v-model="queryParams.accessoryName" placeholder="请输入" clearable style="width: 200px" @keyup.enter="handleQuery" />
+            <el-form-item :label="$t('accessoryStock.searchBar.partName.label')" prop="accessoryName">
+                <el-input maxlength="100" v-model="queryParams.accessoryName" :placeholder="$t('components.input.placeholder')" clearable style="width: 200px" @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="配件类型" prop="accessoryType">
-                <el-select v-model="queryParams.accessoryType" placeholder="请选择" clearable style="width: 200px">
+            <el-form-item :label="$t('accessoryStock.searchBar.partType.label')" prop="accessoryType">
+                <el-select v-model="queryParams.accessoryType" :placeholder="$t('components.select.placeholder')" clearable style="width: 200px">
                     <el-option v-for="dict in accessory_type" :key="dict.value" :label="dict.label" :value="dict.value" />
                 </el-select>
             </el-form-item>
-            <el-form-item label="工地名称" prop="siteId">
-                <el-select v-model="queryParams.siteId" placeholder="请选择" clearable style="width: 200px">
+            <el-form-item :label="$t('accessoryStock.searchBar.constructionSiteName.label')" prop="siteId">
+                <el-select v-model="queryParams.siteId" :placeholder="$t('components.select.placeholder')" clearable style="width: 200px">
                     <el-option v-for="dict in siteOptions" :key="dict.siteId" :label="dict.siteName" :value="dict.siteId" />
                 </el-select>
             </el-form-item>
-            <el-form-item label="开始日期" prop="startTime">
-                <el-date-picker clearable v-model="queryParams.startTime" type="date" value-format="YYYY-MM-DD" placeholder="选择时间"></el-date-picker>
+            <el-form-item :label="$t('accessoryStock.searchBar.endDate.label')" prop="startTime">
+                <el-date-picker clearable v-model="queryParams.startTime" type="date" value-format="YYYY-MM-DD" :placeholder="$t('components.datePicker.placeholder')"></el-date-picker>
             </el-form-item>
-            <el-form-item label="结束日期" prop="endTime">
-                <el-date-picker clearable v-model="queryParams.endTime" type="date" value-format="YYYY-MM-DD" placeholder="选择时间"></el-date-picker>
+            <el-form-item :label="$t('accessoryStock.searchBar.partName.label')" prop="endTime">
+                <el-date-picker clearable v-model="queryParams.endTime" type="date" value-format="YYYY-MM-DD" :placeholder="$t('components.datePicker.placeholder')"></el-date-picker>
             </el-form-item>
             <form-search @reset="resetQuery" @search="handleQuery" />
         </el-form>
@@ -28,48 +28,48 @@
                 <el-button type="primary" plain icon="plus" size="small" @click="handleAdd" v-hasPermi="['system:user:add']">入库</el-button>
             </el-col>
             <el-col :span="1.5">
-                <el-button type="info" plain icon="upload" size="small" @click="handleImport" v-hasPermi="['system:user:import']">导入</el-button>
+                <el-button type="info" plain icon="upload" size="small" @click="handleImport" v-hasPermi="['system:user:import']">{{ $t('operationButtons.import.label') }}</el-button>
             </el-col>
             <el-col :span="1.5">
-                <el-button type="warning" plain icon="download" size="small" @click="handleExport" v-hasPermi="['system:user:export']">导出</el-button>
+                <el-button type="warning" plain icon="download" size="small" @click="handleExport" v-hasPermi="['system:user:export']">{{ $t('operationButtons.export.label') }}</el-button>
             </el-col>
             <right-toolbar v-model:showSearch="showSearch" @queryTable="getPageList"></right-toolbar>
         </el-row>
 
         <el-table stripe border v-loading="loading" :data="tableData" @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="50" align="center" />
-            <el-table-column type="index" width="80" label="序号" align="center" />
-            <el-table-column label="配件名称" align="center" prop="accessoryName" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="工地名称" align="center" prop="siteName" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="配件类型" align="center" prop="accessoryType" min-width="120" show-overflow-tooltip>
+            <el-table-column type="index" width="80" :label="$t('tableColumn.index')" align="center" />
+            <el-table-column :label="$t('accessoryStock.tableColumn[0].label')" align="center" prop="accessoryName" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('accessoryStock.tableColumn[1].label')" align="center" prop="siteName" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('accessoryStock.tableColumn[2].label')" align="center" prop="accessoryType" min-width="120" show-overflow-tooltip>
                 <template #default="scope">
                     <dict-tag :options="accessory_type" :value="scope.row.accessoryType" />
                 </template>
             </el-table-column>
-            <el-table-column label="供应商" align="center" prop="supplier" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="货币单位" align="center" prop="monetaryUnit" min-width="120" show-overflow-tooltip>
+            <el-table-column :label="$t('accessoryStock.tableColumn[3].label')" align="center" prop="supplier" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('accessoryStock.tableColumn[4].label')" align="center" prop="monetaryUnit" min-width="120" show-overflow-tooltip>
                 <template #default="scope">
                     <dict-tag :options="currency_unit_type" :value="scope.row.monetaryUnit" />
                 </template>
             </el-table-column>
-            <el-table-column label="价格" align="center" prop="price" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="入库数量" align="center" prop="num" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="剩余数量" align="center" prop="outNum" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="入库日期" align="center" prop="time" min-width="120" show-overflow-tooltip>
+            <el-table-column :label="$t('accessoryStock.tableColumn[5].label')" align="center" prop="price" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('accessoryStock.tableColumn[6].label')" align="center" prop="num" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('accessoryStock.tableColumn[7].label')" align="center" prop="outNum" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('accessoryStock.tableColumn[8].label')" align="center" prop="time" min-width="120" show-overflow-tooltip>
                 <template #default="scope">
                     <span>{{ scope.row.time ? parseTime(new Date(scope.row.time), '{y}-{m}-{d}') : '' }}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="入库人员" align="center" prop="by" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="备注" align="center" prop="remark" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="创建人" align="center" prop="createBy" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="创建时间" align="center" prop="createTime" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="操作" align="center" class-name="small-padding fixed-width" min-width="200" fixed="right">
+            <el-table-column :label="$t('accessoryStock.tableColumn[9].label')" align="center" prop="by" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('accessoryStock.tableColumn[10].label')" align="center" prop="remark" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('accessoryStock.tableColumn[11].label')" align="center" prop="createBy" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('accessoryStock.tableColumn[12].label')" align="center" prop="createTime" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('tableColumn.operation')" align="center" class-name="small-padding fixed-width" min-width="200" fixed="right">
                 <template #default="scope">
-                    <el-button type="text" @click="handleInfo(scope.row)" v-hasPermi="['system:info:edit']">详情</el-button>
-                    <el-button type="text" @click="handleUpdate(scope.row)" v-hasPermi="['system:info:edit']">编辑</el-button>
-                    <el-button type="text" @click="handleDelete(scope.row)" v-hasPermi="['system:info:remove']">删除</el-button>
-                    <el-button type="text" @click="handlePrice(scope.row)" v-hasPermi="['system:log:edit']">价格维护</el-button>
+                    <el-button type="text" @click="handleInfo(scope.row)" v-hasPermi="['system:info:edit']">{{ $t('operationButtons.info.label') }}</el-button>
+                    <el-button type="text" @click="handleUpdate(scope.row)" v-hasPermi="['system:info:edit']">{{ $t('operationButtons.edit.label') }}</el-button>
+                    <el-button type="text" @click="handleDelete(scope.row)" v-hasPermi="['system:info:remove']">{{ $t('operationButtons.delete.label') }}</el-button>
+                    <el-button type="text" @click="handlePrice(scope.row)" v-hasPermi="['system:log:edit']">{{ $t('operationButtons.price.label') }}</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -78,40 +78,42 @@
 
         <!-- 添加或修改对话框 -->
         <el-dialog :title="title" v-model="open" width="800px" append-to-body>
-            <el-form ref="formRef" :model="form" :rules="rules" label-width="auto">
-                <el-form-item label="配件名称:" prop="accessoryName">
-                    <el-input v-model="form.accessoryName" placeholder="请输入" clearable />
-                </el-form-item>
-                <el-form-item label="工地名称:" prop="siteId">
-                    <el-select v-model="form.siteId" placeholder="请选择" clearable>
-                        <el-option v-for="dict in siteOptions" :key="dict.siteId" :label="dict.siteName" :value="dict.siteId" />
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="配件类型:" prop="accessoryType">
-                    <el-select v-model="form.accessoryType" placeholder="请选择" clearable>
-                        <el-option v-for="dict in accessory_type" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="供应商:" prop="supplier">
-                    <el-input v-model="form.supplier" placeholder="请输入" clearable />
-                </el-form-item>
-                <el-form-item label="数量:" prop="num">
-                    <el-input v-model="form.num" placeholder="请输入" clearable />
-                </el-form-item>
-                <el-form-item label="入库日期:" prop="time">
-                    <el-date-picker v-model="form.time" type="date" value-format="YYYY-MM-DD" placeholder="选择日期" clearable style="width: 300px"></el-date-picker>
-                </el-form-item>
-                <el-form-item label="入库人员:" prop="by">
-                    <el-input v-model="form.by" placeholder="请输入" clearable />
-                </el-form-item>
-                <el-form-item label="备注:" prop="remark">
-                    <el-input v-model="form.remark" type="textarea" rows="5" placeholder="请输入" clearable />
-                </el-form-item>
-            </el-form>
+            <el-row justify="center" style="max-height: 600px; overflow-y: auto">
+                <el-form ref="formRef" :model="form" :rules="rules" label-width="auto">
+                    <el-form-item :label="$t('accessoryStock.fields[0].label')" prop="accessoryName">
+                        <el-input maxlength="100" v-model="form.accessoryName" :placeholder="$t('components.input.placeholder')" clearable />
+                    </el-form-item>
+                    <el-form-item :label="$t('accessoryStock.fields[1].label')" prop="siteId">
+                        <el-select v-model="form.siteId" :placeholder="$t('components.select.placeholder')" clearable>
+                            <el-option v-for="dict in siteOptions" :key="dict.siteId" :label="dict.siteName" :value="dict.siteId" />
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item :label="$t('accessoryStock.fields[2].label')" prop="accessoryType">
+                        <el-select v-model="form.accessoryType" :placeholder="$t('components.select.placeholder')" clearable>
+                            <el-option v-for="dict in accessory_type" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item :label="$t('accessoryStock.fields[3].label')" prop="supplier">
+                        <el-input maxlength="100" v-model="form.supplier" :placeholder="$t('components.input.placeholder')" clearable />
+                    </el-form-item>
+                    <el-form-item :label="$t('accessoryStock.fields[4].label')" prop="num">
+                        <el-input maxlength="100" v-model="form.num" :placeholder="$t('components.input.placeholder')" clearable />
+                    </el-form-item>
+                    <el-form-item :label="$t('accessoryStock.fields[5].label')" prop="time">
+                        <el-date-picker v-model="form.time" type="date" value-format="YYYY-MM-DD" :placeholder="$t('components.datePicker.placeholder')" clearable style="width: 300px"></el-date-picker>
+                    </el-form-item>
+                    <el-form-item :label="$t('accessoryStock.fields[6].label')" prop="by">
+                        <el-input maxlength="100" v-model="form.by" :placeholder="$t('components.input.placeholder')" clearable />
+                    </el-form-item>
+                    <el-form-item :label="$t('accessoryStock.fields[7].label')" prop="remark">
+                        <el-input maxlength="200" v-model="form.remark" type="textarea" :rows="5" :placeholder="$t('components.input.placeholder')" clearable />
+                    </el-form-item>
+                </el-form>
+            </el-row>
             <template #footer>
                 <div class="dialog-footer">
-                    <el-button type="primary" @click="submitForm">确 定</el-button>
-                    <el-button @click="cancel">取 消</el-button>
+                    <el-button type="primary" @click="submitForm">{{ $t('components.btn.confirmButton') }}</el-button>
+                    <el-button @click="cancel">{{ $t('components.btn.cancelButton') }}</el-button>
                 </div>
             </template>
         </el-dialog>
@@ -119,109 +121,109 @@
         <!-- 价格维护对话框 -->
         <el-dialog :title="title" v-model="openPrice" width="800px" append-to-body>
             <el-form ref="formRef" :model="form" :rules="rules" label-width="auto">
-                <el-form-item label="配件名称:" prop="accessoryName">
+                <el-form-item :label="$t('accessoryStock.fields[0].label')" prop="accessoryName">
                     <span>{{ form.accessoryName }}</span>
                 </el-form-item>
-                <el-form-item label="工地名称:" prop="siteName">
+                <el-form-item :label="$t('accessoryStock.fields[1].label')" prop="siteName">
                     <span>{{ form.siteName }}</span>
                 </el-form-item>
-                <el-form-item label="配件类型:" prop="accessoryType">
+                <el-form-item :label="$t('accessoryStock.fields[2].label')" prop="accessoryType">
                     <dict-tag :options="accessory_type" :value="form.accessoryType" />
                 </el-form-item>
-                <el-form-item label="供应商:" prop="supplier">
+                <el-form-item :label="$t('accessoryStock.fields[3].label')" prop="supplier">
                     <span>{{ form.supplier }}</span>
                 </el-form-item>
-                <el-form-item label="货币单位:" prop="monetaryUnit">
-                    <el-select v-model="form.monetaryUnit" placeholder="请选择" clearable>
+                <el-form-item :label="$t('accessoryStock.fields[4].label')" prop="monetaryUnit">
+                    <el-select v-model="form.monetaryUnit" :placeholder="$t('components.select.placeholder')" clearable>
                         <el-option v-for="dict in currency_unit_type" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="价格:" prop="price">
-                    <el-input v-model="form.price" placeholder="请输入" clearable />
+                <el-form-item :label="$t('accessoryStock.fields[5].label')" prop="price">
+                    <el-input maxlength="100" v-model="form.price" :placeholder="$t('components.input.placeholder')" clearable />
                 </el-form-item>
-                <el-form-item label="数量:" prop="num">
+                <el-form-item :label="$t('accessoryStock.fields[6].label')" prop="num">
                     <span>{{ form.num }}</span>
                 </el-form-item>
-                <el-form-item label="入库日期:" prop="time">
+                <el-form-item :label="$t('accessoryStock.fields[7].label')" prop="time">
                     <span>{{ form.time }}</span>
                 </el-form-item>
-                <el-form-item label="入库人员:" prop="by">
+                <el-form-item :label="$t('accessoryStock.fields[8].label')" prop="by">
                     <span>{{ form.by }}</span>
                 </el-form-item>
-                <el-form-item label="备注:" prop="remark">
+                <el-form-item :label="$t('accessoryStock.fields[9].label')" prop="remark">
                     <span>{{ form.remark }}</span>
                 </el-form-item>
             </el-form>
             <template #footer>
                 <div class="dialog-footer">
-                    <el-button type="primary" @click="submitForm">确 定</el-button>
-                    <el-button @click="cancel">取 消</el-button>
+                    <el-button type="primary" @click="submitForm">{{ $t('components.btn.confirmButton') }}</el-button>
+                    <el-button @click="cancel">{{ $t('components.btn.cancelButton') }}</el-button>
                 </div>
             </template>
         </el-dialog>
 
         <!-- 详情对话框 -->
         <el-drawer :title="title" size="80%" v-model="openInfo">
-            <el-divider content-position="left">基本信息</el-divider>
+            <el-divider content-position="left">{{ $t('accessoryStock.basicInfo.title') }}</el-divider>
             <table class="info-table" border="1">
                 <tbody>
                     <tr>
-                        <td>配件名称</td>
+                        <td>{{ $t('accessoryStock.basicInfo.partName') }}</td>
                         <td>{{ form.accessoryName }}</td>
-                        <td>工地名称</td>
+                        <td>{{ $t('accessoryStock.basicInfo.constructionSiteName') }}</td>
                         <td>{{ form.siteName }}</td>
-                        <td>配件类型</td>
+                        <td>{{ $t('accessoryStock.basicInfo.partType') }}</td>
                         <td><dict-tag :options="accessory_type" :value="form.accessoryType" /></td>
                     </tr>
                     <tr>
-                        <td>供应商</td>
+                        <td>{{ $t('accessoryStock.basicInfo.supplier') }}</td>
                         <td>{{ form.supplier }}</td>
-                        <td>价格</td>
+                        <td>{{ $t('accessoryStock.basicInfo.price') }}</td>
                         <td>{{ form.price }}</td>
-                        <td>入库人员</td>
+                        <td>{{ $t('accessoryStock.basicInfo.inStockStaff') }}</td>
                         <td>{{ form.by }}</td>
                     </tr>
                     <tr>
-                        <td>入库数量</td>
+                        <td>{{ $t('accessoryStock.basicInfo.inStockQuantity') }}</td>
                         <td>{{ form.num }}</td>
-                        <td>剩余数量</td>
+                        <td>{{ $t('accessoryStock.basicInfo.remainingQuantity') }}</td>
                         <td>{{ form.outNum }}</td>
-                        <td>入库日期</td>
+                        <td>{{ $t('accessoryStock.basicInfo.inStockDate') }}</td>
                         <td>{{ form.time }}</td>
                     </tr>
                     <tr>
-                        <td>创建人</td>
+                        <td>{{ $t('accessoryStock.basicInfo.creator') }}</td>
                         <td>{{ form.createBy }}</td>
-                        <td>创建时间</td>
+                        <td>{{ $t('accessoryStock.basicInfo.creationTime') }}</td>
                         <td>{{ form.createTime }}</td>
-                        <td>备注</td>
+                        <td>{{ $t('accessoryStock.basicInfo.remark') }}</td>
                         <td>{{ form.remark }}</td>
                     </tr>
                 </tbody>
             </table>
-            <el-divider content-position="left">出库记录</el-divider>
+            <el-divider content-position="left">{{ $t('accessoryStock.outboundRecords.title') }}</el-divider>
             <el-row :gutter="10" class="mb8">
                 <el-col :span="1.5">
-                    <el-button type="primary" plain icon="plus" size="small" @click="handleAddAccessoryOut" v-hasPermi="['system:user:add']">单独出库</el-button>
+                    <el-button type="primary" plain icon="plus" size="small" @click="handleAddAccessoryOut" v-hasPermi="['system:user:add']">{{ $t('components.btn.outButton') }}</el-button>
                 </el-col>
             </el-row>
             <el-table stripe border v-loading="loading" :data="AccessoryOutData">
-                <el-table-column type="index" width="80" label="序号" align="center" />
-                <el-table-column label="出库数量" align="center" prop="num" min-width="120" show-overflow-tooltip></el-table-column>
-                <el-table-column label="出库日期" align="center" prop="putTime" min-width="120" show-overflow-tooltip></el-table-column>
-                <el-table-column label="出库人员" align="center" prop="putBy" min-width="120" show-overflow-tooltip></el-table-column>
-                <el-table-column label="出库类型" align="center" prop="relevance" min-width="120" show-overflow-tooltip>
+                <el-table-column type="index" width="80" :label="$t('tableColumn.index')" align="center" />
+                <el-table-column :label="$t('accessoryStock.outboundRecords.tableColumn[0].label')" align="center" prop="num" min-width="120" show-overflow-tooltip></el-table-column>
+                <el-table-column :label="$t('accessoryStock.outboundRecords.tableColumn[1].label')" align="center" prop="putTime" min-width="120" show-overflow-tooltip></el-table-column>
+                <el-table-column :label="$t('accessoryStock.outboundRecords.tableColumn[2].label')" align="center" prop="putBy" min-width="120" show-overflow-tooltip></el-table-column>
+                <el-table-column :label="$t('accessoryStock.outboundRecords.tableColumn[3].label')" align="center" prop="relevance" min-width="120" show-overflow-tooltip>
                     <template #default="scope">
-                        {{ scope.row.relevance == 0 ? '维修出库' : '单独出库' }}
+                        {{ scope.row.relevance == 0 ? $t('accessoryStock.outboundRecords.tableColumn[3].options[0]') : $t('accessoryStock.outboundRecords.tableColumn[3].options[1]') }}
                     </template>
                 </el-table-column>
-                <el-table-column label="备注" align="center" prop="remark" min-width="120" show-overflow-tooltip></el-table-column>
-                <el-table-column label="创建人" align="center" prop="createBy" min-width="120" show-overflow-tooltip></el-table-column>
-                <el-table-column label="创建时间" align="center" prop="createTime" min-width="120" show-overflow-tooltip></el-table-column>
-                <el-table-column label="操作" align="center" class-name="small-padding fixed-width" min-width="200" fixed="right">
+                <el-table-column :label="$t('accessoryStock.outboundRecords.tableColumn[4].label')" align="center" prop="remark" min-width="120" show-overflow-tooltip></el-table-column>
+                <el-table-column :label="$t('accessoryStock.outboundRecords.tableColumn[5].label')" align="center" prop="createBy" min-width="120" show-overflow-tooltip></el-table-column>
+                <el-table-column :label="$t('accessoryStock.outboundRecords.tableColumn[6].label')" align="center" prop="createTime" min-width="120" show-overflow-tooltip></el-table-column>
+                <el-table-column :label="$t('tableColumn.operation')" align="center" class-name="small-padding fixed-width" min-width="200" fixed="right">
                     <template #default="scope">
-                        <el-button type="text" @click="handleUpdateAccessoryOut(scope.row)" v-if="scope.row.relevance == 1" v-hasPermi="['system:log:edit']">编辑</el-button>
-                        <el-button type="text" @click="handleDeleteAccessoryOut(scope.row)" v-if="scope.row.relevance == 1" v-hasPermi="['system:log:remove']">删除</el-button>
+                        <el-button type="text" @click="handleUpdateAccessoryOut(scope.row)" v-if="scope.row.relevance == 1" v-hasPermi="['system:log:edit']">{{ $t('operationButtons.edit.label') }}</el-button>
+                        <el-button type="text" @click="handleDeleteAccessoryOut(scope.row)" v-if="scope.row.relevance == 1" v-hasPermi="['system:log:remove']">{{ $t('operationButtons.delete.label') }}</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -229,24 +231,26 @@
 
         <!-- 添加或修改对话框 -->
         <el-dialog :title="titleAccessoryOut" v-model="openAccessoryOut" width="800px" append-to-body>
-            <el-form ref="formRefAccessoryOut" :model="formAccessoryOut" :rules="rulesAccessoryOut" label-width="auto">
-                <el-form-item label="数量:" prop="num">
-                    <el-input v-model="formAccessoryOut.num" placeholder="请输入" clearable />
-                </el-form-item>
-                <el-form-item label="出库日期:" prop="putTime">
-                    <el-date-picker v-model="formAccessoryOut.putTime" type="date" value-format="YYYY-MM-DD" placeholder="选择日期" clearable style="width: 300px"></el-date-picker>
-                </el-form-item>
-                <el-form-item label="出库人员:" prop="putBy">
-                    <el-input v-model="formAccessoryOut.putBy" placeholder="请输入" clearable />
-                </el-form-item>
-                <el-form-item label="备注:" prop="remark">
-                    <el-input v-model="formAccessoryOut.remark" type="textarea" rows="5" placeholder="请输入" clearable />
-                </el-form-item>
-            </el-form>
+            <el-row justify="center" style="max-height: 600px; overflow-y: auto">
+                <el-form ref="formRefAccessoryOut" :model="formAccessoryOut" :rules="rulesAccessoryOut" label-width="auto">
+                    <el-form-item :label="$t('accessoryStock.outboundRecords.fields[0].label')" prop="num">
+                        <el-input maxlength="100" v-model="formAccessoryOut.num" :placeholder="$t('components.input.placeholder')" clearable />
+                    </el-form-item>
+                    <el-form-item :label="$t('accessoryStock.outboundRecords.fields[1].label')" prop="putTime">
+                        <el-date-picker v-model="formAccessoryOut.putTime" type="date" value-format="YYYY-MM-DD" :placeholder="$t('components.datePicker.placeholder')" clearable style="width: 300px"></el-date-picker>
+                    </el-form-item>
+                    <el-form-item :label="$t('accessoryStock.outboundRecords.fields[2].label')" prop="putBy">
+                        <el-input maxlength="100" v-model="formAccessoryOut.putBy" :placeholder="$t('components.input.placeholder')" clearable />
+                    </el-form-item>
+                    <el-form-item :label="$t('accessoryStock.outboundRecords.fields[3].label')" prop="remark">
+                        <el-input maxlength="200" v-model="formAccessoryOut.remark" type="textarea" :rows="5" :placeholder="$t('components.input.placeholder')" clearable />
+                    </el-form-item>
+                </el-form>
+            </el-row>
             <template #footer>
                 <div class="dialog-footer">
-                    <el-button type="primary" @click="submitFormAccessoryOut">确 定</el-button>
-                    <el-button @click="cancelAccessoryOut">取 消</el-button>
+                    <el-button type="primary" @click="submitFormAccessoryOut">{{ $t('components.btn.confirmButton') }}</el-button>
+                    <el-button @click="cancelAccessoryOut">{{ $t('components.btn.cancelButton') }}</el-button>
                 </div>
             </template>
         </el-dialog>
@@ -268,18 +272,18 @@
 			>
 				<i class="upload"></i>
 				<div class="el-upload__text">
-					将文件拖到此处，或
-					<em>点击上传</em>
+					{{$t('components.upload.text1')}}
+					<em>{{$t('components.upload.text2')}}</em>
 				</div>
                 <!-- prettier-ignore -->
-				<div class="el-upload__tip" style="color:red" slot="tip">提示：仅允许导入“xls”或“xlsx”格式文件！</div>
+				<div class="el-upload__tip" style="color:red" slot="tip">{{$t('components.upload.text3')}}</div>
 			</el-upload>
             <template #footer>
                 <div class="dialog-footer">
                     <!-- prettier-ignore -->
-                    <el-button type="primary" @click="submitFileForm">确 定</el-button>
+                    <el-button type="primary" @click="submitFileForm">{{$t('components.btn.confirmButton')}}</el-button>
                     <!-- prettier-ignore -->
-                    <el-button @click="upload.open = false">取 消</el-button>
+                    <el-button @click="upload.open = false">{{$t('components.btn.cancelButton')}}</el-button>
                 </div>
             </template>
         </el-dialog>
@@ -293,6 +297,7 @@ import { getSiteList } from '@/api/site/siteManage'
 import { ref, reactive, toRefs, getCurrentInstance } from 'vue'
 import { ElForm, ElTable, ElUpload } from 'element-plus'
 import { getToken } from '@/utils/auth'
+import { $t } from '@/lang'
 const baseURL = import.meta.env.VITE_APP_BASE_API
 
 const { proxy } = getCurrentInstance() as any
@@ -342,15 +347,15 @@ const data = reactive({
         by: null
     },
     rules: {
-        accessoryName: [{ required: true, message: '请输入', trigger: 'blur' }],
-        siteId: [{ required: true, message: '请选择', trigger: 'blur' }],
-        accessoryType: [{ required: true, message: '请选择', trigger: 'blur' }],
-        supplier: [{ required: true, message: '请输入', trigger: 'blur' }],
-        monetaryUnit: [{ required: true, message: '请输入', trigger: 'blur' }],
-        price: [{ required: true, message: '请输入', trigger: 'blur' }],
-        num: [{ required: true, message: '请输入', trigger: 'blur' }],
-        time: [{ required: true, message: '请选择', trigger: 'blur' }],
-        by: [{ required: true, message: '请输入', trigger: 'blur' }]
+        accessoryName: [{ required: true, message: $t('components.input.placeholder'), trigger: 'blur' }],
+        siteId: [{ required: true, message: $t('components.select.placeholder'), trigger: 'blur' }],
+        accessoryType: [{ required: true, message: $t('components.select.placeholder'), trigger: 'blur' }],
+        supplier: [{ required: true, message: $t('components.input.placeholder'), trigger: 'blur' }],
+        monetaryUnit: [{ required: true, message: $t('components.input.placeholder'), trigger: 'blur' }],
+        price: [{ required: true, message: $t('components.input.placeholder'), trigger: 'blur' }],
+        num: [{ required: true, message: $t('components.input.placeholder'), trigger: 'blur' }],
+        time: [{ required: true, message: $t('components.select.placeholder'), trigger: 'blur' }],
+        by: [{ required: true, message: $t('components.input.placeholder'), trigger: 'blur' }]
     }
 })
 
@@ -368,9 +373,20 @@ const dataAccessoryOut = reactive({
         remark: null
     },
     rulesAccessoryOut: {
-        num: [{ required: true, message: '请输入', trigger: 'blur' }],
-        putTime: [{ required: true, message: '请输入', trigger: 'blur' }],
-        putBy: [{ required: true, message: '请输入', trigger: 'blur' }]
+        num: [
+            { required: true, message: $t('components.input.placeholder'), trigger: 'blur' },
+            {
+                validator: (rule: any, value: any, callback: any) => {
+                    if (value > form.value.outNum) {
+                        callback(new Error($t('components.validator.inventoryInsufficient')))
+                    } else {
+                        callback()
+                    }
+                }
+            }
+        ],
+        putTime: [{ required: true, message: $t('components.input.placeholder'), trigger: 'blur' }],
+        putBy: [{ required: true, message: $t('components.input.placeholder'), trigger: 'blur' }]
     }
 })
 
@@ -389,7 +405,7 @@ const getPageList = () => {
 const siteOptions = ref([]) as any
 
 const getSiteOptions = () => {
-    getSiteList({}).then((res: any) => {
+    getSiteList({ status: 0 }).then((res: any) => {
         siteOptions.value = res.rows
     })
 }
@@ -441,7 +457,7 @@ const handleSelectionChange = (selection: any) => {
 /** 详情按钮操作 */
 const handleInfo = (row: any) => {
     openInfo.value = true
-    title.value = '详情'
+    title.value = $t('dialog.infoTitle')
     formRef.value?.resetFields()
     const id = row.id
     getAccessoryOutData(row.id)
@@ -453,14 +469,15 @@ const handleInfo = (row: any) => {
 /** 新增按钮操作 */
 const handleAdd = () => {
     open.value = true
-    title.value = '新增'
+    title.value = $t('dialog.addTitle')
     formRef.value?.resetFields()
+    form.value.id = null
 }
 
 /** 修改按钮操作 */
 const handleUpdate = (row: any) => {
     open.value = true
-    title.value = '编辑'
+    title.value = $t('dialog.editTitle')
     formRef.value?.resetFields()
     const id = row.id
     getAccessoryStockInfo(id).then((res: any) => {
@@ -471,7 +488,7 @@ const handleUpdate = (row: any) => {
 /** 价格维护按钮操作 */
 const handlePrice = (row: any) => {
     openPrice.value = true
-    title.value = '价格维护'
+    title.value = $t('dialog.priceTitle')
     formRef.value?.resetFields()
     const id = row.id
     getAccessoryStockInfo(id).then((res: any) => {
@@ -489,14 +506,14 @@ const submitForm = () => {
             }
             if (form.value.id != null) {
                 updateAccessoryStock(form.value).then(() => {
-                    proxy.$modal.msgSuccess('修改成功')
+                    proxy.$modal.msgSuccess($t('components.message.edit'))
                     open.value = false
                     openPrice.value = false
                     getPageList()
                 })
             } else {
                 addAccessoryStock(form.value).then(() => {
-                    proxy.$modal.msgSuccess('新增成功')
+                    proxy.$modal.msgSuccess($t('components.message.add'))
                     open.value = false
                     openPrice.value = false
                     getPageList()
@@ -509,13 +526,16 @@ const submitForm = () => {
 /** 删除按钮操作 */
 const handleDelete = (row: any) => {
     proxy.$modal
-        .confirm('是否确认删除此数据项？')
+        .confirm($t('components.message.delete.content'), {
+            confirmButtonText: $t('components.btn.confirmButton'),
+            cancelButtonText: $t('components.btn.cancelButton')
+        })
         .then(() => {
             return delAccessoryStock(row.id)
         })
         .then(() => {
             getPageList()
-            proxy.$modal.msgSuccess('删除成功')
+            proxy.$modal.msgSuccess($t('components.message.delete.text'))
         })
         .catch(() => {})
 }
@@ -523,8 +543,9 @@ const handleDelete = (row: any) => {
 /** 详情-新增配件使用 */
 const handleAddAccessoryOut = () => {
     openAccessoryOut.value = true
-    titleAccessoryOut.value = '出库'
+    titleAccessoryOut.value = $t('dialog.addTitle')
     formAccessoryOut.value = {
+        id: null,
         accessoryType: form.value.accessoryType,
         accessoryId: form.value.id,
         accessoryName: form.value.accessoryName
@@ -534,7 +555,7 @@ const handleAddAccessoryOut = () => {
 /** 详情-更新配件使用 */
 const handleUpdateAccessoryOut = (row: any) => {
     openAccessoryOut.value = true
-    titleAccessoryOut.value = '编辑'
+    titleAccessoryOut.value = $t('dialog.editTitle')
     formRefAccessoryOut.value?.resetFields()
     const id = row.id
     getAccessoryOutInfo(id).then((res) => {
@@ -550,13 +571,13 @@ const submitFormAccessoryOut = () => {
         if (valid) {
             if (formAccessoryOut.value.id != null) {
                 updateAccessoryOut({ ...formAccessoryOut.value, relevance: 1 }).then(() => {
-                    proxy.$modal.msgSuccess('修改成功')
+                    proxy.$modal.msgSuccess($t('components.message.edit'))
                     openAccessoryOut.value = false
                     getAccessoryOutData(formAccessoryOut.value.accessoryId)
                 })
             } else {
                 addAccessoryOut({ ...formAccessoryOut.value, relevance: 1 }).then(() => {
-                    proxy.$modal.msgSuccess('新增成功')
+                    proxy.$modal.msgSuccess($t('components.message.add'))
                     openAccessoryOut.value = false
                     getAccessoryOutData(formAccessoryOut.value.accessoryId)
                 })
@@ -568,13 +589,16 @@ const submitFormAccessoryOut = () => {
 /** 详情-删除按钮 */
 const handleDeleteAccessoryOut = (row: any) => {
     proxy.$modal
-        .confirm('是否确认删除此数据项？')
+        .confirm($t('components.message.delete.content'), {
+            confirmButtonText: $t('components.btn.confirmButton'),
+            cancelButtonText: $t('components.btn.cancelButton')
+        })
         .then(() => {
             return delAccessoryOut(row.id)
         })
         .then(() => {
             getAccessoryOutData(formAccessoryOut.value.accessoryId)
-            proxy.$modal.msgSuccess('删除成功')
+            proxy.$modal.msgSuccess($t('components.message.delete.text'))
         })
         .catch(() => {})
 }
@@ -603,7 +627,7 @@ const upload = ref<any>({
 
 /** 导入按钮操作 */
 const handleImport = () => {
-    upload.value.title = '数据导入'
+    upload.value.title = $t('import.title')
     upload.value.open = true
 }
 
@@ -625,7 +649,8 @@ const handleFileSuccess = (res: any, file: any, fileList: any) => {
     upload.value.open = false
     upload.value.isUploading = false
     cleanUploadRef()
-    proxy.$alert(res.msg, '导入结果', {
+    proxy.$alert(res.msg, $t('import.result'), {
+        confirmButtonText: $t('components.btn.confirmButton'),
         dangerouslyUseHTMLString: true
     })
     getPageList()
@@ -658,7 +683,6 @@ getPageList()
     width: 100%;
     border-collapse: collapse;
 
-    th,
     td {
         border: 1px solid #ebeef5;
         padding: 8px;
@@ -667,12 +691,14 @@ getPageList()
         font-size: 14px;
 
         &:nth-child(odd) {
+            width: 10%;
+            max-width: 10%;
             background: #f8f8f9;
-            min-width: 10%;
         }
 
         &:nth-child(even) {
-            min-width: calc(70% / 3);
+            width: calc(70% / 3);
+            max-width: calc(70% / 3);
         }
     }
 }

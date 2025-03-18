@@ -2,26 +2,26 @@
     <div class="app-container">
         <el-form :model="queryParams" ref="queryFormRef" :inline="true" v-show="showSearch">
             <el-form-item label="工地名称" prop="siteName">
-                <el-input v-model="queryParams.siteName" placeholder="请输入" clearable style="width: 200px" @keyup.enter="handleQuery" />
+                <el-input maxlength="100" v-model="queryParams.siteName" :placeholder="$t('components.input.placeholder')" clearable style="width: 200px" @keyup.enter="handleQuery" />
             </el-form-item>
             <form-search @reset="resetQuery" @search="handleQuery" />
         </el-form>
 
         <el-row :gutter="10" class="mb8">
             <el-col :span="1.5">
-                <el-button type="primary" plain icon="plus" size="small" @click="handleAdd" v-hasPermi="['system:user:add']">新增</el-button>
+                <el-button type="primary" plain icon="plus" size="small" @click="handleAdd" v-hasPermi="['system:user:add']">{{ $t('operationButtons.add.label') }}</el-button>
             </el-col>
             <el-col :span="1.5">
-                <el-button type="info" plain icon="upload" size="small" @click="handleImport" v-hasPermi="['system:user:import']">导入</el-button>
+                <el-button type="info" plain icon="upload" size="small" @click="handleImport" v-hasPermi="['system:user:import']">{{ $t('operationButtons.import.label') }}</el-button>
             </el-col>
             <el-col :span="1.5">
-                <el-button type="warning" plain icon="download" size="small" @click="handleExport" v-hasPermi="['system:user:export']">导出</el-button>
+                <el-button type="warning" plain icon="download" size="small" @click="handleExport" v-hasPermi="['system:user:export']">{{ $t('operationButtons.export.label') }}</el-button>
             </el-col>
             <right-toolbar v-model:showSearch="showSearch" @queryTable="getPageList"></right-toolbar>
         </el-row>
 
         <el-table stripe border v-loading="loading" :data="tableData">
-            <el-table-column type="index" width="80" label="序号" align="center" />
+            <el-table-column type="index" width="80" :label="$t('tableColumn.index')" align="center" />
             <el-table-column label="工地编码" align="center" prop="siteId" min-width="120" show-overflow-tooltip></el-table-column>
             <el-table-column label="工地名称" align="center" prop="siteName" min-width="120" show-overflow-tooltip></el-table-column>
             <el-table-column label="地址" align="center" prop="siteAddress" min-width="120" show-overflow-tooltip></el-table-column>
@@ -32,11 +32,11 @@
                     <dict-tag :options="site_status" :value="scope.row.status" />
                 </template>
             </el-table-column>
-            <el-table-column label="操作" align="center" class-name="small-padding fixed-width" min-width="200" fixed="right">
+            <el-table-column :label="$t('tableColumn.operation')" align="center" class-name="small-padding fixed-width" min-width="200" fixed="right">
                 <template #default="scope">
-                    <el-button type="text" @click="handleInfo(scope.row)" v-hasPermi="['system:info:edit']">详情</el-button>
-                    <el-button type="text" @click="handleUpdate(scope.row)" v-hasPermi="['system:info:edit']">编辑</el-button>
-                    <el-button type="text" @click="handleDelete(scope.row)" v-hasPermi="['system:info:remove']">删除</el-button>
+                    <el-button type="text" @click="handleInfo(scope.row)" v-hasPermi="['system:info:edit']">{{ $t('operationButtons.info.label') }}</el-button>
+                    <el-button type="text" @click="handleUpdate(scope.row)" v-hasPermi="['system:info:edit']">{{ $t('operationButtons.edit.label') }}</el-button>
+                    <el-button type="text" @click="handleDelete(scope.row)" v-hasPermi="['system:info:remove']">{{ $t('operationButtons.delete.label') }}</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -60,50 +60,52 @@
 			>
 				<i class="upload"></i>
 				<div class="el-upload__text">
-					将文件拖到此处，或
-					<em>点击上传</em>
+					{{$t('components.upload.text1')}}
+					<em>{{$t('components.upload.text2')}}</em>
 				</div>
                 <!-- prettier-ignore -->
-				<div class="el-upload__tip" style="color:red" slot="tip">提示：仅允许导入“xls”或“xlsx”格式文件！</div>
+				<div class="el-upload__tip" style="color:red" slot="tip">{{$t('components.upload.text3')}}</div>
 			</el-upload>
             <template #footer>
                 <div class="dialog-footer">
                     <!-- prettier-ignore -->
-                    <el-button type="primary" @click="submitFileForm">确 定</el-button>
+                    <el-button type="primary" @click="submitFileForm">{{$t('components.btn.confirmButton')}}</el-button>
                     <!-- prettier-ignore -->
-                    <el-button @click="upload.open = false">取 消</el-button>
+                    <el-button @click="upload.open = false">{{$t('components.btn.cancelButton')}}</el-button>
                 </div>
             </template>
         </el-dialog>
 
         <!-- 添加或修改工地对话框 -->
         <el-dialog :title="title" v-model="open" width="800px" append-to-body>
-            <el-form ref="infoRef" :model="form" :rules="rules" label-width="auto">
-                <el-form-item label="工地编码:" prop="siteId">
-                    <el-input v-model="form.siteId" placeholder="请输入" clearable />
-                </el-form-item>
-                <el-form-item label="工地名称:" prop="siteName">
-                    <el-input v-model="form.siteName" placeholder="请输入" clearable />
-                </el-form-item>
-                <el-form-item label="地址:" prop="siteAddress">
-                    <el-input v-model="form.siteAddress" placeholder="请输入" clearable />
-                </el-form-item>
-                <el-form-item label="联系人:" prop="contactPerson">
-                    <el-input v-model="form.contactPerson" placeholder="请输入" clearable />
-                </el-form-item>
-                <el-form-item label="联系方式:" prop="contactPhone">
-                    <el-input v-model="form.contactPhone" placeholder="请输入" clearable />
-                </el-form-item>
-                <el-form-item label="状态:" prop="status">
-                    <el-select v-model="form.status" placeholder="请选择" clearable>
-                        <el-option v-for="dict in site_status" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
-                    </el-select>
-                </el-form-item>
-            </el-form>
+            <el-row justify="center" style="max-height: 600px; overflow-y: auto">
+                <el-form ref="infoRef" :model="form" :rules="rules" label-width="auto">
+                    <el-form-item label="工地编码:" prop="siteId">
+                        <el-input maxlength="100" v-model="form.siteId" :placeholder="$t('components.input.placeholder')" clearable />
+                    </el-form-item>
+                    <el-form-item label="工地名称:" prop="siteName">
+                        <el-input maxlength="100" v-model="form.siteName" :placeholder="$t('components.input.placeholder')" clearable />
+                    </el-form-item>
+                    <el-form-item label="地址:" prop="siteAddress">
+                        <el-input maxlength="100" v-model="form.siteAddress" :placeholder="$t('components.input.placeholder')" clearable />
+                    </el-form-item>
+                    <el-form-item label="联系人:" prop="contactPerson">
+                        <el-input maxlength="100" v-model="form.contactPerson" :placeholder="$t('components.input.placeholder')" clearable />
+                    </el-form-item>
+                    <el-form-item label="联系方式:" prop="contactPhone">
+                        <el-input maxlength="100" v-model="form.contactPhone" :placeholder="$t('components.input.placeholder')" clearable />
+                    </el-form-item>
+                    <el-form-item label="状态:" prop="status">
+                        <el-select v-model="form.status" :placeholder="$t('components.select.placeholder')" clearable>
+                            <el-option v-for="dict in site_status" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-form>
+            </el-row>
             <template #footer>
                 <div class="dialog-footer">
-                    <el-button type="primary" @click="submitForm">确 定</el-button>
-                    <el-button @click="cancel">取 消</el-button>
+                    <el-button type="primary" @click="submitForm">{{ $t('components.btn.confirmButton') }}</el-button>
+                    <el-button @click="cancel">{{ $t('components.btn.cancelButton') }}</el-button>
                 </div>
             </template>
         </el-dialog>
@@ -132,7 +134,7 @@
             </el-form>
             <template #footer>
                 <div class="dialog-footer">
-                    <el-button @click="cancel">取 消</el-button>
+                    <el-button @click="cancel">{{ $t('components.btn.cancelButton') }}</el-button>
                 </div>
             </template>
         </el-dialog>
@@ -144,6 +146,7 @@ import { getSiteList, getSiteInfo, addSite, updateSite, delSite } from '@/api/si
 import { ref, reactive, toRefs, getCurrentInstance } from 'vue'
 import { ElForm, ElTable, ElUpload } from 'element-plus'
 import { getToken } from '@/utils/auth'
+import { $t } from '@/lang'
 const baseURL = import.meta.env.VITE_APP_BASE_API
 
 const { proxy } = getCurrentInstance() as any
@@ -168,12 +171,12 @@ const data = reactive({
     },
     form: {},
     rules: {
-        siteId: [{ required: true, message: '请输入', trigger: 'blur' }],
-        siteName: [{ required: true, message: '请输入', trigger: 'blur' }],
-        siteAddress: [{ required: true, message: '请输入', trigger: 'blur' }],
-        contactPerson: [{ required: true, message: '请输入', trigger: 'blur' }],
-        contactPhone: [{ required: true, message: '请输入', trigger: 'blur' }],
-        status: [{ required: true, message: '请选择', trigger: 'change' }]
+        siteId: [{ required: true, message: $t('components.input.placeholder'), trigger: 'blur' }],
+        siteName: [{ required: true, message: $t('components.input.placeholder'), trigger: 'blur' }],
+        siteAddress: [{ required: true, message: $t('components.input.placeholder'), trigger: 'blur' }],
+        contactPerson: [{ required: true, message: $t('components.input.placeholder'), trigger: 'blur' }],
+        contactPhone: [{ required: true, message: $t('components.input.placeholder'), trigger: 'blur' }],
+        status: [{ required: true, message: $t('components.select.placeholder'), trigger: 'change' }]
     }
 })
 
@@ -259,13 +262,13 @@ const submitForm = () => {
         if (valid) {
             if (form.value.id != null) {
                 updateSite(form.value).then(() => {
-                    proxy.$modal.msgSuccess('修改成功')
+                    proxy.$modal.msgSuccess($t('components.message.edit'))
                     open.value = false
                     getPageList()
                 })
             } else {
                 addSite(form.value).then(() => {
-                    proxy.$modal.msgSuccess('新增成功')
+                    proxy.$modal.msgSuccess($t('components.message.add'))
                     open.value = false
                     getPageList()
                 })
@@ -277,13 +280,16 @@ const submitForm = () => {
 /** 删除按钮操作 */
 const handleDelete = (row: any) => {
     proxy.$modal
-        .confirm('是否确认删除此数据项？')
+        .confirm($t('components.message.delete.content'), {
+            confirmButtonText: $t('components.btn.confirmButton'),
+            cancelButtonText: $t('components.btn.cancelButton')
+        })
         .then(() => {
             return delSite(row.id)
         })
         .then(() => {
             getPageList()
-            proxy.$modal.msgSuccess('删除成功')
+            proxy.$modal.msgSuccess($t('components.message.delete.text'))
         })
         .catch(() => {})
 }
@@ -312,7 +318,7 @@ const upload = ref<any>({
 
 /** 导入按钮操作 */
 const handleImport = () => {
-    upload.value.title = '数据导入'
+    upload.value.title = $t('import.title')
     upload.value.open = true
 }
 
@@ -334,7 +340,8 @@ const handleFileSuccess = (response: any, file: any, fileList: any) => {
     upload.value.open = false
     upload.value.isUploading = false
     cleanUploadRef()
-    proxy.$alert(response.msg, '导入结果', {
+    proxy.$alert(response.msg, $t('import.result'), {
+        confirmButtonText: $t('components.btn.confirmButton'),
         dangerouslyUseHTMLString: true
     })
     getPageList()

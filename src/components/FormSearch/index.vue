@@ -1,8 +1,8 @@
 <template>
     <el-form-item class="item-search">
-        <el-button icon="refresh" @click="resetClick">重置</el-button>
+        <el-button icon="refresh" @click="resetClick">{{ $t('components.btn.resetButton') }}</el-button>
         <!-- prettier-ignore -->
-        <el-button type="primary" icon="search" @click="queryClick">搜索</el-button>
+        <el-button type="primary" icon="search" @click="queryClick">{{ $t('components.btn.searchButton') }}</el-button>
     </el-form-item>
 </template>
 <script>

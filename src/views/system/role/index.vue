@@ -2,10 +2,10 @@
     <div class="app-container">
         <el-form :model="queryParams" ref="queryFormRef" v-show="showSearch" :inline="true" label-width="70px">
             <el-form-item label="角色名称" prop="roleName">
-                <el-input v-model="queryParams.roleName" placeholder="请输入角色名称" clearable style="width: 240px" @keyup.enter.native="handleQuery()" />
+                <el-input maxlength="100" v-model="queryParams.roleName" placeholder="请输入角色名称" clearable style="width: 240px" @keyup.enter.native="handleQuery()" />
             </el-form-item>
-            <el-form-item label="权限字符" prop="roleKey">
-                <el-input v-model="queryParams.roleKey" placeholder="请输入权限字符" clearable style="width: 240px" @keyup.enter.native="handleQuery()" @change="handleQuery()" />
+            <!-- <el-form-item label="权限字符" prop="roleKey">
+                <el-input maxlength="100" v-model="queryParams.roleKey" placeholder="请输入权限字符" clearable style="width: 240px" @keyup.enter.native="handleQuery()" @change="handleQuery()" />
             </el-form-item>
             <el-form-item label="状态" prop="status">
                 <el-select v-model="queryParams.status" placeholder="角色状态" clearable @change="handleQuery()" style="width: 240px">
@@ -14,22 +14,22 @@
             </el-form-item>
             <el-form-item label="创建时间" style="font-weight: bold">
                 <el-date-picker v-model="dateRange" style="width: 240px" format="YYYY-MM-DD" value-format="YYYY-MM-DD" type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期" clearable @change="handleQuery()"></el-date-picker>
-            </el-form-item>
+            </el-form-item> -->
             <form-search @reset="resetQuery()" @search="handleQuery()" />
         </el-form>
 
         <el-row :gutter="10" class="mb8">
             <el-col :span="1.5">
-                <el-button type="primary" plain icon="plus" size="small" @click="handleAdd" v-hasPermi="['system:role:add']">新增</el-button>
+                <el-button type="primary" plain icon="plus" size="small" @click="handleAdd" v-hasPermi="['system:role:add']">{{ $t('operationButtons.add.label') }}</el-button>
             </el-col>
             <el-col :span="1.5">
-                <el-button type="warning" plain icon="download" size="small" @click="handleExport" v-hasPermi="['system:role:export']">导出</el-button>
+                <el-button type="warning" plain icon="download" size="small" @click="handleExport" v-hasPermi="['system:role:export']">{{ $t('operationButtons.export.label') }}</el-button>
             </el-col>
             <el-col :span="1.5" v-if="!single">
-                <el-button type="success" plain icon="edit" size="small" :disabled="single" @click="handleUpdate" v-hasPermi="['system:role:edit']">修改</el-button>
+                <el-button type="success" plain icon="edit" size="small" :disabled="single" @click="handleUpdate" v-hasPermi="['system:role:edit']">{{ $t('operationButtons.edit.label') }}</el-button>
             </el-col>
             <el-col :span="1.5" v-if="!multiple">
-                <el-button type="danger" plain icon="delete" size="small" :loading="exportLoading" :disabled="multiple" @click="handleDelete" v-hasPermi="['system:role:remove']">删除</el-button>
+                <el-button type="danger" plain icon="delete" size="small" :loading="exportLoading" :disabled="multiple" @click="handleDelete" v-hasPermi="['system:role:remove']">{{ $t('operationButtons.delete.label') }}</el-button>
             </el-col>
             <!-- prettier-ignore -->
             <right-toolbar v-model:showSearch="showSearch" @queryTable="getList" />
@@ -37,18 +37,18 @@
 
         <el-table stripe border ref="pageTable" v-loading="loading" :data="roleList" @selection-change="handleSelectionChange">
             <!-- prettier-ignore -->
-            <el-table-column type="selection" width="55" align="center" :selectable="checkSelected"/>
+            <el-table-column type="selection" width="50" align="center" :selectable="checkSelected"/>
             <!-- prettier-ignore -->
-            <el-table-column label="角色编号" prop="roleId" width="150" />
+            <el-table-column label="角色编号" prop="roleId" width="80" />
             <!-- prettier-ignore -->
-            <el-table-column label="角色名称" prop="roleName" :show-overflow-tooltip="true" />
+            <el-table-column label="角色名称" prop="roleName" min-width="120" :show-overflow-tooltip="true" />
             <!-- prettier-ignore -->
-            <el-table-column label="权限字符" prop="roleKey" :show-overflow-tooltip="true" width="200" />
+            <el-table-column label="权限字符" prop="roleKey" min-width="120" :show-overflow-tooltip="true" width="200" />
             <!-- prettier-ignore -->
-            <el-table-column label="显示顺序" prop="roleSort" width="200" />
+            <el-table-column label="显示顺序" prop="roleSort" min-width="120" />
             <!-- prettier-ignore -->
-            <el-table-column label="备注信息" prop="remark" width="300" />
-            <el-table-column label="状态" align="center" width="200">
+            <el-table-column label="备注信息" prop="remark" min-width="120" />
+            <el-table-column label="状态" align="center" min-width="120">
                 <template #default="scope">
                     <!--默认active颜色#1890FF -->
                     <!-- prettier-ignore -->
@@ -58,21 +58,21 @@
                 </template>
             </el-table-column>
             <!-- prettier-ignore -->
-            <el-table-column label="创建时间" align="center" prop="createTime" width="200">
+            <el-table-column label="创建时间" align="center" prop="createTime" min-width="120">
 				<template #default="scope">
 					<span>{{ dateTimeSub(scope.row.createTime) }}</span>
 				</template>
 			</el-table-column>
-            <el-table-column label="修改时间" align="center" prop="updateTime" width="200">
+            <el-table-column label="修改时间" align="center" prop="updateTime" min-width="120">
                 <template #default="scope">
                     <span>{{ dateTimeSub(scope.row.updateTime) }}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="操作" align="center" width="300" class-name="small-padding fixed-width">
+            <el-table-column :label="$t('tableColumn.operation')" align="center" min-width="200" class-name="small-padding fixed-width" fixed="right">
                 <template #default="scope">
-                    <el-link class="el-link-spacing" :underline="false" size="small" type="primary" icon="edit" @click="handleUpdate(scope.row)" v-hasPermi="['system:role:edit']"><span class="table_link_text">修改</span></el-link>
-                    <el-link v-if="scope.row.roleId !== '1'" class="el-link-spacing" :underline="false" size="small" type="primary" icon="circle-check" @click="handleDataScope(scope.row)" v-hasPermi="['system:role:edit']"><span class="table_link_text">数据权限</span></el-link>
-                    <el-link v-if="scope.row.roleId !== '1'" class="el-link-spacing" :underline="false" size="small" type="danger" icon="delete" @click="handleDelete(scope.row)" v-hasPermi="['system:role:remove']"><span class="table_link_text">删除</span></el-link>
+                    <el-link class="el-link-spacing" :underline="false" size="small" type="primary" @click="handleUpdate(scope.row)" v-hasPermi="['system:role:edit']"><span class="table_link_text">修改</span></el-link>
+                    <el-link v-if="scope.row.roleId !== '1'" class="el-link-spacing" :underline="false" size="small" type="primary" @click="handleDataScope(scope.row)" v-hasPermi="['system:role:edit']"><span class="table_link_text">数据权限</span></el-link>
+                    <el-link v-if="scope.row.roleId !== '1'" class="el-link-spacing" :underline="false" size="small" type="danger" @click="handleDelete(scope.row)" v-hasPermi="['system:role:remove']"><span class="table_link_text">删除</span></el-link>
                 </template>
             </el-table-column>
         </el-table>
@@ -85,17 +85,17 @@
                 <el-row>
                     <el-col :span="12">
                         <el-form-item label="角色名称" prop="roleName">
-                            <el-input v-model="form.roleName" placeholder="请输入角色名称" style="width: 100%" />
+                            <el-input maxlength="100" v-model="form.roleName" placeholder="请输入角色名称" style="width: 100%" />
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
                         <el-form-item label="权限字符" prop="roleKey">
-                            <el-input v-model="form.roleKey" placeholder="请输入权限字符" style="width: 100%" />
+                            <el-input maxlength="100" v-model="form.roleKey" placeholder="请输入权限字符" style="width: 100%" />
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
                         <el-form-item label="角色顺序" prop="roleSort">
-                            <el-input-number v-model="form.roleSort" controls-position="right" :min="0" style="width: 100%" />
+                            <el-input maxlength="100" -number v-model="form.roleSort" controls-position="right" :min="0" style="width: 100%" />
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
@@ -130,7 +130,7 @@
                     </el-col>
                     <el-col :span="24">
                         <el-form-item label="备注">
-                            <el-input v-model="form.remark" type="textarea" :autosize="{ minRows: 4 }" placeholder="请输入内容" />
+                            <el-input maxlength="100" v-model="form.remark" type="textarea" :autosize="{ minRows: 4 }" placeholder="请输入内容" />
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -138,8 +138,8 @@
             <template #footer>
                 <div class="dialog-footer">
                     <!-- prettier-ignore -->
-                    <el-button type="primary" @click="submitForm">确 定</el-button>
-                    <el-button @click="open = false">取 消</el-button>
+                    <el-button type="primary" @click="submitForm">{{$t('components.btn.confirmButton')}}</el-button>
+                    <el-button @click="open = false">{{ $t('components.btn.cancelButton') }}</el-button>
                 </div>
             </template>
         </el-dialog>
@@ -148,10 +148,10 @@
         <el-dialog :title="title" v-model="openDataScope" width="20%" append-to-body @close="cleanSelect()">
             <el-form :model="form" label-width="80px">
                 <el-form-item label="角色名称">
-                    <el-input v-model="form.roleName" :disabled="true" />
+                    <el-input maxlength="100" v-model="form.roleName" :disabled="true" />
                 </el-form-item>
                 <el-form-item label="权限字符">
-                    <el-input v-model="form.roleKey" :disabled="true" />
+                    <el-input maxlength="100" v-model="form.roleKey" :disabled="true" />
                 </el-form-item>
                 <el-form-item label="权限范围">
                     <el-select v-model="form.dataScope" @change="dataScopeSelectChange">
@@ -168,8 +168,8 @@
             <template #footer>
                 <div class="dialog-footer">
                     <!-- prettier-ignore -->
-                    <el-button type="primary" @click="submitDataScope">确 定</el-button>
-                    <el-button @click="openDataScope = false">取 消</el-button>
+                    <el-button type="primary" @click="submitDataScope">{{$t('components.btn.confirmButton')}}</el-button>
+                    <el-button @click="openDataScope = false">{{ $t('components.btn.cancelButton') }}</el-button>
                 </div>
             </template>
         </el-dialog>

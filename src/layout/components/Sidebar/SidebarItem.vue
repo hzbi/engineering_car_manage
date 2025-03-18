@@ -5,18 +5,18 @@
                 <el-menu-item :index="resolvePath(onlyOneChild.path)" :class="{ 'submenu-title-noDropdown': !isNest }">
                     <svg-icon :icon-class="onlyOneChild.meta.icon || (item.meta && item.meta.icon)" />
                     <template #title>
-                        <span class="menu-title" :title="hasTitle(onlyOneChild.meta.title)">{{ onlyOneChild.meta.title }}</span>
+                        <span class="menu-title" :title="hasTitle($t(`menu.${onlyOneChild.name}`))">{{ $t(`menu.${onlyOneChild.name}`) }}</span>
                     </template>
                 </el-menu-item>
             </app-link>
         </template>
-
+        <!-- onlyOneChild.meta.title -->
         <el-sub-menu v-else ref="subMenu" :index="resolvePath(item.path)" popper-append-to-body>
             <template v-if="item.meta" #title>
                 <svg-icon :icon-class="item.meta && item.meta.icon" />
-                <span class="menu-title" :title="hasTitle(item.meta.title)">{{ item.meta.title }}</span>
+                <span class="menu-title" :title="hasTitle($t(`menu.${item.name}`))">{{ $t(`menu.${item.name}`) }}</span>
             </template>
-
+            <!-- item.meta.title -->
             <sidebar-item v-for="child in item.children" :key="child.path" :is-nest="true" :item="child" :base-path="resolvePath(child.path)" class="nest-menu" />
         </el-sub-menu>
     </div>
@@ -70,7 +70,6 @@ function hasOneShowingChild(children = [], parent) {
         onlyOneChild.value = { ...parent, path: '', noShowingChildren: true }
         return true
     }
-
     return false
 }
 

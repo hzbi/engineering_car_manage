@@ -1,35 +1,35 @@
 <template>
     <div class="app-container">
         <el-form :model="queryParams" ref="queryFormRef" :inline="true" v-show="showSearch">
-            <el-form-item label="卡车编号" prop="carId">
-                <el-input v-model="queryParams.carId" placeholder="请输入卡车编号" clearable style="width: 200px" @keyup.enter.native="handleQuery" />
+            <el-form-item :label="$t('accessoryUse.searchBar.plateNumber.label')" prop="carNumber">
+                <el-input maxlength="100" v-model="queryParams.carNumber" :placeholder="$t('components.input.placeholder')" clearable style="width: 200px" />
             </el-form-item>
-            <el-form-item label="开始日期" prop="startTime">
-                <el-date-picker clearable v-model="queryParams.startTime" type="date" value-format="YYYY-MM-DD" placeholder="选择时间"></el-date-picker>
+            <el-form-item :label="$t('accessoryUse.searchBar.startDate.label')" prop="startTime">
+                <el-date-picker clearable v-model="queryParams.startTime" type="date" value-format="YYYY-MM-DD" :placeholder="$t('components.datePicker.placeholder')"></el-date-picker>
             </el-form-item>
-            <el-form-item label="结束日期" prop="endTime">
-                <el-date-picker clearable v-model="queryParams.endTime" type="date" value-format="YYYY-MM-DD" placeholder="选择时间"></el-date-picker>
+            <el-form-item :label="$t('accessoryUse.searchBar.endDate.label')" prop="endTime">
+                <el-date-picker clearable v-model="queryParams.endTime" type="date" value-format="YYYY-MM-DD" :placeholder="$t('components.datePicker.placeholder')"></el-date-picker>
             </el-form-item>
             <form-search @reset="resetQuery" @search="handleQuery" />
         </el-form>
 
         <el-table stripe border v-loading="loading" :data="infoList">
             <el-table-column type="selection" width="50" align="center" />
-            <el-table-column type="index" width="80" label="序号" align="center" />
-            <el-table-column label="日期" align="center" prop="carId" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="卡车编号" align="center" prop="carId" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="配件类型" align="center" prop="accessoryType" min-width="120" show-overflow-tooltip>
+            <el-table-column type="index" width="80" :label="$t('tableColumn.index')" align="center" />
+            <el-table-column :label="$t('accessoryUse.tableColumn[0].label')" align="center" prop="maintenanceTime" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('accessoryUse.tableColumn[1].label')" align="center" prop="carNumber" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('accessoryUse.tableColumn[2].label')" align="center" prop="accessoryType" min-width="120" show-overflow-tooltip>
                 <template #default="scope">
                     <dict-tag :options="accessory_type" :value="scope.row.accessoryType" />
                 </template>
             </el-table-column>
-            <el-table-column label="配件名称" align="center" prop="accessoryName" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="数量" align="center" prop="num" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="用途" align="center" prop="useing" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="供应商" align="center" prop="supplier" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="备注" align="center" prop="remark" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="创建人" align="center" prop="createBy" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="创建时间" align="center" prop="createTime" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('accessoryUse.tableColumn[3].label')" align="center" prop="accessoryName" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('accessoryUse.tableColumn[4].label')" align="center" prop="num" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('accessoryUse.tableColumn[5].label')" align="center" prop="useing" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('accessoryUse.tableColumn[6].label')" align="center" prop="supplier" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('accessoryUse.tableColumn[7].label')" align="center" prop="remark" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('accessoryUse.tableColumn[8].label')" align="center" prop="createBy" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('accessoryUse.tableColumn[9].label')" align="center" prop="createTime" min-width="120" show-overflow-tooltip></el-table-column>
         </el-table>
 
         <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getPageList" />
@@ -40,6 +40,7 @@
 import { getAccessoryUseList } from '@/api/truck/accessoryUse'
 import { ref, reactive, toRefs, getCurrentInstance } from 'vue'
 import { ElForm, ElTable } from 'element-plus'
+import { $t } from '@/lang'
 
 const { proxy } = getCurrentInstance() as any
 
@@ -56,7 +57,7 @@ const data = reactive({
     queryParams: {
         pageNum: 1,
         pageSize: 10,
-        carId: null,
+        carNumber: null,
         startTime: null,
         endTime: null
     },
