@@ -63,7 +63,7 @@
         <!-- 添加或修改司机信息对话框 -->
         <el-dialog :title="title" v-model="open" width="800px" append-to-body>
             <el-row justify="center" style="max-height: 600px; overflow-y: auto">
-                <el-form ref="formRef" :model="form" :rules="rules" label-width="auto">
+                <el-form ref="formRef" :model="form" :rules="rules" label-width="auto" scroll-to-error>
                     <el-form-item label="日期:" prop="workloadTime">
                         <el-date-picker clearable v-model="form.workloadTime" type="date" value-format="YYYY-MM-DD" :placeholder="$t('components.datePicker.placeholder')" style="width: 300px"></el-date-picker>
                     </el-form-item>
@@ -103,29 +103,31 @@
 
         <!-- 司机信息详情对话框 -->
         <el-dialog :title="title" v-model="openInfo" width="800px" append-to-body>
-            <el-form ref="formRef" :model="form" :rules="rules" label-width="auto">
-                <el-form-item label="日期:" prop="workloadTime">
-                    <span>{{ form.workloadTime }}</span>
-                </el-form-item>
-                <el-form-item label="司机姓名:" prop="name">
-                    <span>{{ form.name }}</span>
-                </el-form-item>
-                <el-form-item label="车牌号:" prop="carNumber">
-                    <span>{{ form.carNumber }}</span>
-                </el-form-item>
-                <el-form-item label="表现评分(总分10分):" prop="performanceScore">
-                    <dict-tag :options="performance" :value="form.performanceScore" />
-                </el-form-item>
-                <el-form-item label="违规类型:" prop="violationType">
-                    <dict-tag :options="violation_type" :value="form.violationType" />
-                </el-form-item>
-                <el-form-item label="偷窃行为记录:" prop="log">
-                    <span>{{ form.log }}</span>
-                </el-form-item>
-                <el-form-item label="备注:" prop="remark">
-                    <span>{{ form.remark }}</span>
-                </el-form-item>
-            </el-form>
+            <el-row justify="center" style="max-height: 600px; overflow-y: auto">
+                <el-form ref="formRef" :model="form" :rules="rules" label-width="auto">
+                    <el-form-item label="日期:" prop="workloadTime">
+                        <span>{{ form.workloadTime }}</span>
+                    </el-form-item>
+                    <el-form-item label="司机姓名:" prop="name">
+                        <span>{{ form.name }}</span>
+                    </el-form-item>
+                    <el-form-item label="车牌号:" prop="carNumber">
+                        <span>{{ form.carNumber }}</span>
+                    </el-form-item>
+                    <el-form-item label="表现评分(总分10分):" prop="performanceScore">
+                        <dict-tag :options="performance" :value="form.performanceScore" />
+                    </el-form-item>
+                    <el-form-item label="违规类型:" prop="violationType">
+                        <dict-tag :options="violation_type" :value="form.violationType" />
+                    </el-form-item>
+                    <el-form-item label="偷窃行为记录:" prop="log">
+                        <span>{{ form.log }}</span>
+                    </el-form-item>
+                    <el-form-item label="备注:" prop="remark">
+                        <span>{{ form.remark }}</span>
+                    </el-form-item>
+                </el-form>
+            </el-row>
             <template #footer>
                 <div class="dialog-footer">
                     <el-button @click="cancel">{{ $t('components.btn.cancelButton') }}</el-button>
@@ -146,6 +148,7 @@
 				:on-progress="handleFileUploadProgress"
 				:on-success="handleFileSuccess"
 				:auto-upload="false"
+                v-model:file-list="fileList"
 				drag
 			>
 				<i class="upload"></i>
@@ -168,11 +171,11 @@
     </div>
 </template>
 
-<script setup name="Info" lang="ts">
+<script setup name="DriverPerformance" lang="ts">
 import { getDriverPerformanceList, getDriverPerformanceInfo, addDriverPerformance, updateDriverPerformance, delDriverPerformance } from '@/api/driver/driverPerformance'
 import { getDriverAndTruck } from '@/api/driver/driverInfo'
 import { ref, reactive, toRefs, getCurrentInstance } from 'vue'
-import { ElForm, ElTable, ElUpload } from 'element-plus'
+import { ElForm, ElTable, ElUpload, UploadUserFile } from 'element-plus'
 import { getToken } from '@/utils/auth'
 import { $t } from '@/lang'
 import useAppStore from '@/store/modules/app'
@@ -360,7 +363,7 @@ const handleDelete = (row: any) => {
 
 /** 导出按钮操作 */
 const handleExport = () => {
-    proxy.download('truck/DriverPerformance/export', { ...queryParams.value }, `${$t('menu.DriverPerformance')}${new Date().getTime()}.xlsx`)
+    proxy.download('truck/DriverPerformance/export', { ...queryParams.value, ids: ids.value.join(',') }, `${$t('menu.DriverPerformance')}${new Date().getTime()}.xlsx`)
 }
 
 const uploadRef = ref<InstanceType<typeof ElUpload>>()
@@ -379,6 +382,7 @@ const upload = ref<any>({
     // 上传的地址
     url: baseURL + '/truck/DriverPerformance/import'
 })
+const fileList = ref<UploadUserFile[]>([])
 
 /** 导入按钮操作 */
 const handleImport = () => {

@@ -47,12 +47,12 @@
                 </template>
             </el-table-column>
             <el-table-column :label="$t('accessoryStock.tableColumn[3].label')" align="center" prop="supplier" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column :label="$t('accessoryStock.tableColumn[4].label')" align="center" prop="monetaryUnit" min-width="120" show-overflow-tooltip>
+            <el-table-column :label="$t('accessoryStock.tableColumn[4].label')" align="center" prop="monetaryUnit" min-width="120" show-overflow-tooltip v-hasRole="['superAdmin', 'admin']">
                 <template #default="scope">
                     <dict-tag :options="currency_unit_type" :value="scope.row.monetaryUnit" />
                 </template>
             </el-table-column>
-            <el-table-column :label="$t('accessoryStock.tableColumn[5].label')" align="center" prop="price" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('accessoryStock.tableColumn[5].label')" align="center" prop="price" min-width="120" show-overflow-tooltip v-hasRole="['superAdmin', 'admin']"></el-table-column>
             <el-table-column :label="$t('accessoryStock.tableColumn[6].label')" align="center" prop="num" min-width="120" show-overflow-tooltip></el-table-column>
             <el-table-column :label="$t('accessoryStock.tableColumn[7].label')" align="center" prop="outNum" min-width="120" show-overflow-tooltip></el-table-column>
             <el-table-column :label="$t('accessoryStock.tableColumn[8].label')" align="center" prop="time" min-width="120" show-overflow-tooltip>
@@ -79,7 +79,7 @@
         <!-- 添加或修改对话框 -->
         <el-dialog :title="title" v-model="open" width="800px" append-to-body>
             <el-row justify="center" style="max-height: 600px; overflow-y: auto">
-                <el-form ref="formRef" :model="form" :rules="rules" label-width="auto">
+                <el-form ref="formRef" :model="form" :rules="rules" label-width="auto" scroll-to-error>
                     <el-form-item :label="$t('accessoryStock.fields[0].label')" prop="accessoryName">
                         <el-input maxlength="100" v-model="form.accessoryName" :placeholder="$t('components.input.placeholder')" clearable />
                     </el-form-item>
@@ -120,40 +120,42 @@
 
         <!-- 价格维护对话框 -->
         <el-dialog :title="title" v-model="openPrice" width="800px" append-to-body>
-            <el-form ref="formRef" :model="form" :rules="rules" label-width="auto">
-                <el-form-item :label="$t('accessoryStock.fields[0].label')" prop="accessoryName">
-                    <span>{{ form.accessoryName }}</span>
-                </el-form-item>
-                <el-form-item :label="$t('accessoryStock.fields[1].label')" prop="siteName">
-                    <span>{{ form.siteName }}</span>
-                </el-form-item>
-                <el-form-item :label="$t('accessoryStock.fields[2].label')" prop="accessoryType">
-                    <dict-tag :options="accessory_type" :value="form.accessoryType" />
-                </el-form-item>
-                <el-form-item :label="$t('accessoryStock.fields[3].label')" prop="supplier">
-                    <span>{{ form.supplier }}</span>
-                </el-form-item>
-                <el-form-item :label="$t('accessoryStock.fields[4].label')" prop="monetaryUnit">
-                    <el-select v-model="form.monetaryUnit" :placeholder="$t('components.select.placeholder')" clearable>
-                        <el-option v-for="dict in currency_unit_type" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item :label="$t('accessoryStock.fields[5].label')" prop="price">
-                    <el-input maxlength="100" v-model="form.price" :placeholder="$t('components.input.placeholder')" clearable />
-                </el-form-item>
-                <el-form-item :label="$t('accessoryStock.fields[6].label')" prop="num">
-                    <span>{{ form.num }}</span>
-                </el-form-item>
-                <el-form-item :label="$t('accessoryStock.fields[7].label')" prop="time">
-                    <span>{{ form.time }}</span>
-                </el-form-item>
-                <el-form-item :label="$t('accessoryStock.fields[8].label')" prop="by">
-                    <span>{{ form.by }}</span>
-                </el-form-item>
-                <el-form-item :label="$t('accessoryStock.fields[9].label')" prop="remark">
-                    <span>{{ form.remark }}</span>
-                </el-form-item>
-            </el-form>
+            <el-row justify="center" style="max-height: 600px; overflow-y: auto">
+                <el-form ref="formRef" :model="form" :rules="rules" label-width="auto" scroll-to-error>
+                    <el-form-item :label="$t('accessoryStock.fields[0].label')" prop="accessoryName">
+                        <span>{{ form.accessoryName }}</span>
+                    </el-form-item>
+                    <el-form-item :label="$t('accessoryStock.fields[1].label')" prop="siteName">
+                        <span>{{ form.siteName }}</span>
+                    </el-form-item>
+                    <el-form-item :label="$t('accessoryStock.fields[2].label')" prop="accessoryType">
+                        <dict-tag :options="accessory_type" :value="form.accessoryType" />
+                    </el-form-item>
+                    <el-form-item :label="$t('accessoryStock.fields[3].label')" prop="supplier">
+                        <span>{{ form.supplier }}</span>
+                    </el-form-item>
+                    <el-form-item :label="$t('accessoryStock.fields[4].label')" prop="monetaryUnit">
+                        <el-select v-model="form.monetaryUnit" :placeholder="$t('components.select.placeholder')" clearable>
+                            <el-option v-for="dict in currency_unit_type" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item :label="$t('accessoryStock.fields[5].label')" prop="price">
+                        <el-input maxlength="100" v-model="form.price" :placeholder="$t('components.input.placeholder')" clearable />
+                    </el-form-item>
+                    <el-form-item :label="$t('accessoryStock.fields[6].label')" prop="num">
+                        <span>{{ form.num }}</span>
+                    </el-form-item>
+                    <el-form-item :label="$t('accessoryStock.fields[7].label')" prop="time">
+                        <span>{{ form.time }}</span>
+                    </el-form-item>
+                    <el-form-item :label="$t('accessoryStock.fields[8].label')" prop="by">
+                        <span>{{ form.by }}</span>
+                    </el-form-item>
+                    <el-form-item :label="$t('accessoryStock.fields[9].label')" prop="remark">
+                        <span>{{ form.remark }}</span>
+                    </el-form-item>
+                </el-form>
+            </el-row>
             <template #footer>
                 <div class="dialog-footer">
                     <el-button type="primary" @click="submitForm">{{ $t('components.btn.confirmButton') }}</el-button>
@@ -204,7 +206,7 @@
             <el-divider content-position="left">{{ $t('accessoryStock.outboundRecords.title') }}</el-divider>
             <el-row :gutter="10" class="mb8">
                 <el-col :span="1.5">
-                    <el-button type="primary" plain icon="plus" size="small" @click="handleAddAccessoryOut" v-hasPermi="['truck:accessoryStock:add']">{{ $t('components.btn.outButton') }}</el-button>
+                    <el-button type="primary" plain icon="plus" size="small" @click="handleAddAccessoryOut" v-hasPermi="['truck:accessoryStock:outStock']">{{ $t('components.btn.outButton') }}</el-button>
                 </el-col>
             </el-row>
             <el-table stripe border v-loading="loading" :data="AccessoryOutData">
@@ -222,8 +224,8 @@
                 <el-table-column :label="$t('accessoryStock.outboundRecords.tableColumn[6].label')" align="center" prop="createTime" min-width="120" show-overflow-tooltip></el-table-column>
                 <el-table-column :label="$t('tableColumn.operation')" align="center" class-name="small-padding fixed-width" min-width="200" fixed="right">
                     <template #default="scope">
-                        <el-button type="text" @click="handleUpdateAccessoryOut(scope.row)" v-if="scope.row.relevance == 1" v-hasPermi="['truck:accessoryStock:edit']">{{ $t('operationButtons.edit.label') }}</el-button>
-                        <el-button type="text" @click="handleDeleteAccessoryOut(scope.row)" v-if="scope.row.relevance == 1" v-hasPermi="['truck:accessoryStock:remove']">{{ $t('operationButtons.delete.label') }}</el-button>
+                        <el-button type="text" @click="handleUpdateAccessoryOut(scope.row)" v-if="scope.row.relevance == 1" v-hasPermi="['truck:accessoryStock:infoEdit']">{{ $t('operationButtons.edit.label') }}</el-button>
+                        <el-button type="text" @click="handleDeleteAccessoryOut(scope.row)" v-if="scope.row.relevance == 1" v-hasPermi="['truck:accessoryStock:infoDelete']">{{ $t('operationButtons.delete.label') }}</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -231,7 +233,7 @@
 
         <!-- 添加或修改对话框 -->
         <el-dialog :title="titleAccessoryOut" v-model="openAccessoryOut" width="800px" append-to-body>
-            <el-row justify="center" style="max-height: 600px; overflow-y: auto">
+            <el-row justify="center" style="max-height: 600px; overflow-y: auto" scroll-to-error>
                 <el-form ref="formRefAccessoryOut" :model="formAccessoryOut" :rules="rulesAccessoryOut" label-width="auto">
                     <el-form-item :label="$t('accessoryStock.outboundRecords.fields[0].label')" prop="num">
                         <el-input maxlength="100" v-model="formAccessoryOut.num" :placeholder="$t('components.input.placeholder')" clearable />
@@ -268,6 +270,7 @@
 				:on-progress="handleFileUploadProgress"
 				:on-success="handleFileSuccess"
 				:auto-upload="false"
+                v-model:file-list="fileList"
 				drag
 			>
 				<i class="upload"></i>
@@ -290,12 +293,12 @@
     </div>
 </template>
 
-<script setup name="Info" lang="ts">
+<script setup name="AccessoryStock" lang="ts">
 import { getAccessoryStockList, getAccessoryStockInfo, addAccessoryStock, updateAccessoryStock, delAccessoryStock } from '@/api/truck/accessoryStock'
 import { getAccessoryOutList, getAccessoryOutInfo, addAccessoryOut, updateAccessoryOut, delAccessoryOut } from '@/api/truck/accessoryOut'
 import { getSiteList } from '@/api/site/siteManage'
 import { ref, reactive, toRefs, getCurrentInstance } from 'vue'
-import { ElForm, ElTable, ElUpload } from 'element-plus'
+import { ElForm, ElTable, ElUpload, UploadUserFile } from 'element-plus'
 import { getToken } from '@/utils/auth'
 import { $t } from '@/lang'
 import useAppStore from '@/store/modules/app'
@@ -379,7 +382,7 @@ const dataAccessoryOut = reactive({
             { required: true, message: $t('components.input.placeholder'), trigger: 'blur' },
             {
                 validator: (rule: any, value: any, callback: any) => {
-                    if (value > form.value.outNum) {
+                    if (value - 0 > form.value.outNum - 0) {
                         callback(new Error($t('components.validator.inventoryInsufficient')))
                     } else {
                         callback()
@@ -614,7 +617,7 @@ const handleDeleteAccessoryOut = (row: any) => {
 
 /** 导出按钮操作 */
 const handleExport = () => {
-    proxy.download('truck/Accessory/export', { ...queryParams.value }, `${$t('menu.AccessoryStock')}${new Date().getTime()}.xlsx`)
+    proxy.download('truck/Accessory/export', { ...queryParams.value, ids: ids.value.join(',') }, `${$t('menu.AccessoryStock')}${new Date().getTime()}.xlsx`)
 }
 
 const uploadRef = ref<InstanceType<typeof ElUpload>>()
@@ -633,6 +636,8 @@ const upload = ref<any>({
     // 上传的地址
     url: baseURL + '/truck/Accessory/import'
 })
+
+const fileList = ref<UploadUserFile[]>([])
 
 /** 导入按钮操作 */
 const handleImport = () => {

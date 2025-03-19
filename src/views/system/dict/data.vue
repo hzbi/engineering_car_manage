@@ -60,7 +60,7 @@
             <el-table-column :label="$t('tableColumn.operation')" align="center" width="300" class-name="small-padding fixed-width">
                 <template #default="scope">
                     <el-link class="table_link_btn" :underline="false" size="small" type="primary" icon="edit" @click="handleUpdate(scope.row)" v-hasPermi="['system:dict:edit']"><span class="table_link_text">修改</span></el-link>
-                    <el-link class="table_link_btn" :underline="false" size="small" type="danger" icon="delete" @click="handleDelete(scope.row)" v-hasPermi="['system:dict:remove']"><span class="table_link_text">删除</span></el-link>
+                    <el-link class="table_link_btn" :underline="false" size="small" type="primary" icon="delete" @click="handleDelete(scope.row)" v-hasPermi="['system:dict:remove']"><span class="table_link_text">删除</span></el-link>
                 </template>
             </el-table-column>
         </el-table>

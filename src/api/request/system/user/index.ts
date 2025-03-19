@@ -4,7 +4,7 @@ import { listUser, getUser, delUser, addUser, updateUser, resetUserPwd, changeUs
 import { getToken } from '@/utils/auth'
 import { treeselect } from '@/api/system/dept'
 import { ref, getCurrentInstance, watch, toRefs, nextTick, reactive } from 'vue'
-import { ElForm, ElTable, ElUpload, FormItemRule } from 'element-plus'
+import { ElForm, ElTable, ElUpload, FormItemRule, UploadUserFile } from 'element-plus'
 import { $t } from '@/lang'
 const baseURL = import.meta.env.VITE_APP_BASE_API
 
@@ -70,6 +70,7 @@ export default () => {
         // 上传的地址
         url: baseURL + '/system/user/importData'
     })
+    const fileList = ref<UploadUserFile[]>([])
     // 查询参数
     const queryParams = ref<any>({
         pageNum: 1,
@@ -416,7 +417,7 @@ export default () => {
     // 文件上传成功处理
     const handleFileSuccess = (response: any, file: any, fileList: any) => {
         upload.value.open = false
-        upload.isUploading = false
+        upload.value.isUploading = false
         // proxy.$refs.upload.clearFiles();
         cleanUploadRef()
         proxy.$alert(response.msg, $t('import.result'), {
@@ -427,7 +428,7 @@ export default () => {
     }
     // 提交上传文件
     const submitFileForm = () => {
-        proxy.$refs.upload.submit()
+        proxy.$refs.uploadRef.submit()
     }
 
     const checkSelected = (row: any) => {
@@ -475,6 +476,7 @@ export default () => {
         rules,
         pageTableRef,
         uploadRef,
+        fileList,
         getPageList,
         filterNode,
         handleNodeClick,

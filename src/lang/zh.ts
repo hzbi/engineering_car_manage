@@ -649,6 +649,9 @@ export default {
         },
         price: {
             label: '价格维护'
+        },
+        select: {
+            label: '选择使用'
         }
     },
     dialog: {

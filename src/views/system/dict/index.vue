@@ -71,7 +71,7 @@
             <el-table-column :label="$t('tableColumn.operation')" align="center" width="200" fixed="right">
                 <template #default="scope">
                     <el-link class="table_link_btn" :underline="false" type="primary" @click="handleUpdate(scope.row)" v-hasPermi="['system:dict:edit']"><span class="table_link_text">修改</span></el-link>
-                    <el-link :underline="false" size="small" type="danger" @click="handleDelete(scope.row)" v-hasPermi="['system:dict:remove']"><span class="table_link_text">删除</span></el-link>
+                    <el-link :underline="false" size="small" type="primary" @click="handleDelete(scope.row)" v-hasPermi="['system:dict:remove']"><span class="table_link_text">删除</span></el-link>
                 </template>
             </el-table-column>
         </el-table>

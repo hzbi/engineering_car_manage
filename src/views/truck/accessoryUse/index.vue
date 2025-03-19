@@ -36,7 +36,7 @@
     </div>
 </template>
 
-<script setup name="Info" lang="ts">
+<script setup name="AccessoryUse" lang="ts">
 import { getAccessoryUseList } from '@/api/truck/accessoryUse'
 import { ref, reactive, toRefs, getCurrentInstance } from 'vue'
 import { ElForm, ElTable } from 'element-plus'

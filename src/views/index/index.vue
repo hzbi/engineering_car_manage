@@ -112,11 +112,11 @@
     </div>
 </template>
 
-<script setup name="Info" lang="ts">
+<script setup name="Index" lang="ts">
 import { getIndexAllNum, getAccessoryStockList } from '@/api/statistics/index'
 import { ref, reactive, toRefs, getCurrentInstance } from 'vue'
 import { checkPermi, checkRole } from '@/utils/permission' // 权限判断函数
-import { ElForm } from 'element-plus'
+import { dayjs, ElForm } from 'element-plus'
 import router from '@/router'
 import { $t } from '@/lang'
 
@@ -140,8 +140,8 @@ const numList = ref([
 
 const data = reactive({
     queryParams: {
-        startTime: null,
-        endTime: null
+        startTime: dayjs().startOf('year').format('YYYY-MM-DD'),
+        endTime: dayjs(new Date().setDate(new Date().getDate())).format('YYYY-MM-DD')
     }
 })
 

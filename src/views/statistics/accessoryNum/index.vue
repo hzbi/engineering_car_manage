@@ -32,11 +32,11 @@
     </div>
 </template>
 
-<script setup name="Info" lang="ts">
+<script setup name="AccessoryNum" lang="ts">
 import { getAccessoryStockList } from '@/api/statistics/index'
 import { getSiteList } from '@/api/site/siteManage'
 import { ref, reactive, toRefs, getCurrentInstance, onMounted } from 'vue'
-import { ElForm, ElTable } from 'element-plus'
+import { dayjs, ElForm, ElTable } from 'element-plus'
 import * as echarts from 'echarts'
 import { $t } from '@/lang'
 
@@ -58,7 +58,7 @@ const data = reactive({
     queryParams: {
         pageNum: 1,
         pageSize: 10,
-        year: null,
+        year: dayjs(new Date().setDate(new Date().getDate() - 1)).format('YYYY-MM-DD'),
         mon: null,
         carNumber: null,
         carType: null
@@ -67,8 +67,7 @@ const data = reactive({
 
 const { queryParams }: any = toRefs(data)
 
-console.log(accessory_type)
-console.log(proxy.selectDictLabel(accessory_type.value, '0'))
+const accessoryTypeOptions = ref([])
 
 /** 查询配件使用列表 */
 const getPageList = () => {
@@ -80,6 +79,9 @@ const getPageList = () => {
         const commandstatsIntance = echarts.init(chartRef.value, 'macarons')
 
         commandstatsIntance.setOption({
+            title: {
+                text: '库存数量'
+            },
             grid: {
                 left: '20',
                 right: '20',
@@ -88,7 +90,7 @@ const getPageList = () => {
             },
             xAxis: {
                 type: 'category',
-                data: res.rows && res.rows.map((item: any) => item.accessoryName)
+                data: res.rows && res.rows.map((item: any) => proxy.selectDictLabel(accessoryTypeOptions.value, item.accessoryType))
             },
             yAxis: {
                 type: 'value'
@@ -137,6 +139,9 @@ const handleExport = () => {
 
 onMounted(() => {
     getPageList()
+    proxy.getDicts('accessory_type').then((response: any) => {
+        accessoryTypeOptions.value = response.data
+    })
 })
 </script>
 

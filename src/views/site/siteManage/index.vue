@@ -56,6 +56,7 @@
 				:on-progress="handleFileUploadProgress"
 				:on-success="handleFileSuccess"
 				:auto-upload="false"
+                v-model:file-list="fileList"
 				drag
 			>
 				<i class="upload"></i>
@@ -112,26 +113,28 @@
 
         <!-- 工地详情对话框 -->
         <el-dialog :title="title" v-model="openInfo" width="800px" append-to-body>
-            <el-form ref="infoRef" :model="form" :rules="rules" label-width="auto">
-                <el-form-item label="工地编码:" prop="siteId">
-                    <span>{{ form.siteId }}</span>
-                </el-form-item>
-                <el-form-item label="工地名称:" prop="siteName">
-                    <span>{{ form.siteName }}</span>
-                </el-form-item>
-                <el-form-item label="地址:" prop="siteAddress">
-                    <span>{{ form.siteAddress }}</span>
-                </el-form-item>
-                <el-form-item label="联系人:" prop="contactPerson">
-                    <span>{{ form.contactPerson }}</span>
-                </el-form-item>
-                <el-form-item label="联系方式:" prop="contactPhone">
-                    <span>{{ form.contactPhone }}</span>
-                </el-form-item>
-                <el-form-item label="状态:" prop="status">
-                    <dict-tag :options="site_status" :value="form.status" />
-                </el-form-item>
-            </el-form>
+            <el-row justify="center" style="max-height: 600px; overflow-y: auto">
+                <el-form ref="infoRef" :model="form" :rules="rules" label-width="auto">
+                    <el-form-item label="工地编码:" prop="siteId">
+                        <span>{{ form.siteId }}</span>
+                    </el-form-item>
+                    <el-form-item label="工地名称:" prop="siteName">
+                        <span>{{ form.siteName }}</span>
+                    </el-form-item>
+                    <el-form-item label="地址:" prop="siteAddress">
+                        <span>{{ form.siteAddress }}</span>
+                    </el-form-item>
+                    <el-form-item label="联系人:" prop="contactPerson">
+                        <span>{{ form.contactPerson }}</span>
+                    </el-form-item>
+                    <el-form-item label="联系方式:" prop="contactPhone">
+                        <span>{{ form.contactPhone }}</span>
+                    </el-form-item>
+                    <el-form-item label="状态:" prop="status">
+                        <dict-tag :options="site_status" :value="form.status" />
+                    </el-form-item>
+                </el-form>
+            </el-row>
             <template #footer>
                 <div class="dialog-footer">
                     <el-button @click="cancel">{{ $t('components.btn.cancelButton') }}</el-button>
@@ -141,10 +144,10 @@
     </div>
 </template>
 
-<script setup name="Info" lang="ts">
+<script setup name="SiteManage" lang="ts">
 import { getSiteList, getSiteInfo, addSite, updateSite, delSite } from '@/api/site/siteManage'
 import { ref, reactive, toRefs, getCurrentInstance } from 'vue'
-import { ElForm, ElTable, ElUpload } from 'element-plus'
+import { ElForm, ElTable, ElUpload, UploadUserFile } from 'element-plus'
 import { getToken } from '@/utils/auth'
 import { $t } from '@/lang'
 import useAppStore from '@/store/modules/app'
@@ -317,6 +320,7 @@ const upload = ref<any>({
     // 上传的地址
     url: baseURL + '/truck/Site/import'
 })
+const fileList = ref<UploadUserFile[]>([])
 
 /** 导入按钮操作 */
 const handleImport = () => {

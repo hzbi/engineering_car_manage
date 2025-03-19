@@ -67,7 +67,7 @@
         <!-- 添加或修改车辆信息对话框 -->
         <el-dialog :title="title" v-model="open" width="800px" append-to-body>
             <el-row justify="center" style="max-height: 600px; overflow-y: auto">
-                <el-form ref="formRef" :model="form" :rules="rules" label-width="auto">
+                <el-form ref="formRef" :model="form" :rules="rules" label-width="auto" scroll-to-error>
                     <el-form-item :label="$t('truckInfo.fields[0].label')" prop="carNumber">
                         <el-input maxlength="100" v-model="form.carNumber" :placeholder="$t('components.input.placeholder')" clearable />
                     </el-form-item>
@@ -105,30 +105,31 @@
 
         <!-- 车辆信息详情对话框 -->
         <el-dialog :title="title" v-model="openInfo" width="800px" append-to-body>
-            <el-form ref="formRef" :model="form" :rules="rules" label-width="auto">
-                <el-form-item :label="$t('truckInfo.fields[0].label')" prop="carNumber">
-                    <span>{{ form.carNumber }}</span>
-                </el-form-item>
-                <el-form-item :label="$t('truckInfo.fields[1].label')" prop="carType">
-                    <dict-tag :options="truck_type" :value="form.carType" />
-                </el-form-item>
-                <el-form-item :label="$t('truckInfo.fields[2].label')" prop="carWeight">
-                    <span>{{ form.carWeight }}</span>
-                </el-form-item>
-                <el-form-item :label="$t('truckInfo.fields[3].label')" prop="carCreateTime">
-                    <span>{{ form.carCreateTime ? parseTime(new Date(form.carCreateTime), '{y}-{m}-{d}') : '' }}</span>
-                </el-form-item>
-                <el-form-item :label="$t('truckInfo.fields[4].label')" prop="carInspectionTime">
-                    <span>{{ form.carInspectionTime ? parseTime(new Date(form.carInspectionTime), '{y}-{m}-{d}') : '' }}</span>
-                </el-form-item>
-                <el-form-item :label="$t('truckInfo.fields[5].label')" prop="carStatus">
-                    <dict-tag :options="truck_status" :value="form.carStatus" />
-                </el-form-item>
-                <el-form-item :label="$t('truckInfo.fields[6].label')" prop="remark">
-                    <span>{{ form.remark }}</span>
-                </el-form-item>
-            </el-form>
-
+            <el-row justify="center" style="max-height: 600px; overflow-y: auto">
+                <el-form ref="formRef" :model="form" :rules="rules" label-width="auto">
+                    <el-form-item :label="$t('truckInfo.fields[0].label')" prop="carNumber">
+                        <span>{{ form.carNumber }}</span>
+                    </el-form-item>
+                    <el-form-item :label="$t('truckInfo.fields[1].label')" prop="carType">
+                        <dict-tag :options="truck_type" :value="form.carType" />
+                    </el-form-item>
+                    <el-form-item :label="$t('truckInfo.fields[2].label')" prop="carWeight">
+                        <span>{{ form.carWeight }}</span>
+                    </el-form-item>
+                    <el-form-item :label="$t('truckInfo.fields[3].label')" prop="carCreateTime">
+                        <span>{{ form.carCreateTime ? parseTime(new Date(form.carCreateTime), '{y}-{m}-{d}') : '' }}</span>
+                    </el-form-item>
+                    <el-form-item :label="$t('truckInfo.fields[4].label')" prop="carInspectionTime">
+                        <span>{{ form.carInspectionTime ? parseTime(new Date(form.carInspectionTime), '{y}-{m}-{d}') : '' }}</span>
+                    </el-form-item>
+                    <el-form-item :label="$t('truckInfo.fields[5].label')" prop="carStatus">
+                        <dict-tag :options="truck_status" :value="form.carStatus" />
+                    </el-form-item>
+                    <el-form-item :label="$t('truckInfo.fields[6].label')" prop="remark">
+                        <span>{{ form.remark }}</span>
+                    </el-form-item>
+                </el-form>
+            </el-row>
             <template #footer>
                 <div class="dialog-footer">
                     <el-button @click="cancel">{{ $t('components.btn.cancelButton') }}</el-button>
@@ -149,6 +150,7 @@
 				:on-progress="handleFileUploadProgress"
 				:on-success="handleFileSuccess"
 				:auto-upload="false"
+                v-model:file-list="fileList"
 				drag
 			>
 				<i class="upload"></i>
@@ -171,10 +173,10 @@
     </div>
 </template>
 
-<script setup name="Info" lang="ts">
+<script setup name="TruckInfo" lang="ts">
 import { getTruckList, getTruckInfo, addTruck, updateTruck, delTruck } from '@/api/truck/truckInfo'
 import { ref, reactive, toRefs, getCurrentInstance } from 'vue'
-import { ElForm, ElTable, ElUpload } from 'element-plus'
+import { ElForm, ElTable, ElUpload, UploadUserFile } from 'element-plus'
 import { getToken } from '@/utils/auth'
 import { $t } from '@/lang'
 import useAppStore from '@/store/modules/app'
@@ -223,7 +225,7 @@ const data = reactive({
         carInspectionTime: [
             {
                 validator: (rule: any, value: any, callback: any) => {
-                    if (new Date(value).getTime() < new Date(form.value.carCreateTime).getTime()) {
+                    if (value && new Date(value).getTime() < new Date(form.value.carCreateTime).getTime()) {
                         callback(new Error($t('components.validator.carInspectionTime')))
                     } else {
                         callback()
@@ -270,8 +272,6 @@ const resetQuery = () => {
 // 多选框选中数据
 const handleSelectionChange = (selection: any) => {
     ids.value = selection.map((item: { id: any }) => item.id)
-    single.value = selection.length !== 1
-    multiple.value = !selection.length
 }
 
 /** 详情按钮操作 */
@@ -344,7 +344,7 @@ const handleDelete = (row: any) => {
 
 /** 导出按钮操作 */
 const handleExport = () => {
-    proxy.download('carInfo/export', { ...queryParams.value }, `${$t('menu.TruckInfo')}${new Date().getTime()}.xlsx`)
+    proxy.download('carInfo/export', { ...queryParams.value, ids: ids.value.join(',') }, `${$t('menu.TruckInfo')}${new Date().getTime()}.xlsx`)
 }
 
 const uploadRef = ref<InstanceType<typeof ElUpload>>()
@@ -363,6 +363,8 @@ const upload = ref<any>({
     // 上传的地址
     url: baseURL + '/carInfo/import'
 })
+
+const fileList = ref<UploadUserFile[]>([])
 
 /** 导入按钮操作 */
 const handleImport = () => {

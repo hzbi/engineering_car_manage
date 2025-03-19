@@ -118,38 +118,40 @@
 
         <!-- 司机信息详情对话框 -->
         <el-dialog :title="title" v-model="openInfo" width="800px" append-to-body>
-            <el-form ref="formRef" :model="form" :rules="rules" label-width="auto">
-                <el-form-item label="姓名:" prop="name">
-                    <span>{{ form.name }}</span>
-                </el-form-item>
-                <el-form-item label="联系方式:" prop="phone">
-                    <span>{{ form.phone }}</span>
-                </el-form-item>
-                <el-form-item label="证件号:" prop="idNum">
-                    <span>{{ form.idNum }}</span>
-                </el-form-item>
-                <el-form-item label="性别:" prop="sex">
-                    <dict-tag :options="driver_sex" :value="form.sex" />
-                </el-form-item>
-                <el-form-item label="出生日期:" prop="birthTime">
-                    <span>{{ form.birthTime ? parseTime(new Date(form.birthTime), '{y}-{m}-{d}') : '' }}</span>
-                </el-form-item>
-                <el-form-item label="入职日期:" prop="entryTime">
-                    <span>{{ form.entryTime ? parseTime(new Date(form.entryTime), '{y}-{m}-{d}') : '' }}</span>
-                </el-form-item>
-                <el-form-item label="状态:" prop="status">
-                    <dict-tag :options="driver_status" :value="form.status" />
-                </el-form-item>
-                <el-form-item label="银行卡号:" prop="bankNum">
-                    <span>{{ form.bankNum }}</span>
-                </el-form-item>
-                <el-form-item label="所属银行:" prop="bank">
-                    <span>{{ form.bank }}</span>
-                </el-form-item>
-                <el-form-item label="备注:" prop="remark">
-                    <span>{{ form.remark }}</span>
-                </el-form-item>
-            </el-form>
+            <el-row justify="center" style="max-height: 600px; overflow-y: auto">
+                <el-form ref="formRef" :model="form" :rules="rules" label-width="auto">
+                    <el-form-item label="姓名:" prop="name">
+                        <span>{{ form.name }}</span>
+                    </el-form-item>
+                    <el-form-item label="联系方式:" prop="phone">
+                        <span>{{ form.phone }}</span>
+                    </el-form-item>
+                    <el-form-item label="证件号:" prop="idNum">
+                        <span>{{ form.idNum }}</span>
+                    </el-form-item>
+                    <el-form-item label="性别:" prop="sex">
+                        <dict-tag :options="driver_sex" :value="form.sex" />
+                    </el-form-item>
+                    <el-form-item label="出生日期:" prop="birthTime">
+                        <span>{{ form.birthTime ? parseTime(new Date(form.birthTime), '{y}-{m}-{d}') : '' }}</span>
+                    </el-form-item>
+                    <el-form-item label="入职日期:" prop="entryTime">
+                        <span>{{ form.entryTime ? parseTime(new Date(form.entryTime), '{y}-{m}-{d}') : '' }}</span>
+                    </el-form-item>
+                    <el-form-item label="状态:" prop="status">
+                        <dict-tag :options="driver_status" :value="form.status" />
+                    </el-form-item>
+                    <el-form-item label="银行卡号:" prop="bankNum">
+                        <span>{{ form.bankNum }}</span>
+                    </el-form-item>
+                    <el-form-item label="所属银行:" prop="bank">
+                        <span>{{ form.bank }}</span>
+                    </el-form-item>
+                    <el-form-item label="备注:" prop="remark">
+                        <span>{{ form.remark }}</span>
+                    </el-form-item>
+                </el-form>
+            </el-row>
             <template #footer>
                 <div class="dialog-footer">
                     <el-button @click="cancel">{{ $t('components.btn.cancelButton') }}</el-button>
@@ -189,6 +191,7 @@
 				:on-progress="handleFileUploadProgress"
 				:on-success="handleFileSuccess"
 				:auto-upload="false"
+                v-model:file-list="fileList"
 				drag
 			>
 				<i class="upload"></i>
@@ -211,11 +214,11 @@
     </div>
 </template>
 
-<script setup name="Info" lang="ts">
+<script setup name="DriverInfo" lang="ts">
 import { getDriverList, getDriverInfo, addDriver, updateDriver, delDriver } from '@/api/driver/driverInfo'
 import { getTruckByNoDrive } from '@/api/truck/truckInfo'
 import { ref, reactive, toRefs, getCurrentInstance } from 'vue'
-import { ElForm, ElTable, ElUpload } from 'element-plus'
+import { ElForm, ElTable, ElUpload, UploadUserFile } from 'element-plus'
 import { getToken } from '@/utils/auth'
 import { $t } from '@/lang'
 import useAppStore from '@/store/modules/app'
@@ -417,7 +420,7 @@ const handleDelete = (row: any) => {
 
 /** 导出按钮操作 */
 const handleExport = () => {
-    proxy.download('truck/Driver/export', { ...queryParams.value }, `${$t('menu.DriverInfo')}${new Date().getTime()}.xlsx`)
+    proxy.download('truck/Driver/export', { ...queryParams.value, ids: ids.value.join(',') }, `${$t('menu.DriverInfo')}${new Date().getTime()}.xlsx`)
 }
 
 const uploadRef = ref<InstanceType<typeof ElUpload>>()
@@ -436,6 +439,7 @@ const upload = ref<any>({
     // 上传的地址
     url: baseURL + '/truck/Driver/import'
 })
+const fileList = ref<UploadUserFile[]>([])
 
 /** 导入按钮操作 */
 const handleImport = () => {

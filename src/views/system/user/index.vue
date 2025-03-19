@@ -63,7 +63,7 @@
                             <div v-if="scope.row.userName == 'superAdmin' || scope.row.userName == 'admin'">全部</div>
                             <div v-else>
                                 <template v-if="scope.row.carInfoList && scope.row.carInfoList.length > 0" v-for="(item, index) in scope.row.carInfoList" :key="index">
-                                    <span style="color: #409eff; cursor: pointer" @click="handleSettingTruck(scope.row)">{{ (index == scope.row.carInfoList.length - 1 && item.carNumber) || item.carNumber + ',' }}</span>
+                                    <span :style="{ color: item.carStatus == 0 ? '#409eff' : '#C0C4CC', cursor: 'pointer' }" @click="handleSettingTruck(scope.row)">{{ (index == scope.row.carInfoList.length - 1 && item.carNumber) || item.carNumber + ',' }}</span>
                                 </template>
                                 <el-button v-else type="text" @click="handleSettingTruck(scope.row)">设置管理车辆</el-button>
                             </div>
@@ -74,7 +74,7 @@
                             <div v-if="scope.row.userName == 'superAdmin' || scope.row.userName == 'admin'">全部</div>
                             <div v-else>
                                 <template v-if="scope.row.siteInfoList && scope.row.siteInfoList.length > 0" v-for="(item, index) in scope.row.siteInfoList" :key="index">
-                                    <span style="color: #409eff; cursor: pointer" @click="handleSettingSite(scope.row)">{{ (index == scope.row.siteInfoList.length - 1 && item.siteName) || item.siteName + ',' }}</span>
+                                    <span :style="{ color: item.status == 0 ? '#409eff' : '#C0C4CC', cursor: 'pointer' }" @click="handleSettingSite(scope.row)">{{ (index == scope.row.siteInfoList.length - 1 && item.siteName) || item.siteName + ',' }}</span>
                                 </template>
                                 <el-button v-else type="text" @click="handleSettingSite(scope.row)">设置管理工地</el-button>
                             </div>
@@ -121,7 +121,7 @@
 								:underline="false"
 								:disabled="scope.row.userId === '1'"
 								size="small"
-								type="danger"
+								type="primary"
 								@click="handleDelete(scope.row)"
 								v-hasPermi="['system:user:remove']"
 								><span class="table_link_text"
@@ -265,6 +265,7 @@
 				:on-progress="handleFileUploadProgress"
 				:on-success="handleFileSuccess"
 				:auto-upload="false"
+                v-model:file-list="fileList"
 				drag
 			>
 				<i class="upload"></i>
@@ -309,7 +310,10 @@
             </el-form>
 
             <div style="margin: 15px 0; color: #409eff">
-                {{ `已选择车辆：${multipleTruckSelection.map((item: any) => item.carNumber)}` }}
+                已选择车辆：
+                <template v-for="(item, index) in multipleTruckSelection" :key="index">
+                    <span :style="{ color: item.carStatus == 0 ? '#409eff' : '#C0C4CC', cursor: 'pointer' }">{{ (index == multipleTruckSelection.length - 1 && item.carNumber) || item.carNumber + ',' }}</span>
+                </template>
             </div>
 
             <el-table stripe border v-loading="loading" :data="truckTableData" ref="multipleTruckTableRef" row-key="id" @selection-change="handleSelectionChangeTruck" max-height="500">
@@ -348,7 +352,10 @@
             </el-form>
 
             <div style="margin: 15px 0; color: #409eff">
-                {{ `已选择工地：${multipleSiteSelection.map((item: any) => item.siteName)}` }}
+                已选择工地：
+                <template v-for="(item, index) in multipleSiteSelection" :key="index">
+                    <span :style="{ color: item.status == 0 ? '#409eff' : '#C0C4CC', cursor: 'pointer' }">{{ (index == multipleSiteSelection.length - 1 && item.siteName) || item.siteName + ',' }}</span>
+                </template>
             </div>
 
             <el-table stripe border v-loading="loading" :data="siteTableData" ref="multipleSiteTableRef" row-key="id" @selection-change="handleSelectionChangeSite" max-height="500">

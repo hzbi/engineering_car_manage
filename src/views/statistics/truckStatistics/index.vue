@@ -44,10 +44,10 @@
     </div>
 </template>
 
-<script setup name="Info" lang="ts">
+<script setup name="TruckStatistics" lang="ts">
 import { getTruckStatisticsList } from '@/api/statistics/index'
 import { ref, reactive, toRefs, getCurrentInstance } from 'vue'
-import { ElForm, ElTable } from 'element-plus'
+import { dayjs, ElForm, ElTable } from 'element-plus'
 import { $t } from '@/lang'
 
 const { proxy } = getCurrentInstance() as any
@@ -66,7 +66,7 @@ const data = reactive({
     queryParams: {
         pageNum: 1,
         pageSize: 10,
-        year: null,
+        year: dayjs(new Date().setDate(new Date().getDate() - 1)).format('YYYY-MM-DD'),
         mon: null,
         carNumber: null,
         carType: null

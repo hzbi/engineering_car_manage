@@ -66,7 +66,7 @@
                 <template #default="scope">
                     <el-link class="el-link-spacing" :underline="false" size="small" type="primary" @click="handleUpdate(scope.row)" v-hasPermi="['system:role:edit']"><span class="table_link_text">修改</span></el-link>
                     <el-link v-if="scope.row.roleId !== '1'" class="el-link-spacing" :underline="false" size="small" type="primary" @click="handleDataScope(scope.row)" v-hasPermi="['system:role:edit']"><span class="table_link_text">数据权限</span></el-link>
-                    <el-link v-if="scope.row.roleId !== '1'" class="el-link-spacing" :underline="false" size="small" type="danger" @click="handleDelete(scope.row)" v-hasPermi="['system:role:remove']"><span class="table_link_text">删除</span></el-link>
+                    <el-link v-if="scope.row.roleId !== '1'" class="el-link-spacing" :underline="false" size="small" type="primary" @click="handleDelete(scope.row)" v-hasPermi="['system:role:remove']"><span class="table_link_text">删除</span></el-link>
                 </template>
             </el-table-column>
         </el-table>

@@ -101,7 +101,7 @@
                 <template #default="scope">
                     <el-link class="table_link_btn" :underline="false" type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['system:menu:edit']"><span class="table_link_text">修改</span></el-link>
                     <el-link class="table_link_btn" :underline="false" type="primary" icon="Plus" @click="handleAdd(scope.row)" v-hasPermi="['system:menu:add']"><span class="table_link_text">新增</span></el-link>
-                    <el-link class="table_link_btn" :underline="false" type="danger" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['system:menu:remove']"><span class="table_link_text">删除</span></el-link>
+                    <el-link class="table_link_btn" :underline="false" type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['system:menu:remove']"><span class="table_link_text">删除</span></el-link>
                 </template>
             </el-table-column>
         </el-table>

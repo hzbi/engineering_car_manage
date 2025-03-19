@@ -16,7 +16,7 @@
                         <ul class="list-group list-group-striped">
                             <li class="list-group-item">
                                 <span>
-                                    <svg-icon icon-class="user" style="margin-right: 5px" />
+                                    <!-- <svg-icon icon-class="user" style="margin-right: 5px" /> -->
                                     {{ $t('navbar.personalInfo.userName') }}
                                 </span>
                                 <span class="pull-right">
@@ -25,7 +25,7 @@
                             </li>
                             <li class="list-group-item">
                                 <span>
-                                    <svg-icon icon-class="phone" style="margin-right: 5px" />
+                                    <!-- <svg-icon icon-class="phone" style="margin-right: 5px" /> -->
                                     {{ $t('navbar.personalInfo.phoneNumber') }}
                                 </span>
                                 <span class="pull-right">
@@ -35,7 +35,7 @@
 
                             <li class="list-group-item">
                                 <span>
-                                    <svg-icon icon-class="peoples" style="margin-right: 5px" />
+                                    <!-- <svg-icon icon-class="peoples" style="margin-right: 5px" /> -->
                                     {{ $t('navbar.personalInfo.role') }}
                                 </span>
                                 <span class="pull-right">
@@ -44,7 +44,7 @@
                             </li>
                             <li class="list-group-item">
                                 <span>
-                                    <svg-icon icon-class="date" style="margin-right: 5px" />
+                                    <!-- <svg-icon icon-class="date" style="margin-right: 5px" /> -->
                                     {{ $t('navbar.personalInfo.creationDate') }}
                                 </span>
                                 <span class="pull-right">
