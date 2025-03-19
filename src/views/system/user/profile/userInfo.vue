@@ -4,7 +4,7 @@
             <el-input maxlength="100" v-model="user.nickName" />
         </el-form-item>
         <el-form-item :label="$t('navbar.basicInfo.phone')" prop="phonenumber">
-            <el-input maxlength="100" v-model="user.phonenumber" maxlength="11" />
+            <el-input v-model="user.phonenumber" maxlength="11" />
         </el-form-item>
         <el-form-item :label="$t('navbar.basicInfo.gender')">
             <el-radio-group v-model="user.sex">
@@ -30,7 +30,7 @@ import { $t } from '@/lang'
 export default {
     props: {
         user: {
-            type: Object
+            type: Object as any
         }
     },
     setup(props: any) {

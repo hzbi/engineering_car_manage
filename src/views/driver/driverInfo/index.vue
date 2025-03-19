@@ -17,13 +17,13 @@
 
         <el-row :gutter="10" class="mb8">
             <el-col :span="1.5">
-                <el-button type="primary" plain icon="plus" size="small" @click="handleAdd" v-hasPermi="['system:user:add']">{{ $t('operationButtons.add.label') }}</el-button>
+                <el-button type="primary" plain icon="plus" size="small" @click="handleAdd" v-hasPermi="['driver:driverInfo:add']">{{ $t('operationButtons.add.label') }}</el-button>
             </el-col>
             <el-col :span="1.5">
-                <el-button type="info" plain icon="upload" size="small" @click="handleImport" v-hasPermi="['system:user:import']">{{ $t('operationButtons.import.label') }}</el-button>
+                <el-button type="primary" plain icon="download" size="small" @click="handleImport" v-hasPermi="['driver:driverInfo:import']">{{ $t('operationButtons.import.label') }}</el-button>
             </el-col>
             <el-col :span="1.5">
-                <el-button type="warning" plain icon="download" size="small" @click="handleExport" v-hasPermi="['system:user:export']">{{ $t('operationButtons.export.label') }}</el-button>
+                <el-button type="primary" plain icon="upload" size="small" @click="handleExport" v-hasPermi="['driver:driverInfo:export']">{{ $t('operationButtons.export.label') }}</el-button>
             </el-col>
             <right-toolbar v-model:showSearch="showSearch" @queryTable="getPageList"></right-toolbar>
         </el-row>
@@ -53,15 +53,15 @@
             <el-table-column label="创建时间" align="center" prop="createTime" min-width="120" show-overflow-tooltip></el-table-column>
             <el-table-column label="分配车辆" align="center" prop="createTime" min-width="120" show-overflow-tooltip>
                 <template #default="scope">
-                    <el-button v-if="scope.row.carNumber" type="text" @click="handleAllocate(scope.row)" v-hasPermi="['system:info:edit']">{{ scope.row.carNumber }}</el-button>
-                    <el-button v-else type="text" @click="handleAllocate(scope.row)" v-hasPermi="['system:info:edit']">分配车辆</el-button>
+                    <el-button v-if="scope.row.carNumber" type="text" @click="handleAllocate(scope.row)">{{ scope.row.carNumber }}</el-button>
+                    <el-button v-else type="text" @click="handleAllocate(scope.row)">分配车辆</el-button>
                 </template>
             </el-table-column>
             <el-table-column :label="$t('tableColumn.operation')" align="center" class-name="small-padding fixed-width" min-width="200" fixed="right">
                 <template #default="scope">
-                    <el-button type="text" @click="handleInfo(scope.row)" v-hasPermi="['system:info:edit']">{{ $t('operationButtons.info.label') }}</el-button>
-                    <el-button type="text" @click="handleUpdate(scope.row)" v-hasPermi="['system:info:edit']">{{ $t('operationButtons.edit.label') }}</el-button>
-                    <el-button type="text" @click="handleDelete(scope.row)" v-hasPermi="['system:info:remove']">{{ $t('operationButtons.delete.label') }}</el-button>
+                    <el-button type="text" @click="handleInfo(scope.row)" v-hasPermi="['driver:driverPerformance:info']">{{ $t('operationButtons.info.label') }}</el-button>
+                    <el-button type="text" @click="handleUpdate(scope.row)" v-hasPermi="['driver:driverPerformance:edit']">{{ $t('operationButtons.edit.label') }}</el-button>
+                    <el-button type="text" @click="handleDelete(scope.row)" v-hasPermi="['driver:driverPerformance:delete']">{{ $t('operationButtons.delete.label') }}</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -184,7 +184,7 @@
 				:limit="1"
 				accept=".xlsx, .xls"
 				:headers="upload.headers"
-				:action="upload.url + '?updateSupport=' + upload.updateSupport"
+				:action="upload.url + '?updateSupport=' + upload.updateSupport + '&language=' + useAppStore().language"
 				:disabled="upload.isUploading"
 				:on-progress="handleFileUploadProgress"
 				:on-success="handleFileSuccess"
@@ -218,6 +218,8 @@ import { ref, reactive, toRefs, getCurrentInstance } from 'vue'
 import { ElForm, ElTable, ElUpload } from 'element-plus'
 import { getToken } from '@/utils/auth'
 import { $t } from '@/lang'
+import useAppStore from '@/store/modules/app'
+
 const baseURL = import.meta.env.VITE_APP_BASE_API
 
 const { proxy } = getCurrentInstance() as any
@@ -415,7 +417,7 @@ const handleDelete = (row: any) => {
 
 /** 导出按钮操作 */
 const handleExport = () => {
-    proxy.download('truck/Driver/export', {}, `info_${new Date().getTime()}.xlsx`)
+    proxy.download('truck/Driver/export', { ...queryParams.value }, `${$t('menu.DriverInfo')}${new Date().getTime()}.xlsx`)
 }
 
 const uploadRef = ref<InstanceType<typeof ElUpload>>()

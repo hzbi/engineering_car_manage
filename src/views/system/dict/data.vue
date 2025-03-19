@@ -29,14 +29,9 @@
             <el-col :span="1.5">
                 <el-button type="primary" plain icon="plus" size="small" @click="handleAdd" v-hasPermi="['system:dict:add']">{{ $t('operationButtons.add.label') }}</el-button>
             </el-col>
-            <el-col :span="1.5" v-if="!single">
-                <el-button type="success" plain icon="edit" size="small" :disabled="single" @click="handleUpdate" v-hasPermi="['system:dict:edit']">{{ $t('operationButtons.edit.label') }}</el-button>
-            </el-col>
-            <el-col :span="1.5" v-if="!multiple">
-                <el-button type="danger" plain icon="delete" size="small" :disabled="multiple" @click="handleDelete" v-hasPermi="['system:dict:remove']">{{ $t('operationButtons.delete.label') }}</el-button>
-            </el-col>
+
             <el-col :span="1.5">
-                <el-button type="warning" plain icon="download" size="small" @click="handleExport" v-hasPermi="['system:dict:export']">{{ $t('operationButtons.export.label') }}</el-button>
+                <el-button type="primary" plain icon="upload" size="small" @click="handleExport" v-hasPermi="['system:dict:export']">{{ $t('operationButtons.export.label') }}</el-button>
             </el-col>
             <!-- prettier-ignore -->
             <right-toolbar v-model:showSearch="showSearch" @queryTable="getList" />
@@ -85,7 +80,7 @@
                     <el-input maxlength="100" v-model="form.dictValue" placeholder="请输入数据键值" />
                 </el-form-item>
                 <el-form-item label="显示排序" prop="dictSort">
-                    <el-input maxlength="100" -number v-model="form.dictSort" controls-position="right" :min="0" />
+                    <el-input-number v-model="form.dictSort" controls-position="right" :min="0" />
                 </el-form-item>
                 <el-form-item label="状态" prop="status">
                     <el-radio-group v-model="form.status">

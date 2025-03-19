@@ -17,7 +17,7 @@
 
         <el-row :gutter="10" class="mb8">
             <el-col :span="1.5">
-                <el-button type="warning" plain icon="download" size="small" @click="handleExport" v-hasPermi="['system:user:export']">{{ $t('operationButtons.export.label') }}</el-button>
+                <el-button type="primary" plain icon="upload" size="small" @click="handleExport" v-hasPermi="['system:user:export']">{{ $t('operationButtons.export.label') }}</el-button>
             </el-col>
             <right-toolbar v-model:showSearch="showSearch" @queryTable="getPageList"></right-toolbar>
         </el-row>
@@ -101,7 +101,7 @@ const resetQuery = () => {
 
 /** 导出按钮操作 */
 const handleExport = () => {
-    proxy.download('truck/workload/exportCarNumAndWorkTime', {}, `info_${new Date().getTime()}.xlsx`)
+    proxy.download('truck/workload/exportCarNumAndWorkTime', { ...queryParams.value }, `${$t('menu.SiteStatistics')}${new Date().getTime()}.xlsx`)
 }
 
 getPageList()

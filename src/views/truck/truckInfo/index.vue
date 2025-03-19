@@ -17,10 +17,10 @@
                 <el-button type="primary" plain icon="plus" size="small" @click="handleAdd" v-hasPermi="['truck:truckInfo:add']">{{ $t('operationButtons.add.label') }}</el-button>
             </el-col>
             <el-col :span="1.5">
-                <el-button type="info" plain icon="upload" size="small" @click="handleImport" v-hasPermi="['truck:truckInfo:import']">{{ $t('operationButtons.import.label') }}</el-button>
+                <el-button type="primary" plain icon="download" size="small" @click="handleImport" v-hasPermi="['truck:truckInfo:import']">{{ $t('operationButtons.import.label') }}</el-button>
             </el-col>
             <el-col :span="1.5">
-                <el-button type="warning" plain icon="download" size="small" @click="handleExport" v-hasPermi="['truck:truckInfo:export']">{{ $t('operationButtons.export.label') }}</el-button>
+                <el-button type="primary" plain icon="upload" size="small" @click="handleExport" v-hasPermi="['truck:truckInfo:export']">{{ $t('operationButtons.export.label') }}</el-button>
             </el-col>
             <right-toolbar v-model:showSearch="showSearch" @queryTable="getPageList"></right-toolbar>
         </el-row>
@@ -144,7 +144,7 @@
 				:limit="1"
 				accept=".xlsx, .xls"
 				:headers="upload.headers"
-				:action="upload.url + '?updateSupport=' + upload.updateSupport"
+				:action="upload.url + '?updateSupport=' + upload.updateSupport + '&language=' + useAppStore().language"
 				:disabled="upload.isUploading"
 				:on-progress="handleFileUploadProgress"
 				:on-success="handleFileSuccess"
@@ -177,6 +177,8 @@ import { ref, reactive, toRefs, getCurrentInstance } from 'vue'
 import { ElForm, ElTable, ElUpload } from 'element-plus'
 import { getToken } from '@/utils/auth'
 import { $t } from '@/lang'
+import useAppStore from '@/store/modules/app'
+
 const baseURL = import.meta.env.VITE_APP_BASE_API
 
 const { proxy } = getCurrentInstance() as any
@@ -217,7 +219,18 @@ const data = reactive({
     },
     rules: {
         carNumber: [{ required: true, message: $t('components.input.placeholder'), trigger: 'blur' }],
-        carType: [{ required: true, message: $t('components.select.placeholder'), trigger: 'blur' }]
+        carType: [{ required: true, message: $t('components.select.placeholder'), trigger: 'blur' }],
+        carInspectionTime: [
+            {
+                validator: (rule: any, value: any, callback: any) => {
+                    if (new Date(value).getTime() < new Date(form.value.carCreateTime).getTime()) {
+                        callback(new Error($t('components.validator.carInspectionTime')))
+                    } else {
+                        callback()
+                    }
+                }
+            }
+        ]
     }
 })
 
@@ -331,7 +344,7 @@ const handleDelete = (row: any) => {
 
 /** 导出按钮操作 */
 const handleExport = () => {
-    proxy.download('carInfo/export', {}, `info_${new Date().getTime()}.xlsx`)
+    proxy.download('carInfo/export', { ...queryParams.value }, `${$t('menu.TruckInfo')}${new Date().getTime()}.xlsx`)
 }
 
 const uploadRef = ref<InstanceType<typeof ElUpload>>()

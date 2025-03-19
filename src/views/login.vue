@@ -85,6 +85,7 @@ const { loginFormRef, loginForm, loginRules, codeUrl, loading, getCode, handleLo
     }
 
     .input-icon {
+        color: #000;
         height: 39px;
         width: 14px;
         margin-left: 2px;

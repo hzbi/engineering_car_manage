@@ -14,24 +14,24 @@
                     <el-option v-for="dict in siteOptions" :key="dict.siteId" :label="dict.siteName" :value="dict.siteId" />
                 </el-select>
             </el-form-item>
-            <el-form-item :label="$t('accessoryStock.searchBar.endDate.label')" prop="startTime">
+            <el-form-item :label="$t('accessoryStock.searchBar.startDate.label')" prop="startTime">
                 <el-date-picker clearable v-model="queryParams.startTime" type="date" value-format="YYYY-MM-DD" :placeholder="$t('components.datePicker.placeholder')"></el-date-picker>
             </el-form-item>
-            <el-form-item :label="$t('accessoryStock.searchBar.partName.label')" prop="endTime">
-                <el-date-picker clearable v-model="queryParams.endTime" type="date" value-format="YYYY-MM-DD" :placeholder="$t('components.datePicker.placeholder')"></el-date-picker>
+            <el-form-item :label="$t('accessoryStock.searchBar.endDate.label')" prop="endTime">
+                <el-date-picker clearable v-model="queryParams.endTime" type="date" value-format="YYYY-MM-DD" :disabled-date="disabledEndDate" :placeholder="$t('components.datePicker.placeholder')"></el-date-picker>
             </el-form-item>
             <form-search @reset="resetQuery" @search="handleQuery" />
         </el-form>
 
         <el-row :gutter="10" class="mb8">
             <el-col :span="1.5">
-                <el-button type="primary" plain icon="plus" size="small" @click="handleAdd" v-hasPermi="['system:user:add']">入库</el-button>
+                <el-button type="primary" plain icon="plus" size="small" @click="handleAdd" v-hasPermi="['truck:accessoryStock:add']">入库</el-button>
             </el-col>
             <el-col :span="1.5">
-                <el-button type="info" plain icon="upload" size="small" @click="handleImport" v-hasPermi="['system:user:import']">{{ $t('operationButtons.import.label') }}</el-button>
+                <el-button type="primary" plain icon="download" size="small" @click="handleImport" v-hasPermi="['truck:accessoryStock:import']">{{ $t('operationButtons.import.label') }}</el-button>
             </el-col>
             <el-col :span="1.5">
-                <el-button type="warning" plain icon="download" size="small" @click="handleExport" v-hasPermi="['system:user:export']">{{ $t('operationButtons.export.label') }}</el-button>
+                <el-button type="primary" plain icon="upload" size="small" @click="handleExport" v-hasPermi="['truck:accessoryStock:export']">{{ $t('operationButtons.export.label') }}</el-button>
             </el-col>
             <right-toolbar v-model:showSearch="showSearch" @queryTable="getPageList"></right-toolbar>
         </el-row>
@@ -66,10 +66,10 @@
             <el-table-column :label="$t('accessoryStock.tableColumn[12].label')" align="center" prop="createTime" min-width="120" show-overflow-tooltip></el-table-column>
             <el-table-column :label="$t('tableColumn.operation')" align="center" class-name="small-padding fixed-width" min-width="200" fixed="right">
                 <template #default="scope">
-                    <el-button type="text" @click="handleInfo(scope.row)" v-hasPermi="['system:info:edit']">{{ $t('operationButtons.info.label') }}</el-button>
-                    <el-button type="text" @click="handleUpdate(scope.row)" v-hasPermi="['system:info:edit']">{{ $t('operationButtons.edit.label') }}</el-button>
-                    <el-button type="text" @click="handleDelete(scope.row)" v-hasPermi="['system:info:remove']">{{ $t('operationButtons.delete.label') }}</el-button>
-                    <el-button type="text" @click="handlePrice(scope.row)" v-hasPermi="['system:log:edit']">{{ $t('operationButtons.price.label') }}</el-button>
+                    <el-button type="text" @click="handleInfo(scope.row)" v-hasPermi="['truck:accessoryStock:info']">{{ $t('operationButtons.info.label') }}</el-button>
+                    <el-button type="text" @click="handleUpdate(scope.row)" v-hasPermi="['truck:accessoryStock:edit']">{{ $t('operationButtons.edit.label') }}</el-button>
+                    <el-button type="text" @click="handleDelete(scope.row)" v-hasPermi="['truck:accessoryStock:delete']">{{ $t('operationButtons.delete.label') }}</el-button>
+                    <el-button type="text" @click="handlePrice(scope.row)" v-hasPermi="['truck:accessoryStock:price']">{{ $t('operationButtons.price.label') }}</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -204,7 +204,7 @@
             <el-divider content-position="left">{{ $t('accessoryStock.outboundRecords.title') }}</el-divider>
             <el-row :gutter="10" class="mb8">
                 <el-col :span="1.5">
-                    <el-button type="primary" plain icon="plus" size="small" @click="handleAddAccessoryOut" v-hasPermi="['system:user:add']">{{ $t('components.btn.outButton') }}</el-button>
+                    <el-button type="primary" plain icon="plus" size="small" @click="handleAddAccessoryOut" v-hasPermi="['truck:accessoryStock:add']">{{ $t('components.btn.outButton') }}</el-button>
                 </el-col>
             </el-row>
             <el-table stripe border v-loading="loading" :data="AccessoryOutData">
@@ -222,8 +222,8 @@
                 <el-table-column :label="$t('accessoryStock.outboundRecords.tableColumn[6].label')" align="center" prop="createTime" min-width="120" show-overflow-tooltip></el-table-column>
                 <el-table-column :label="$t('tableColumn.operation')" align="center" class-name="small-padding fixed-width" min-width="200" fixed="right">
                     <template #default="scope">
-                        <el-button type="text" @click="handleUpdateAccessoryOut(scope.row)" v-if="scope.row.relevance == 1" v-hasPermi="['system:log:edit']">{{ $t('operationButtons.edit.label') }}</el-button>
-                        <el-button type="text" @click="handleDeleteAccessoryOut(scope.row)" v-if="scope.row.relevance == 1" v-hasPermi="['system:log:remove']">{{ $t('operationButtons.delete.label') }}</el-button>
+                        <el-button type="text" @click="handleUpdateAccessoryOut(scope.row)" v-if="scope.row.relevance == 1" v-hasPermi="['truck:accessoryStock:edit']">{{ $t('operationButtons.edit.label') }}</el-button>
+                        <el-button type="text" @click="handleDeleteAccessoryOut(scope.row)" v-if="scope.row.relevance == 1" v-hasPermi="['truck:accessoryStock:remove']">{{ $t('operationButtons.delete.label') }}</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -263,7 +263,7 @@
 				:limit="1"
 				accept=".xlsx, .xls"
 				:headers="upload.headers"
-				:action="upload.url + '?updateSupport=' + upload.updateSupport"
+				:action="upload.url + '?updateSupport=' + upload.updateSupport + '&language=' + useAppStore().language"
 				:disabled="upload.isUploading"
 				:on-progress="handleFileUploadProgress"
 				:on-success="handleFileSuccess"
@@ -298,6 +298,8 @@ import { ref, reactive, toRefs, getCurrentInstance } from 'vue'
 import { ElForm, ElTable, ElUpload } from 'element-plus'
 import { getToken } from '@/utils/auth'
 import { $t } from '@/lang'
+import useAppStore from '@/store/modules/app'
+
 const baseURL = import.meta.env.VITE_APP_BASE_API
 
 const { proxy } = getCurrentInstance() as any
@@ -400,6 +402,13 @@ const getPageList = () => {
         total.value = parseInt(res.total)
         loading.value = false
     })
+}
+
+const disabledEndDate = (time: any) => {
+    if (queryParams.value.startTime) {
+        return time.getTime() < new Date(queryParams.value.startTime).getTime()
+    }
+    return false
 }
 
 const siteOptions = ref([]) as any
@@ -605,7 +614,7 @@ const handleDeleteAccessoryOut = (row: any) => {
 
 /** 导出按钮操作 */
 const handleExport = () => {
-    proxy.download('truck/Accessory/export', {}, `info_${new Date().getTime()}.xlsx`)
+    proxy.download('truck/Accessory/export', { ...queryParams.value }, `${$t('menu.AccessoryStock')}${new Date().getTime()}.xlsx`)
 }
 
 const uploadRef = ref<InstanceType<typeof ElUpload>>()

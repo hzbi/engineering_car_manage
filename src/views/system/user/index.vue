@@ -22,10 +22,10 @@
                         <el-button type="primary" plain icon="plus" size="small" @click="handleAdd" v-hasPermi="['system:user:add']">{{ $t('operationButtons.add.label') }}</el-button>
                     </el-col>
                     <el-col :span="1.5">
-                        <el-button type="info" plain icon="upload" size="small" @click="handleImport" v-hasPermi="['system:user:import']">{{ $t('operationButtons.import.label') }}</el-button>
+                        <el-button type="primary" plain icon="download" size="small" @click="handleImport" v-hasPermi="['system:user:import']">{{ $t('operationButtons.import.label') }}</el-button>
                     </el-col>
                     <el-col :span="1.5">
-                        <el-button type="warning" plain icon="download" size="small" @click="handleExport" v-hasPermi="['system:user:export']">{{ $t('operationButtons.export.label') }}</el-button>
+                        <el-button type="primary" plain icon="upload" size="small" @click="handleExport" v-hasPermi="['system:user:export']">{{ $t('operationButtons.export.label') }}</el-button>
                     </el-col>
                     <!-- <el-col :span="1.5" v-if="!single">
                         <el-button type="success" plain icon="edit" size="small" :disabled="single" @click="handleUpdate" v-hasPermi="['system:user:edit']">{{$t('operationButtons.edit.label')}}</el-button>
@@ -217,7 +217,6 @@
 						<el-form-item label="所属角色">
 							<el-select
 								v-model="form.roleIds"
-								multiple
 								placeholder="请选择角色"
                                 style="width: 100%;"
 							>
@@ -261,7 +260,7 @@
 				:limit="1"
 				accept=".xlsx, .xls"
 				:headers="upload.headers"
-				:action="upload.url + '?updateSupport=' + upload.updateSupport"
+				:action="upload.url + '?updateSupport=' + upload.updateSupport + '&language=' + useAppStore().language"
 				:disabled="upload.isUploading"
 				:on-progress="handleFileUploadProgress"
 				:on-success="handleFileSuccess"
@@ -386,6 +385,7 @@ import { ElForm, TableV2Instance } from 'element-plus'
 import { updateUserCarSite } from '@/api/system/user'
 import { getTruckList } from '@/api/truck/truckInfo'
 import { getSiteList } from '@/api/site/siteManage'
+import useAppStore from '@/store/modules/app'
 
 const { loading, queryFormRef, formRef, sys_normal_disable, deptTreeRef, single, multiple, showSearch, total, userList, title, deptOptions, open, deptName, dateRange, sys_user_sex, postOptions, roleOptions, form, defaultProps, upload, queryParams, columns, rules, pageTableRef, uploadRef, getPageList, filterNode, handleNodeClick, handleStatusChange, cancel, handleQuery, resetQuery, handleSelectionChange, statusChange, handleAdd, handleUpdate, handleResetPwd, submitForm, handleDelete, handleExport, handleImport, importTemplate, handleFileUploadProgress, handleFileSuccess, submitFileForm, checkSelected, cleanSelect, cleanUploadRef, truck_type, truck_status, site_status } = User()
 
@@ -445,7 +445,7 @@ const handleSettingTruck = async (row: any) => {
                 multipleTruckTableRef.value!.toggleRowSelection(item, undefined, true)
             })
         }
-    }, 100)
+    }, 1000)
 }
 
 const handleSelectionChangeTruck = (selection: any) => {
@@ -517,7 +517,7 @@ const handleSettingSite = async (row: any) => {
                 multipleSiteTableRef.value!.toggleRowSelection(item, undefined, true)
             })
         }
-    }, 100)
+    }, 1000)
 }
 
 const handleSelectionChangeSite = (selection: any) => {

@@ -8,7 +8,7 @@
                 <el-date-picker clearable v-model="queryParams.startTime" type="date" value-format="YYYY-MM-DD" :placeholder="$t('components.datePicker.placeholder')"></el-date-picker>
             </el-form-item>
             <el-form-item :label="$t('accessoryUse.searchBar.endDate.label')" prop="endTime">
-                <el-date-picker clearable v-model="queryParams.endTime" type="date" value-format="YYYY-MM-DD" :placeholder="$t('components.datePicker.placeholder')"></el-date-picker>
+                <el-date-picker clearable v-model="queryParams.endTime" type="date" value-format="YYYY-MM-DD" :disabled-date="disabledEndDate" :placeholder="$t('components.datePicker.placeholder')"></el-date-picker>
             </el-form-item>
             <form-search @reset="resetQuery" @search="handleQuery" />
         </el-form>
@@ -41,6 +41,7 @@ import { getAccessoryUseList } from '@/api/truck/accessoryUse'
 import { ref, reactive, toRefs, getCurrentInstance } from 'vue'
 import { ElForm, ElTable } from 'element-plus'
 import { $t } from '@/lang'
+import useAppStore from '@/store/modules/app'
 
 const { proxy } = getCurrentInstance() as any
 
@@ -89,6 +90,13 @@ const resetQuery = () => {
     queryFormRef.value?.resetFields()
     total.value = 0
     handleQuery()
+}
+
+const disabledEndDate = (time: any) => {
+    if (queryParams.value.startTime) {
+        return time.getTime() < new Date(queryParams.value.startTime).getTime()
+    }
+    return false
 }
 
 getPageList()

@@ -4,12 +4,12 @@
             <el-form-item :label="$t('maintainRecords.searchBar.plateNumber.label')" prop="carNumber">
                 <el-input maxlength="100" v-model="queryParams.carNumber" :placeholder="$t('components.input.placeholder')" clearable style="width: 200px" />
             </el-form-item>
-            <el-form-item :label="$t('maintainRecords.searchBar.constructionSiteName.label')" prop="siteName">
+            <el-form-item :label="$t('maintainRecords.searchBar.constructionSiteName.label')" prop="siteId">
                 <el-select v-model="queryParams.siteId" :placeholder="$t('components.select.placeholder')" clearable style="width: 200px">
                     <el-option v-for="dict in siteOptions" :key="dict.siteId" :label="dict.siteName" :value="dict.siteId" />
                 </el-select>
             </el-form-item>
-            <el-form-item :label="$t('accessoryUse.fields[0].label')" prop="maintenanceType">
+            <el-form-item :label="$t('maintainRecords.searchBar.maintenanceType.label')" prop="maintenanceType">
                 <el-select v-model="queryParams.maintenanceType" :placeholder="$t('components.select.placeholder')" clearable style="width: 200px">
                     <el-option v-for="dict in maintenance_type" :key="dict.value" :label="dict.label" :value="dict.value" />
                 </el-select>
@@ -18,7 +18,7 @@
                 <el-date-picker clearable v-model="queryParams.startTime" type="date" value-format="YYYY-MM-DD" :placeholder="$t('components.datePicker.placeholder')"></el-date-picker>
             </el-form-item>
             <el-form-item :label="$t('maintainRecords.searchBar.endDate.label')" prop="endTime">
-                <el-date-picker clearable v-model="queryParams.endTime" type="date" value-format="YYYY-MM-DD" :placeholder="$t('components.datePicker.placeholder')"></el-date-picker>
+                <el-date-picker clearable v-model="queryParams.endTime" type="date" value-format="YYYY-MM-DD" :disabled-date="disabledEndDate" :placeholder="$t('components.datePicker.placeholder')"></el-date-picker>
             </el-form-item>
             <form-search @reset="resetQuery" @search="handleQuery" />
         </el-form>
@@ -28,10 +28,10 @@
                 <el-button type="primary" plain icon="plus" size="small" @click="handleAdd" v-hasPermi="['truck:maintainRecords:add']">{{ $t('operationButtons.add.label') }}</el-button>
             </el-col>
             <el-col :span="1.5">
-                <el-button type="info" plain icon="upload" size="small" @click="handleImport" v-hasPermi="['truck:maintainRecords:import']">{{ $t('operationButtons.import.label') }}</el-button>
+                <el-button type="primary" plain icon="download" size="small" @click="handleImport" v-hasPermi="['truck:maintainRecords:import']">{{ $t('operationButtons.import.label') }}</el-button>
             </el-col>
             <el-col :span="1.5">
-                <el-button type="warning" plain icon="download" size="small" @click="handleExport" v-hasPermi="['truck:maintainRecords:export']">{{ $t('operationButtons.export.label') }}</el-button>
+                <el-button type="primary" plain icon="upload" size="small" @click="handleExport" v-hasPermi="['truck:maintainRecords:export']">{{ $t('operationButtons.export.label') }}</el-button>
             </el-col>
             <right-toolbar v-model:showSearch="showSearch" @queryTable="getPageList"></right-toolbar>
         </el-row>
@@ -87,7 +87,7 @@
             </el-table-column>
         </el-table>
 
-        <pagination v-show="total > 0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize" @pagination="getPageList" />
+        <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getPageList" />
 
         <!-- 添加或修改维护记录管理对话框 -->
         <el-dialog :title="title" v-model="open" width="800px" append-to-body>
@@ -332,7 +332,7 @@
 				:limit="1"
 				accept=".xlsx, .xls"
 				:headers="upload.headers"
-				:action="upload.url + '?updateSupport=' + upload.updateSupport"
+				:action="upload.url + '?updateSupport=' + upload.updateSupport + '&language=' + useAppStore().language"
 				:disabled="upload.isUploading"
 				:on-progress="handleFileUploadProgress"
 				:on-success="handleFileSuccess"
@@ -369,6 +369,8 @@ import { ref, reactive, toRefs, getCurrentInstance } from 'vue'
 import { ElForm, ElTable, ElUpload } from 'element-plus'
 import { getToken } from '@/utils/auth'
 import { $t } from '@/lang'
+import useAppStore from '@/store/modules/app'
+
 const baseURL = import.meta.env.VITE_APP_BASE_API
 
 const { proxy } = getCurrentInstance() as any
@@ -433,7 +435,18 @@ const data = reactive({
         maintenanceProvider: [{ required: true, message: $t('components.input.placeholder'), trigger: 'blur' }],
         upkeep: [{ required: true, message: $t('components.input.placeholder'), trigger: 'blur' }],
         monetaryUnit: [{ required: true, message: $t('components.input.placeholder'), trigger: 'blur' }],
-        amount: [{ required: true, message: $t('components.input.placeholder'), trigger: 'blur' }]
+        amount: [{ required: true, message: $t('components.input.placeholder'), trigger: 'blur' }],
+        nextTime: [
+            {
+                validator: (rule: any, value: any, callback: any) => {
+                    if (new Date(value).getTime() < new Date(form.value.maintenanceTime).getTime()) {
+                        callback(new Error($t('components.validator.nextTime')))
+                    } else {
+                        callback()
+                    }
+                }
+            }
+        ]
     }
 })
 
@@ -492,6 +505,13 @@ const getPageList = () => {
     })
 }
 
+const disabledEndDate = (time: any) => {
+    if (queryParams.value.startTime) {
+        return time.getTime() < new Date(queryParams.value.startTime).getTime()
+    }
+    return false
+}
+
 const truckOptions = ref([]) as any
 
 const getTruckOption = () => {
@@ -543,6 +563,7 @@ const cancelAccessoryUse = () => {
 
 /** 搜索按钮操作 */
 const handleQuery = () => {
+    total.value = 0
     queryParams.value.pageNum = 1
     getPageList()
 }
@@ -665,6 +686,7 @@ const handleAddAccessoryUse = () => {
         siteName: form.value.siteName,
         carNumber: form.value.carNumber
     }
+    accessoryStockOptions.value = []
 }
 
 /** 详情-更新配件使用 */
@@ -735,7 +757,7 @@ const handleDeleteAccessoryUse = (row: any) => {
 
 /** 导出按钮操作 */
 const handleExport = () => {
-    proxy.download('truck/maintenance/export', {}, `log_${new Date().getTime()}.xlsx`)
+    proxy.download('truck/maintenance/export', { ...queryParams.value }, `${$t('menu.MaintainRecords')}${new Date().getTime()}.xlsx`)
 }
 
 const uploadRef = ref<InstanceType<typeof ElUpload>>()

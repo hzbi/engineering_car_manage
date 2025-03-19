@@ -109,7 +109,7 @@
         <pagination v-show="pageTable && total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getPage()" />
 
         <!-- 添加或修改菜单对话框 -->
-        <el-dialog :title="title" v-model="open" width="30%" append-to-body @closed="cleanSelect()">
+        <el-dialog :title="title" v-model="open" width="40%" append-to-body @closed="cleanSelect()">
             <el-form ref="menuRef" :model="form" :rules="rules" label-width="110px">
                 <el-row>
                     <el-col :span="12">
@@ -167,7 +167,7 @@
                     </el-col>
                     <el-col :span="12">
                         <el-form-item label="显示排序" prop="orderNum">
-                            <el-input maxlength="100" -number v-model="form.orderNum" controls-position="right" :min="0" style="width: 100%" />
+                            <el-input-number v-model="form.orderNum" controls-position="right" :min="0" style="width: 100%" />
                         </el-form-item>
                     </el-col>
                     <el-col :span="12" v-if="form.menuType != 'F'">
@@ -214,7 +214,7 @@
                     </el-col>
                     <el-col :span="12" v-if="form.menuType != 'M'">
                         <el-form-item>
-                            <el-input maxlength="100" v-model="form.perms" placeholder="请输入权限标识" maxlength="100" />
+                            <el-input v-model="form.perms" placeholder="请输入权限标识" maxlength="100" />
                             <template #label>
                                 <span>
                                     <el-tooltip content="控制器中定义的权限字符，如：@PreAuthorize(`@ss.hasPermi('system:user:list')`)" placement="top">
@@ -227,7 +227,7 @@
                     </el-col>
                     <el-col :span="12" v-if="form.menuType == 'C'">
                         <el-form-item>
-                            <el-input maxlength="100" v-model="form.query" placeholder="请输入路由参数" maxlength="255" />
+                            <el-input v-model="form.query" placeholder="请输入路由参数" maxlength="255" />
                             <template #label>
                                 <span>
                                     <el-tooltip content='访问路由的默认传递参数，如：`{"id": 1, "name": "ry"}`' placement="top">

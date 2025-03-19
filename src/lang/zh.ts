@@ -70,6 +70,7 @@ export default {
         Role: '角色管理',
         Menu: '菜单管理',
         Dict: '字典管理',
+        Data: '字典数据',
         Site: '基础数据',
         SiteManage: '工地管理',
         Profile: '个人中心'
@@ -618,7 +619,9 @@ export default {
             lengthPassword: '长度在 6 到 20 个字符',
             confirmPassword: '确认密码不能为空',
             equalToPassword: '两次输入的密码不一致',
-            inventoryInsufficient: '库存不足'
+            inventoryInsufficient: '库存不足',
+            nextTime: '下次维护日期不能早于日期',
+            carInspectionTime: '年检时间不得早于制造时间'
         }
     },
     tableColumn: {

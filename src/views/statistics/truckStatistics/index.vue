@@ -20,7 +20,7 @@
 
         <el-row :gutter="10" class="mb8">
             <el-col :span="1.5">
-                <el-button type="warning" plain icon="download" size="small" @click="handleExport" v-hasPermi="['system:user:export']">{{ $t('operationButtons.export.label') }}</el-button>
+                <el-button type="primary" plain icon="upload" size="small" @click="handleExport" v-hasPermi="['system:user:export']">{{ $t('operationButtons.export.label') }}</el-button>
             </el-col>
             <right-toolbar v-model:showSearch="showSearch" @queryTable="getPageList"></right-toolbar>
         </el-row>
@@ -48,6 +48,7 @@
 import { getTruckStatisticsList } from '@/api/statistics/index'
 import { ref, reactive, toRefs, getCurrentInstance } from 'vue'
 import { ElForm, ElTable } from 'element-plus'
+import { $t } from '@/lang'
 
 const { proxy } = getCurrentInstance() as any
 
@@ -100,7 +101,7 @@ const resetQuery = () => {
 
 /** 导出按钮操作 */
 const handleExport = () => {
-    proxy.download('carInfo/exportSelectCarTongji', {}, `info_${new Date().getTime()}.xlsx`)
+    proxy.download('carInfo/exportSelectCarTongji', { ...queryParams.value }, `${$t('menu.TruckStatistics')}${new Date().getTime()}.xlsx`)
 }
 
 getPageList()

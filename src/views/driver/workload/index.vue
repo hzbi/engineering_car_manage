@@ -11,20 +11,20 @@
                 <el-date-picker clearable v-model="queryParams.startTime" type="date" value-format="YYYY-MM-DD" :placeholder="$t('components.datePicker.placeholder')"></el-date-picker>
             </el-form-item>
             <el-form-item label="结束日期" prop="endTime">
-                <el-date-picker clearable v-model="queryParams.endTime" type="date" value-format="YYYY-MM-DD" :placeholder="$t('components.datePicker.placeholder')"></el-date-picker>
+                <el-date-picker clearable v-model="queryParams.endTime" type="date" value-format="YYYY-MM-DD" :disabled-date="disabledEndDate" :placeholder="$t('components.datePicker.placeholder')"></el-date-picker>
             </el-form-item>
             <form-search @reset="resetQuery" @search="handleQuery" />
         </el-form>
 
         <el-row :gutter="10" class="mb8">
             <el-col :span="1.5">
-                <el-button type="primary" plain icon="plus" size="small" @click="handleAdd" v-hasPermi="['system:user:add']">{{ $t('operationButtons.add.label') }}</el-button>
+                <el-button type="primary" plain icon="plus" size="small" @click="handleAdd" v-hasPermi="['driver:workload:add']">{{ $t('operationButtons.add.label') }}</el-button>
             </el-col>
             <el-col :span="1.5">
-                <el-button type="info" plain icon="upload" size="small" @click="handleImport" v-hasPermi="['system:user:import']">{{ $t('operationButtons.import.label') }}</el-button>
+                <el-button type="primary" plain icon="download" size="small" @click="handleImport" v-hasPermi="['driver:workload:import']">{{ $t('operationButtons.import.label') }}</el-button>
             </el-col>
             <el-col :span="1.5">
-                <el-button type="warning" plain icon="download" size="small" @click="handleExport" v-hasPermi="['system:user:export']">{{ $t('operationButtons.export.label') }}</el-button>
+                <el-button type="primary" plain icon="upload" size="small" @click="handleExport" v-hasPermi="['driver:workload:export']">{{ $t('operationButtons.export.label') }}</el-button>
             </el-col>
             <right-toolbar v-model:showSearch="showSearch" @queryTable="getPageList"></right-toolbar>
         </el-row>
@@ -50,10 +50,10 @@
             <el-table-column label="创建时间" align="center" prop="createTime" min-width="120" show-overflow-tooltip></el-table-column>
             <el-table-column :label="$t('tableColumn.operation')" align="center" class-name="small-padding fixed-width" min-width="200" fixed="right">
                 <template #default="scope">
-                    <el-button type="text" @click="handleInfo(scope.row)" v-hasPermi="['system:info:edit']">{{ $t('operationButtons.info.label') }}</el-button>
-                    <el-button type="text" @click="handleUpdate(scope.row)" v-hasPermi="['system:info:edit']">{{ $t('operationButtons.edit.label') }}</el-button>
-                    <el-button type="text" @click="handleDelete(scope.row)" v-hasPermi="['system:info:remove']">{{ $t('operationButtons.delete.label') }}</el-button>
-                    <el-button type="text" @click="handlePrice(scope.row)" v-hasPermi="['system:log:edit']">{{ $t('operationButtons.price.label') }}</el-button>
+                    <el-button type="text" @click="handleInfo(scope.row)" v-hasPermi="['driver:workload:info']">{{ $t('operationButtons.info.label') }}</el-button>
+                    <el-button type="text" @click="handleUpdate(scope.row)" v-hasPermi="['driver:workload:edit']">{{ $t('operationButtons.edit.label') }}</el-button>
+                    <el-button type="text" @click="handleDelete(scope.row)" v-hasPermi="['driver:workload:delete']">{{ $t('operationButtons.delete.label') }}</el-button>
+                    <el-button type="text" @click="handlePrice(scope.row)" v-hasPermi="['driver:workload:price']">{{ $t('operationButtons.price.label') }}</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -204,7 +204,7 @@
 				:limit="1"
 				accept=".xlsx, .xls"
 				:headers="upload.headers"
-				:action="upload.url + '?updateSupport=' + upload.updateSupport"
+				:action="upload.url + '?updateSupport=' + upload.updateSupport + '&language=' + useAppStore().language"
 				:disabled="upload.isUploading"
 				:on-progress="handleFileUploadProgress"
 				:on-success="handleFileSuccess"
@@ -239,6 +239,8 @@ import { ref, reactive, toRefs, getCurrentInstance } from 'vue'
 import { ElForm, ElTable, ElUpload } from 'element-plus'
 import { getToken } from '@/utils/auth'
 import { $t } from '@/lang'
+import useAppStore from '@/store/modules/app'
+
 const baseURL = import.meta.env.VITE_APP_BASE_API
 
 const { proxy } = getCurrentInstance() as any
@@ -306,6 +308,13 @@ const getPageList = () => {
         total.value = parseInt(res.total)
         loading.value = false
     })
+}
+
+const disabledEndDate = (time: any) => {
+    if (queryParams.value.startTime) {
+        return time.getTime() < new Date(queryParams.value.startTime).getTime()
+    }
+    return false
 }
 
 const driverAndTruckOptions = ref([]) as any
@@ -465,7 +474,7 @@ const handleDelete = (row: any) => {
 
 /** 导出按钮操作 */
 const handleExport = () => {
-    proxy.download('truck/workload/export', {}, `info_${new Date().getTime()}.xlsx`)
+    proxy.download('truck/workload/export', { ...queryParams.value }, `${$t('menu.Workload')}${new Date().getTime()}.xlsx`)
 }
 
 const uploadRef = ref<InstanceType<typeof ElUpload>>()

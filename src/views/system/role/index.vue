@@ -23,13 +23,7 @@
                 <el-button type="primary" plain icon="plus" size="small" @click="handleAdd" v-hasPermi="['system:role:add']">{{ $t('operationButtons.add.label') }}</el-button>
             </el-col>
             <el-col :span="1.5">
-                <el-button type="warning" plain icon="download" size="small" @click="handleExport" v-hasPermi="['system:role:export']">{{ $t('operationButtons.export.label') }}</el-button>
-            </el-col>
-            <el-col :span="1.5" v-if="!single">
-                <el-button type="success" plain icon="edit" size="small" :disabled="single" @click="handleUpdate" v-hasPermi="['system:role:edit']">{{ $t('operationButtons.edit.label') }}</el-button>
-            </el-col>
-            <el-col :span="1.5" v-if="!multiple">
-                <el-button type="danger" plain icon="delete" size="small" :loading="exportLoading" :disabled="multiple" @click="handleDelete" v-hasPermi="['system:role:remove']">{{ $t('operationButtons.delete.label') }}</el-button>
+                <el-button type="primary" plain icon="upload" size="small" @click="handleExport" v-hasPermi="['system:role:export']">{{ $t('operationButtons.export.label') }}</el-button>
             </el-col>
             <!-- prettier-ignore -->
             <right-toolbar v-model:showSearch="showSearch" @queryTable="getList" />
@@ -95,7 +89,7 @@
                     </el-col>
                     <el-col :span="12">
                         <el-form-item label="角色顺序" prop="roleSort">
-                            <el-input maxlength="100" -number v-model="form.roleSort" controls-position="right" :min="0" style="width: 100%" />
+                            <el-input-number v-model="form.roleSort" controls-position="right" :min="0" style="width: 100%" />
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">

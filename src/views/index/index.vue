@@ -9,7 +9,7 @@
                                 <el-date-picker clearable v-model="queryParams.startTime" type="date" value-format="YYYY-MM-DD" :placeholder="$t('components.select.placeholder')"></el-date-picker>
                             </el-form-item>
                             <el-form-item :label="$t('index.dateRange.endDate.label')" prop="endTime">
-                                <el-date-picker clearable v-model="queryParams.endTime" type="date" value-format="YYYY-MM-DD" :placeholder="$t('components.select.placeholder')"></el-date-picker>
+                                <el-date-picker clearable v-model="queryParams.endTime" type="date" value-format="YYYY-MM-DD" :disabled-date="disabledEndDate" :placeholder="$t('components.select.placeholder')"></el-date-picker>
                             </el-form-item>
                             <form-search @reset="resetQuery" @search="handleQuery" />
                         </el-form>
@@ -164,7 +164,6 @@ const getPageStatistics = () => {
             item.value = res.data && res.data[0][item.type] !== null ? res.data[0][item.type] : '-'
             return item
         })
-        console.log(numList.value)
         loading.value = false
     })
 }
@@ -183,6 +182,13 @@ const resetQuery = () => {
     total.value = 0
     handleQuery()
     getPageStatistics()
+}
+
+const disabledEndDate = (time: any) => {
+    if (queryParams.value.startTime) {
+        return time.getTime() < new Date(queryParams.value.startTime).getTime()
+    }
+    return false
 }
 
 const onToJump = (type: string) => {

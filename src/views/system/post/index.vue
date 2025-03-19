@@ -83,7 +83,7 @@
                     <el-col :span="12">
                         <el-form-item label="岗位顺序" prop="postSort">
                             <!-- prettier-ignore -->
-                            <el-input maxlength="100"-number v-model="form.postSort" controls-position="right" :min="0" style="width: 240px;" />
+                            <el-input-number v-model="form.postSort" controls-position="right" :min="0" style="width: 240px;" />
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
