@@ -1,7 +1,7 @@
 <template>
     <div class="app-container">
         <el-form :model="queryParams" ref="queryFormRef" :inline="true" v-show="showSearch">
-            <el-form-item label="工地名称" prop="siteName">
+            <el-form-item :label="$t('siteManage.searchBar.siteName.label')" prop="siteName">
                 <el-input maxlength="100" v-model="queryParams.siteName" :placeholder="$t('components.input.placeholder')" clearable style="width: 200px" @keyup.enter="handleQuery" />
             </el-form-item>
             <form-search @reset="resetQuery" @search="handleQuery" />
@@ -22,12 +22,12 @@
 
         <el-table stripe border v-loading="loading" :data="tableData">
             <el-table-column type="index" width="80" :label="$t('tableColumn.index')" align="center" />
-            <el-table-column label="工地编码" align="center" prop="siteId" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="工地名称" align="center" prop="siteName" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="地址" align="center" prop="siteAddress" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="联系人" align="center" prop="contactPerson" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="联系方式" align="center" prop="contactPhone" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="状态" align="center" prop="status" min-width="120" show-overflow-tooltip>
+            <el-table-column :label="$t('siteManage.tableColumn[0].label')" align="center" prop="siteId" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('siteManage.tableColumn[1].label')" align="center" prop="siteName" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('siteManage.tableColumn[2].label')" align="center" prop="siteAddress" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('siteManage.tableColumn[3].label')" align="center" prop="contactPerson" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('siteManage.tableColumn[4].label')" align="center" prop="contactPhone" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('siteManage.tableColumn[5].label')" align="center" prop="status" min-width="120" show-overflow-tooltip>
                 <template #default="scope">
                     <dict-tag :options="site_status" :value="scope.row.status" />
                 </template>
@@ -81,24 +81,24 @@
         <el-dialog :title="title" v-model="open" width="800px" append-to-body>
             <el-row justify="center" style="max-height: 600px; overflow-y: auto">
                 <el-form ref="infoRef" :model="form" :rules="rules" label-width="auto">
-                    <el-form-item label="工地编码:" prop="siteId">
+                    <el-form-item :label="$t('siteManage.fields[0].label')" prop="siteId">
                         <el-input maxlength="100" v-model="form.siteId" :placeholder="$t('components.input.placeholder')" clearable />
                     </el-form-item>
-                    <el-form-item label="工地名称:" prop="siteName">
+                    <el-form-item :label="$t('siteManage.fields[1].label')" prop="siteName">
                         <el-input maxlength="100" v-model="form.siteName" :placeholder="$t('components.input.placeholder')" clearable />
                     </el-form-item>
-                    <el-form-item label="地址:" prop="siteAddress">
+                    <el-form-item :label="$t('siteManage.fields[2].label')" prop="siteAddress">
                         <el-input maxlength="100" v-model="form.siteAddress" :placeholder="$t('components.input.placeholder')" clearable />
                     </el-form-item>
-                    <el-form-item label="联系人:" prop="contactPerson">
+                    <el-form-item :label="$t('siteManage.fields[3].label')" prop="contactPerson">
                         <el-input maxlength="100" v-model="form.contactPerson" :placeholder="$t('components.input.placeholder')" clearable />
                     </el-form-item>
-                    <el-form-item label="联系方式:" prop="contactPhone">
+                    <el-form-item :label="$t('siteManage.fields[4].label')" prop="contactPhone">
                         <el-input maxlength="100" v-model="form.contactPhone" :placeholder="$t('components.input.placeholder')" clearable />
                     </el-form-item>
-                    <el-form-item label="状态:" prop="status">
+                    <el-form-item :label="$t('siteManage.fields[5].label')" prop="status">
                         <el-select v-model="form.status" :placeholder="$t('components.select.placeholder')" clearable>
-                            <el-option v-for="dict in site_status" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
+                            <el-option v-for="dict in site_status" :key="dict.value" :label="useAppStore().language == 'zh' ? dict.label : dict.labelEn" :value="dict.value"></el-option>
                         </el-select>
                     </el-form-item>
                 </el-form>
@@ -115,22 +115,22 @@
         <el-dialog :title="title" v-model="openInfo" width="800px" append-to-body>
             <el-row justify="center" style="max-height: 600px; overflow-y: auto">
                 <el-form ref="infoRef" :model="form" :rules="rules" label-width="auto">
-                    <el-form-item label="工地编码:" prop="siteId">
+                    <el-form-item :label="$t('siteManage.fields[0].label')" prop="siteId">
                         <span>{{ form.siteId }}</span>
                     </el-form-item>
-                    <el-form-item label="工地名称:" prop="siteName">
+                    <el-form-item :label="$t('siteManage.fields[1].label')" prop="siteName">
                         <span>{{ form.siteName }}</span>
                     </el-form-item>
-                    <el-form-item label="地址:" prop="siteAddress">
+                    <el-form-item :label="$t('siteManage.fields[2].label')" prop="siteAddress">
                         <span>{{ form.siteAddress }}</span>
                     </el-form-item>
-                    <el-form-item label="联系人:" prop="contactPerson">
+                    <el-form-item :label="$t('siteManage.fields[3].label')" prop="contactPerson">
                         <span>{{ form.contactPerson }}</span>
                     </el-form-item>
-                    <el-form-item label="联系方式:" prop="contactPhone">
+                    <el-form-item :label="$t('siteManage.fields[4].label')" prop="contactPhone">
                         <span>{{ form.contactPhone }}</span>
                     </el-form-item>
-                    <el-form-item label="状态:" prop="status">
+                    <el-form-item :label="$t('siteManage.fields[5].label')" prop="status">
                         <dict-tag :options="site_status" :value="form.status" />
                     </el-form-item>
                 </el-form>
@@ -239,7 +239,7 @@ const handleInfo = (row: any) => {
     getSiteInfo(id).then((response: any) => {
         form.value = response.data
         openInfo.value = true
-        title.value = '工地详情'
+        title.value = $t('dialog.infoTitle')
     })
 }
 
@@ -247,7 +247,7 @@ const handleInfo = (row: any) => {
 const handleAdd = () => {
     reset()
     open.value = true
-    title.value = '新增工地'
+    title.value = $t('dialog.addTitle')
 }
 
 /** 修改按钮操作 */
@@ -257,7 +257,7 @@ const handleUpdate = (row: any) => {
     getSiteInfo(id).then((response: any) => {
         form.value = response.data
         open.value = true
-        title.value = '编辑工地'
+        title.value = $t('dialog.editTitle')
     })
 }
 

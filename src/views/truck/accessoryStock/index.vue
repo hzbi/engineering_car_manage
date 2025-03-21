@@ -6,7 +6,7 @@
             </el-form-item>
             <el-form-item :label="$t('accessoryStock.searchBar.partType.label')" prop="accessoryType">
                 <el-select v-model="queryParams.accessoryType" :placeholder="$t('components.select.placeholder')" clearable style="width: 200px">
-                    <el-option v-for="dict in accessory_type" :key="dict.value" :label="dict.label" :value="dict.value" />
+                    <el-option v-for="dict in accessory_type" :key="dict.value" :label="useAppStore().language == 'zh' ? dict.label : dict.labelEn" :value="dict.value" />
                 </el-select>
             </el-form-item>
             <el-form-item :label="$t('accessoryStock.searchBar.constructionSiteName.label')" prop="siteId">
@@ -15,7 +15,7 @@
                 </el-select>
             </el-form-item>
             <el-form-item :label="$t('accessoryStock.searchBar.startDate.label')" prop="startTime">
-                <el-date-picker clearable v-model="queryParams.startTime" type="date" value-format="YYYY-MM-DD" :placeholder="$t('components.datePicker.placeholder')"></el-date-picker>
+                <el-date-picker clearable v-model="queryParams.startTime" type="date" value-format="YYYY-MM-DD" :disabled-date="disabledStartDate" :placeholder="$t('components.datePicker.placeholder')"></el-date-picker>
             </el-form-item>
             <el-form-item :label="$t('accessoryStock.searchBar.endDate.label')" prop="endTime">
                 <el-date-picker clearable v-model="queryParams.endTime" type="date" value-format="YYYY-MM-DD" :disabled-date="disabledEndDate" :placeholder="$t('components.datePicker.placeholder')"></el-date-picker>
@@ -25,7 +25,7 @@
 
         <el-row :gutter="10" class="mb8">
             <el-col :span="1.5">
-                <el-button type="primary" plain icon="plus" size="small" @click="handleAdd" v-hasPermi="['truck:accessoryStock:add']">入库</el-button>
+                <el-button type="primary" plain icon="plus" size="small" @click="handleAdd" v-hasPermi="['truck:accessoryStock:add']">{{ $t('operationButtons.entry.label') }}</el-button>
             </el-col>
             <el-col :span="1.5">
                 <el-button type="primary" plain icon="download" size="small" @click="handleImport" v-hasPermi="['truck:accessoryStock:import']">{{ $t('operationButtons.import.label') }}</el-button>
@@ -90,7 +90,7 @@
                     </el-form-item>
                     <el-form-item :label="$t('accessoryStock.fields[2].label')" prop="accessoryType">
                         <el-select v-model="form.accessoryType" :placeholder="$t('components.select.placeholder')" clearable>
-                            <el-option v-for="dict in accessory_type" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
+                            <el-option v-for="dict in accessory_type" :key="dict.value" :label="useAppStore().language == 'zh' ? dict.label : dict.labelEn" :value="dict.value"></el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item :label="$t('accessoryStock.fields[3].label')" prop="supplier">
@@ -134,24 +134,24 @@
                     <el-form-item :label="$t('accessoryStock.fields[3].label')" prop="supplier">
                         <span>{{ form.supplier }}</span>
                     </el-form-item>
-                    <el-form-item :label="$t('accessoryStock.fields[4].label')" prop="monetaryUnit">
+                    <el-form-item :label="$t('accessoryStock.fields[8].label')" prop="monetaryUnit">
                         <el-select v-model="form.monetaryUnit" :placeholder="$t('components.select.placeholder')" clearable>
-                            <el-option v-for="dict in currency_unit_type" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
+                            <el-option v-for="dict in currency_unit_type" :key="dict.value" :label="useAppStore().language == 'zh' ? dict.label : dict.labelEn" :value="dict.value"></el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item :label="$t('accessoryStock.fields[5].label')" prop="price">
+                    <el-form-item :label="$t('accessoryStock.fields[9].label')" prop="price">
                         <el-input maxlength="100" v-model="form.price" :placeholder="$t('components.input.placeholder')" clearable />
                     </el-form-item>
-                    <el-form-item :label="$t('accessoryStock.fields[6].label')" prop="num">
+                    <el-form-item :label="$t('accessoryStock.fields[4].label')" prop="num">
                         <span>{{ form.num }}</span>
                     </el-form-item>
-                    <el-form-item :label="$t('accessoryStock.fields[7].label')" prop="time">
+                    <el-form-item :label="$t('accessoryStock.fields[5].label')" prop="time">
                         <span>{{ form.time }}</span>
                     </el-form-item>
-                    <el-form-item :label="$t('accessoryStock.fields[8].label')" prop="by">
+                    <el-form-item :label="$t('accessoryStock.fields[6].label')" prop="by">
                         <span>{{ form.by }}</span>
                     </el-form-item>
-                    <el-form-item :label="$t('accessoryStock.fields[9].label')" prop="remark">
+                    <el-form-item :label="$t('accessoryStock.fields[7].label')" prop="remark">
                         <span>{{ form.remark }}</span>
                     </el-form-item>
                 </el-form>
@@ -407,9 +407,16 @@ const getPageList = () => {
     })
 }
 
+const disabledStartDate = (time: any) => {
+    if (queryParams.value.endTime) {
+        return time.getTime() > new Date(queryParams.value.endTime).getTime()
+    }
+    return false
+}
+
 const disabledEndDate = (time: any) => {
     if (queryParams.value.startTime) {
-        return time.getTime() < new Date(queryParams.value.startTime).getTime()
+        return time.getTime() < new Date(queryParams.value.startTime).getTime() - 8.64e7
     }
     return false
 }
@@ -586,12 +593,18 @@ const submitFormAccessoryOut = () => {
                     proxy.$modal.msgSuccess($t('components.message.edit'))
                     openAccessoryOut.value = false
                     getAccessoryOutData(formAccessoryOut.value.accessoryId)
+                    getAccessoryStockInfo(form.value.id).then((res: any) => {
+                        form.value = res.data
+                    })
                 })
             } else {
                 addAccessoryOut({ ...formAccessoryOut.value, relevance: 1 }).then(() => {
                     proxy.$modal.msgSuccess($t('components.message.add'))
                     openAccessoryOut.value = false
                     getAccessoryOutData(formAccessoryOut.value.accessoryId)
+                    getAccessoryStockInfo(form.value.id).then((res: any) => {
+                        form.value = res.data
+                    })
                 })
             }
         }
@@ -610,6 +623,9 @@ const handleDeleteAccessoryOut = (row: any) => {
         })
         .then(() => {
             getAccessoryOutData(formAccessoryOut.value.accessoryId)
+            getAccessoryStockInfo(form.value.id).then((res: any) => {
+                form.value = res.data
+            })
             proxy.$modal.msgSuccess($t('components.message.delete.text'))
         })
         .catch(() => {})

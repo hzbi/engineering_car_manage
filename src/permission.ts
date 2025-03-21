@@ -1,31 +1,35 @@
-import router from "./router";
-import { ElMessage } from "element-plus";
-import NProgress from "nprogress";
-import "nprogress/nprogress.css";
-import { getToken } from "@/utils/auth";
-import { isHttp } from "@/utils/validate";
-import { isRelogin } from "@/utils/request";
-import useUserStore from "@/store/modules/user";
-import useSettingsStore from "@/store/modules/settings";
-import usePermissionStore from "@/store/modules/permission";
+import router from './router'
+import { ElMessage } from 'element-plus'
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
+import { getToken } from '@/utils/auth'
+import { isHttp } from '@/utils/validate'
+import { isRelogin } from '@/utils/request'
+import useUserStore from '@/store/modules/user'
+import useSettingsStore from '@/store/modules/settings'
+import usePermissionStore from '@/store/modules/permission'
+import useAppStore from '@/store/modules/app'
+import { $t } from './lang'
 
-NProgress.configure({ showSpinner: false });
+NProgress.configure({ showSpinner: false })
 
-const whiteList = ["/login", "/auth-redirect", "/bind", "/register"];
+const whiteList = ['/login', '/auth-redirect', '/bind', '/register']
 
 router.beforeEach((to: any, from, next) => {
-	NProgress.start();
-	if (getToken()) {
-		to.meta.title && useSettingsStore().setTitle(to.meta.title);
-		if (to.path === "/login") {
-			next({ path: "/" });
-			NProgress.done();
-		} else {
-			if (useUserStore().roles.length === 0) {
-				isRelogin.show = true;
-				// 判断当前用户是否已拉取完user_info信息
-				// prettier-ignore
-				useUserStore().getInfo().then(() => {
+    NProgress.start()
+    if (getToken()) {
+        useAppStore().language == 'zh' ? useSettingsStore().setTitle($t(`login.title`)) : useSettingsStore().setTitle($t(`login.title`))
+        to.name && useSettingsStore().setTitle($t(`menu.${to.name}`))
+
+        if (to.path === '/login') {
+            next({ path: '/' })
+            NProgress.done()
+        } else {
+            if (useUserStore().roles.length === 0) {
+                isRelogin.show = true
+                // 判断当前用户是否已拉取完user_info信息
+                // prettier-ignore
+                useUserStore().getInfo().then(() => {
                         isRelogin.show = false;
                         // prettier-ignore
 						 usePermissionStore().generateRoutes().then((accessRoutes: any) => {
@@ -46,22 +50,22 @@ router.beforeEach((to: any, from, next) => {
 							next({ path: "/" });
 						});
 					});
-			} else {
-				next();
-			}
-		}
-	} else {
-		// 没有token
-		if (whiteList.indexOf(to.path) !== -1) {
-			// 在免登录白名单，直接进入
-			next();
-		} else {
-			next(`/login?redirect=${to.fullPath}`); // 否则全部重定向到登录页
-			NProgress.done();
-		}
-	}
-});
+            } else {
+                next()
+            }
+        }
+    } else {
+        // 没有token
+        if (whiteList.indexOf(to.path) !== -1) {
+            // 在免登录白名单，直接进入
+            next()
+        } else {
+            next(`/login?redirect=${to.fullPath}`) // 否则全部重定向到登录页
+            NProgress.done()
+        }
+    }
+})
 
 router.afterEach(() => {
-	NProgress.done();
-});
+    NProgress.done()
+})

@@ -5,12 +5,12 @@
             <el-col :span="24" :xs="24">
                 <transition name="fade">
                     <el-form :model="queryParams" ref="queryFormRef" :inline="true" v-show="showSearch">
-                        <el-form-item label="姓名" prop="nickName">
+                        <el-form-item :label="$t('userManage.searchBar.nickName.label')" prop="nickName">
                             <el-input maxlength="100" v-model="queryParams.nickName" :placeholder="$t('components.input.placeholder')" clearable style="width: 200px" />
                         </el-form-item>
-                        <el-form-item label="性别" prop="sex">
-                            <el-select v-model="queryParams.sex" placeholder="请选择性别" style="width: 120px" clearable @change="handleQuery">
-                                <el-option v-for="dict in sys_user_sex" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
+                        <el-form-item :label="$t('userManage.searchBar.sex.label')" prop="sex">
+                            <el-select v-model="queryParams.sex" :placeholder="$t('components.select.placeholder')" style="width: 200px" clearable @change="handleQuery">
+                                <el-option v-for="dict in sys_user_sex" :key="dict.value" :label="useAppStore().language == 'zh' ? dict.label : dict.labelEn" :value="dict.value"></el-option>
                             </el-select>
                         </el-form-item>
                         <form-search @reset="resetQuery" @search="handleQuery" />
@@ -27,63 +27,54 @@
                     <el-col :span="1.5">
                         <el-button type="primary" plain icon="upload" size="small" @click="handleExport" v-hasPermi="['system:user:export']">{{ $t('operationButtons.export.label') }}</el-button>
                     </el-col>
-                    <!-- <el-col :span="1.5" v-if="!single">
-                        <el-button type="success" plain icon="edit" size="small" :disabled="single" @click="handleUpdate" v-hasPermi="['system:user:edit']">{{$t('operationButtons.edit.label')}}</el-button>
-                    </el-col>
-                    <el-col :span="1.5" v-if="!multiple">
-                        <el-button type="danger" plain icon="delete" size="small" :disabled="multiple" @click="handleDelete" v-hasPermi="['system:user:remove']">{{$t('operationButtons.delete.label')}}</el-button>
-                    </el-col> -->
-                    <!-- prettier-ignore -->
                     <right-toolbar v-model:showSearch="showSearch" @queryTable="getPageList" />
                 </el-row>
 
                 <el-table stripe border v-loading="loading" ref="pageTableRef" :data="userList" @selection-change="handleSelectionChange">
                     <el-table-column type="selection" width="50" align="center" :selectable="checkSelected" />
-                    <el-table-column label="编号" width="80" align="center" key="userId" prop="userId" />
-                    <el-table-column label="用户账号" min-width="120" align="center" key="userName" prop="userName" :show-overflow-tooltip="true" />
-                    <el-table-column label="姓名" min-width="120" align="center" key="nickName" prop="nickName" :show-overflow-tooltip="true" />
-                    <el-table-column label="性别" min-width="120" align="center" key="sex" prop="sex">
+                    <el-table-column :label="$t('userManage.tableColumn[0].label')" width="80" align="center" key="userId" prop="userId" />
+                    <el-table-column :label="$t('userManage.tableColumn[1].label')" min-width="120" align="center" key="userName" prop="userName" :show-overflow-tooltip="true" />
+                    <el-table-column :label="$t('userManage.tableColumn[2].label')" min-width="120" align="center" key="nickName" prop="nickName" :show-overflow-tooltip="true" />
+                    <el-table-column :label="$t('userManage.tableColumn[3].label')" min-width="120" align="center" key="sex" prop="sex">
                         <template #default="scope">
-                            <span v-if="scope.row.sex === '0'">男</span>
-                            <span v-else-if="scope.row.sex === '1'">女</span>
-                            <!-- prettier-ignore -->
-                            <span v-else style="color: #f2b53a;font-weight: bolder;">未知</span>
+                            <dict-tag :options="sys_user_sex" :value="scope.row.sex" />
                         </template>
                     </el-table-column>
-                    <el-table-column label="联系电话" min-width="120" align="center" key="phonenumber" prop="phonenumber" />
-                    <el-table-column label="角色" min-width="120" align="center" prop="roleNameArray">
+                    <el-table-column :label="$t('userManage.tableColumn[4].label')" min-width="120" align="center" key="phonenumber" prop="phonenumber" />
+                    <el-table-column :label="$t('userManage.tableColumn[5].label')" min-width="200" align="center" prop="roleNameArray">
                         <template #default="scope">
                             <!-- prettier-ignore -->
                             <data-tag v-model:roles-array="scope.row.roleNameArray"/>
                         </template>
                     </el-table-column>
-                    <el-table-column label="备注" min-width="120" align="center" key="remark" prop="remark" />
-                    <el-table-column label="管理车辆" min-width="200" align="center">
+                    <el-table-column :label="$t('userManage.tableColumn[6].label')" min-width="120" align="center" key="remark" prop="remark" />
+                    <el-table-column :label="$t('userManage.tableColumn[7].label')" min-width="200" align="center">
                         <template #default="scope">
-                            <div v-if="scope.row.userName == 'superAdmin' || scope.row.userName == 'admin'">全部</div>
+                            <div v-if="scope.row.roleidArray.includes('1') || scope.row.roleidArray.includes('2')">{{ $t('operationButtons.all.label') }}</div>
                             <div v-else>
                                 <template v-if="scope.row.carInfoList && scope.row.carInfoList.length > 0" v-for="(item, index) in scope.row.carInfoList" :key="index">
                                     <span :style="{ color: item.carStatus == 0 ? '#409eff' : '#C0C4CC', cursor: 'pointer' }" @click="handleSettingTruck(scope.row)">{{ (index == scope.row.carInfoList.length - 1 && item.carNumber) || item.carNumber + ',' }}</span>
                                 </template>
-                                <el-button v-else type="text" @click="handleSettingTruck(scope.row)">设置管理车辆</el-button>
+                                <el-button v-else type="text" @click="handleSettingTruck(scope.row)">{{ $t('operationButtons.settingTruck.label') }}</el-button>
                             </div>
                         </template>
                     </el-table-column>
-                    <el-table-column label="管理工地" min-width="200" align="center">
+                    <el-table-column :label="$t('userManage.tableColumn[8].label')" min-width="200" align="center">
                         <template #default="scope">
-                            <div v-if="scope.row.userName == 'superAdmin' || scope.row.userName == 'admin'">全部</div>
+                            <div v-if="scope.row.roleidArray.includes('1') || scope.row.roleidArray.includes('2')">{{ $t('operationButtons.all.label') }}</div>
                             <div v-else>
                                 <template v-if="scope.row.siteInfoList && scope.row.siteInfoList.length > 0" v-for="(item, index) in scope.row.siteInfoList" :key="index">
                                     <span :style="{ color: item.status == 0 ? '#409eff' : '#C0C4CC', cursor: 'pointer' }" @click="handleSettingSite(scope.row)">{{ (index == scope.row.siteInfoList.length - 1 && item.siteName) || item.siteName + ',' }}</span>
                                 </template>
-                                <el-button v-else type="text" @click="handleSettingSite(scope.row)">设置管理工地</el-button>
+                                <el-button v-else type="text" @click="handleSettingSite(scope.row)">{{ $t('operationButtons.settingSite.label') }}</el-button>
                             </div>
                         </template>
                     </el-table-column>
                     <!-- <el-table-column label="邮箱" width="200" align="center" key="email" prop="email" /> -->
-                    <el-table-column label="状态" min-width="120" align="center" key="status">
+                    <el-table-column :label="$t('userManage.tableColumn[9].label')" min-width="120" align="center" key="status">
                         <template #default="scope">
-                            <status-switch :disabled="scope.row.admin" :status-data.sync="scope.row.status" :activeColor.sync="'#00CD00'.toString()" :inactiveColor.sync="'#CDBA96'.toString()" @handleChange="handleStatusChange($event, scope.row)" />
+                            <dict-tag :options="sys_normal_disable" :value="scope.row.status" />
+                            <!-- <status-switch :disabled="scope.row.admin" :status-data.sync="scope.row.status" @handleChange="handleStatusChange($event, scope.row)" /> -->
                         </template>
                     </el-table-column>
                     <!-- <el-table-column label="创建时间" align="center" prop="createTime" width="160">
@@ -91,7 +82,7 @@
                             <span>{{ parseTime(scope.row.createTime) }}</span>
                         </template>
                     </el-table-column> -->
-                    <el-table-column :label="$t('tableColumn.operation')" min-width="200" fixed="right" align="center" class-name="small-padding fixed-width">
+                    <el-table-column :label="$t('tableColumn.operation')" min-width="300" fixed="right" align="center" class-name="small-padding fixed-width">
                         <template #default="scope">
                             <!-- prettier-ignore -->
                             <el-link
@@ -102,7 +93,7 @@
 								@click="handleUpdate(scope.row)"
 								v-hasPermi="['system:user:edit']"
                             >
-                                <span class="table_link_text">修改</span>
+                                <span class="table_link_text">{{ $t('operationButtons.edit.label') }}</span>
                             </el-link>
                             <!-- prettier-ignore -->
                             <el-link
@@ -113,7 +104,7 @@
 								@click="handleResetPwd(scope.row)"
 								v-hasPermi="['system:user:resetPwd']"
                             >
-                                <span class="table_link_text">重置</span>
+                                <span class="table_link_text">{{ $t('operationButtons.reset.label') }}</span>
                             </el-link>
                             <!-- prettier-ignore -->
                             <el-link
@@ -125,7 +116,7 @@
 								@click="handleDelete(scope.row)"
 								v-hasPermi="['system:user:remove']"
 								><span class="table_link_text"
-									>删除</span
+									>{{$t('operationButtons.delete.label')}}</span
 								></el-link
 							>
                         </template>
@@ -139,10 +130,10 @@
         <!-- 添加或修改对话框 -->
         <el-dialog :title="title" v-model="open" width="40%" append-to-body @close="cleanSelect()">
             <!-- prettier-ignore -->
-            <el-form ref="formRef" :model="form" :rules="rules" label-width="80px">
+            <el-form ref="formRef" :model="form" :rules="rules" label-width="auto">
 				<el-row>
 					<el-col :span="12">
-						<el-form-item label="姓名" prop="nickName">
+						<el-form-item :label="$t('userManage.fields[0].label')" prop="nickName">
 							<el-input
 								v-model="form.nickName"
 								:placeholder="$t('components.input.placeholder')"
@@ -150,7 +141,7 @@
 						</el-form-item>
 					</el-col>
                     <el-col :span="12">
-						<el-form-item label="联系电话" prop="phonenumber">
+						<el-form-item :label="$t('userManage.fields[1].label')" prop="phonenumber">
 							<el-input
 								v-model="form.phonenumber"
 								:placeholder="$t('components.input.placeholder')"
@@ -163,7 +154,7 @@
 					<el-col :span="12">
 						<el-form-item
 							v-if="form.userId == undefined"
-							label="用户账号"
+							:label="$t('userManage.fields[2].label')"
 							prop="userName"
 						>
 							<el-input
@@ -175,7 +166,7 @@
 					<el-col :span="12">
 						<el-form-item
 							v-if="form.userId == undefined"
-							label="登录密码"
+							:label="$t('userManage.fields[3].label')"
 							prop="password"
 						>
 							<el-input
@@ -189,35 +180,35 @@
 				</el-row>
 				<el-row>
 					<el-col :span="12">
-						<el-form-item label="用户性别">
-							<el-select v-model="form.sex" placeholder="请选择性别" style="width: 100%;">
+						<el-form-item :label="$t('userManage.fields[4].label')">
+							<el-select v-model="form.sex" :placeholder="$t('components.input.placeholder')" style="width: 100%;">
 								<el-option
 									v-for="dict in sys_user_sex"
 									:key="dict.value"
-                                    :label="dict.label"
+                                    :label="useAppStore().language == 'zh' ? dict.label : dict.labelEn"
                                     :value="dict.value"
 								></el-option>
 							</el-select>
 						</el-form-item>
 					</el-col>
 					<el-col :span="12">
-						<el-form-item label="用户状态">
+						<el-form-item :label="$t('userManage.fields[5].label')">
 							<el-radio-group v-model="form.status" style="width: 100%;" @change="statusChange">
 								<el-radio
                                     v-for="dict in sys_normal_disable"
                                     :key="dict.label"
                                     :label="dict.value"
-                                    >{{ dict.label }}</el-radio>
+                                    >{{ useAppStore().language == 'zh' ? dict.label : dict.labelEn }}</el-radio>
 							</el-radio-group>
 						</el-form-item>
 					</el-col>
 				</el-row>
 				<el-row>
 					<el-col :span="12">
-						<el-form-item label="所属角色">
+						<el-form-item :label="$t('userManage.fields[6].label')" prop="roleIds">
 							<el-select
 								v-model="form.roleIds"
-								placeholder="请选择角色"
+								:placeholder="$t('components.input.placeholder')"
                                 style="width: 100%;"
 							>
 								<el-option
@@ -233,12 +224,12 @@
 				</el-row>
 				<el-row>
 					<el-col :span="24">
-						<el-form-item label="备注信息">
+						<el-form-item :label="$t('userManage.fields[7].label')">
 							<el-input
 								v-model="form.remark"
                                 :autosize="{ minRows: 4, maxRows: 8 }"
 								type="textarea"
-								placeholder="请输入内容"
+								:placeholder="$t('components.input.placeholder')"
 							></el-input>
 						</el-form-item>
 					</el-col>
@@ -273,16 +264,16 @@
 					{{$t('components.upload.text1')}}
 					<em>{{$t('components.upload.text2')}}</em>
 				</div>
-				<div class="el-upload__tip" slot="tip">
+				<!-- <div class="el-upload__tip" slot="tip"> -->
                     <!-- prettier-ignore -->
-					<el-checkbox v-model="upload.updateSupport"/>是否更新已经存在的用户数据
+					<!-- <el-checkbox v-model="upload.updateSupport"/>是否更新已经存在的用户数据
 					<el-link
 						type="info"
 						style="font-size:12px"
 						@click="importTemplate"
 						>下载模板</el-link
-					>
-				</div>
+					> -->
+				<!-- </div> -->
                 <!-- prettier-ignore -->
 				<div class="el-upload__tip" style="color:red" slot="tip">{{$t('components.upload.text3')}}</div>
 			</el-upload>
@@ -296,12 +287,12 @@
             </template>
         </el-dialog>
 
-        <el-dialog title="选择管理的车辆" v-model="selectObj.truckOpen" width="50%" append-to-body>
+        <el-dialog :title="$t('userManage.truckDialog.title')" v-model="selectObj.truckOpen" width="50%" append-to-body>
             <el-form :model="truckQueryParams" ref="truckQueryFormRef" :inline="true">
-                <el-form-item label="车牌号" prop="carNumber">
+                <el-form-item :label="$t('truckInfo.searchBar.plateNumber.label')" prop="carNumber">
                     <el-input maxlength="100" v-model="truckQueryParams.carNumber" :placeholder="$t('components.input.placeholder')" clearable style="width: 200px" />
                 </el-form-item>
-                <el-form-item label="车型" prop="carType">
+                <el-form-item :label="$t('truckInfo.searchBar.vehicleType.label')" prop="carType">
                     <el-select v-model="truckQueryParams.carType" :placeholder="$t('components.select.placeholder')" clearable style="width: 200px">
                         <el-option v-for="dict in truck_type" :key="dict.value" :label="dict.label" :value="dict.value" />
                     </el-select>
@@ -310,7 +301,7 @@
             </el-form>
 
             <div style="margin: 15px 0; color: #409eff">
-                已选择车辆：
+                {{ $t('userManage.truckDialog.content') }}
                 <template v-for="(item, index) in multipleTruckSelection" :key="index">
                     <span :style="{ color: item.carStatus == 0 ? '#409eff' : '#C0C4CC', cursor: 'pointer' }">{{ (index == multipleTruckSelection.length - 1 && item.carNumber) || item.carNumber + ',' }}</span>
                 </template>
@@ -319,14 +310,14 @@
             <el-table stripe border v-loading="loading" :data="truckTableData" ref="multipleTruckTableRef" row-key="id" @selection-change="handleSelectionChangeTruck" max-height="500">
                 <el-table-column type="selection" width="50" align="center" />
                 <el-table-column type="index" width="80" :label="$t('tableColumn.index')" align="center" />
-                <el-table-column label="车牌号" align="center" prop="carNumber" min-width="120" show-overflow-tooltip></el-table-column>
-                <el-table-column label="车型" align="center" prop="carType" min-width="120" show-overflow-tooltip>
+                <el-table-column :label="$t('truckInfo.tableColumn[0].label')" align="center" prop="carNumber" min-width="120" show-overflow-tooltip></el-table-column>
+                <el-table-column :label="$t('truckInfo.tableColumn[1].label')" align="center" prop="carType" min-width="120" show-overflow-tooltip>
                     <template #default="scope">
                         <dict-tag :options="truck_type" :value="scope.row.carType" />
                     </template>
                 </el-table-column>
-                <el-table-column label="吨位" align="center" prop="carWeight" min-width="120" show-overflow-tooltip></el-table-column>
-                <el-table-column label="状态" align="center" prop="carStatus" min-width="120" show-overflow-tooltip>
+                <el-table-column :label="$t('truckInfo.tableColumn[2].label')" align="center" prop="carWeight" min-width="120" show-overflow-tooltip></el-table-column>
+                <el-table-column :label="$t('truckInfo.tableColumn[6].label')" align="center" prop="carStatus" min-width="120" show-overflow-tooltip>
                     <template #default="scope">
                         <dict-tag :options="truck_status" :value="scope.row.carStatus" />
                     </template>
@@ -343,16 +334,16 @@
             </template>
         </el-dialog>
 
-        <el-dialog title="选择管理的工地" v-model="selectObj.siteOpen" width="50%" append-to-body>
+        <el-dialog :title="$t('userManage.siteDialog.title')" v-model="selectObj.siteOpen" width="50%" append-to-body>
             <el-form :model="siteQueryParams" ref="siteQueryFormRef" :inline="true">
-                <el-form-item label="工地名称" prop="siteName">
+                <el-form-item :label="$t('siteManage.searchBar.siteName.label')" prop="siteName">
                     <el-input maxlength="100" v-model="siteQueryParams.siteName" :placeholder="$t('components.input.placeholder')" clearable style="width: 200px" />
                 </el-form-item>
                 <form-search @reset="resetSiteQuery" @search="handleSiteQuery" />
             </el-form>
 
             <div style="margin: 15px 0; color: #409eff">
-                已选择工地：
+                {{ $t('userManage.siteDialog.content') }}
                 <template v-for="(item, index) in multipleSiteSelection" :key="index">
                     <span :style="{ color: item.status == 0 ? '#409eff' : '#C0C4CC', cursor: 'pointer' }">{{ (index == multipleSiteSelection.length - 1 && item.siteName) || item.siteName + ',' }}</span>
                 </template>
@@ -361,12 +352,12 @@
             <el-table stripe border v-loading="loading" :data="siteTableData" ref="multipleSiteTableRef" row-key="id" @selection-change="handleSelectionChangeSite" max-height="500">
                 <el-table-column type="selection" width="50" align="center" />
                 <el-table-column type="index" width="80" :label="$t('tableColumn.index')" align="center" />
-                <el-table-column label="工地编码" align="center" prop="siteId" min-width="120" show-overflow-tooltip></el-table-column>
-                <el-table-column label="工地名称" align="center" prop="siteName" min-width="120" show-overflow-tooltip></el-table-column>
-                <el-table-column label="地址" align="center" prop="siteAddress" min-width="120" show-overflow-tooltip></el-table-column>
-                <el-table-column label="联系人" align="center" prop="contactPerson" min-width="120" show-overflow-tooltip></el-table-column>
-                <el-table-column label="联系方式" align="center" prop="contactPhone" min-width="120" show-overflow-tooltip></el-table-column>
-                <el-table-column label="状态" align="center" prop="status" min-width="120" show-overflow-tooltip>
+                <el-table-column :label="$t('siteManage.tableColumn[0].label')" align="center" prop="siteId" min-width="120" show-overflow-tooltip></el-table-column>
+                <el-table-column :label="$t('siteManage.tableColumn[1].label')" align="center" prop="siteName" min-width="120" show-overflow-tooltip></el-table-column>
+                <el-table-column :label="$t('siteManage.tableColumn[2].label')" align="center" prop="siteAddress" min-width="120" show-overflow-tooltip></el-table-column>
+                <el-table-column :label="$t('siteManage.tableColumn[3].label')" align="center" prop="contactPerson" min-width="120" show-overflow-tooltip></el-table-column>
+                <el-table-column :label="$t('siteManage.tableColumn[4].label')" align="center" prop="contactPhone" min-width="120" show-overflow-tooltip></el-table-column>
+                <el-table-column :label="$t('siteManage.tableColumn[5].label')" align="center" prop="status" min-width="120" show-overflow-tooltip>
                     <template #default="scope">
                         <dict-tag :options="site_status" :value="scope.row.status" />
                     </template>
@@ -393,8 +384,9 @@ import { updateUserCarSite } from '@/api/system/user'
 import { getTruckList } from '@/api/truck/truckInfo'
 import { getSiteList } from '@/api/site/siteManage'
 import useAppStore from '@/store/modules/app'
+import { $t } from '@/lang'
 
-const { loading, queryFormRef, formRef, sys_normal_disable, deptTreeRef, single, multiple, showSearch, total, userList, title, deptOptions, open, deptName, dateRange, sys_user_sex, postOptions, roleOptions, form, defaultProps, upload, queryParams, columns, rules, pageTableRef, uploadRef, getPageList, filterNode, handleNodeClick, handleStatusChange, cancel, handleQuery, resetQuery, handleSelectionChange, statusChange, handleAdd, handleUpdate, handleResetPwd, submitForm, handleDelete, handleExport, handleImport, importTemplate, handleFileUploadProgress, handleFileSuccess, submitFileForm, checkSelected, cleanSelect, cleanUploadRef, truck_type, truck_status, site_status } = User()
+const { loading, queryFormRef, formRef, sys_normal_disable, showSearch, total, userList, title, open, sys_user_sex, user_status, roleOptions, form, upload, queryParams, rules, pageTableRef, uploadRef, fileList, getPageList, handleStatusChange, cancel, handleQuery, resetQuery, handleSelectionChange, statusChange, handleAdd, handleUpdate, handleResetPwd, submitForm, handleDelete, handleExport, handleImport, handleFileUploadProgress, handleFileSuccess, submitFileForm, checkSelected, cleanSelect, cleanUploadRef, truck_type, truck_status, site_status } = User()
 
 const { proxy } = getCurrentInstance() as any
 
@@ -462,7 +454,7 @@ const handleSelectionChangeTruck = (selection: any) => {
 const submitFormTruck = () => {
     updateUserCarSite({ userId: rowId.value, carId: multipleTruckSelection.value.map((item: { id: any }) => item.id).join(',') }).then((response: any) => {
         if (response.code === 200) {
-            proxy.$modal.msgSuccess('设置成功')
+            proxy.$modal.msgSuccess($t('components.message.setting'))
             getPageList()
             selectObj.truckOpen = false
             rowId.value = ''
@@ -534,7 +526,7 @@ const handleSelectionChangeSite = (selection: any) => {
 const submitFormSite = () => {
     updateUserCarSite({ userId: rowId.value, siteId: multipleSiteSelection.value.map((item: { id: any }) => item.id).join(',') }).then((res: any) => {
         if (res.code === 200) {
-            proxy.$modal.msgSuccess('设置成功')
+            proxy.$modal.msgSuccess($t('components.message.setting'))
             getPageList()
             selectObj.siteOpen = false
             rowId.value = ''

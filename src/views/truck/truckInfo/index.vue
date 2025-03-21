@@ -6,7 +6,7 @@
             </el-form-item>
             <el-form-item :label="$t('truckInfo.searchBar.vehicleType.label')" prop="carType">
                 <el-select v-model="queryParams.carType" :placeholder="$t('components.select.placeholder')" clearable style="width: 200px">
-                    <el-option v-for="dict in truck_type" :key="dict.value" :label="dict.label" :value="dict.value" />
+                    <el-option v-for="dict in truck_type" :key="dict.value" :label="useAppStore().language == 'zh' ? dict.label : dict.labelEn" :value="dict.value" />
                 </el-select>
             </el-form-item>
             <form-search @reset="resetQuery" @search="handleQuery" />
@@ -73,7 +73,7 @@
                     </el-form-item>
                     <el-form-item :label="$t('truckInfo.fields[1].label')" prop="carType">
                         <el-select v-model="form.carType" :placeholder="$t('components.select.placeholder')" clearable>
-                            <el-option v-for="dict in truck_type" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
+                            <el-option v-for="dict in truck_type" :key="dict.value" :label="useAppStore().language == 'zh' ? dict.label : dict.labelEn" :value="dict.value"></el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item :label="$t('truckInfo.fields[2].label')" prop="carWeight">
@@ -87,7 +87,7 @@
                     </el-form-item>
                     <el-form-item :label="$t('truckInfo.fields[5].label')" prop="carStatus">
                         <el-select v-model="form.carStatus" :placeholder="$t('components.select.placeholder')" clearable>
-                            <el-option v-for="dict in truck_status" :key="dict.value" :label="dict.label" :value="dict.value" />
+                            <el-option v-for="dict in truck_status" :key="dict.value" :label="useAppStore().language == 'zh' ? dict.label : dict.labelEn" :value="dict.value" />
                         </el-select>
                     </el-form-item>
                     <el-form-item :label="$t('truckInfo.fields[6].label')" prop="remark">

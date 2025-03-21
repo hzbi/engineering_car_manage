@@ -2,8 +2,9 @@ import { ElForm, ElTable } from 'element-plus'
 // prettier-ignore
 import { ref, getCurrentInstance, nextTick, onMounted } from "vue";
 // prettier-ignore
-import { addMenu, batchDelMenu, delMenu, getMenu, listMenu, pageList, updateMenu, } from "@/api/system/menu";
-import { lodashFunc } from '@/utils/ruoyi'
+import { addMenu, delMenu, getMenu, listMenu, pageList, updateMenu, } from "@/api/system/menu";
+import useAppStore from '@/store/modules/app'
+import { $t } from '@/lang'
 
 export default () => {
     const { proxy } = getCurrentInstance() as any
@@ -51,21 +52,21 @@ export default () => {
         menuName: [
             {
                 required: true,
-                message: '菜单名称不能为空',
+                message: useAppStore().language == 'zh' ? '菜单名称不能为空' : 'Menu name cannot be empty',
                 trigger: 'blur'
             }
         ],
         orderNum: [
             {
                 required: true,
-                message: '菜单顺序不能为空',
+                message: useAppStore().language == 'zh' ? '菜单顺序不能为空' : 'Menu sequence cannot be empty',
                 trigger: 'blur'
             }
         ],
         path: [
             {
                 required: true,
-                message: '路由地址不能为空',
+                message: useAppStore().language == 'zh' ? '路由地址不能为空' : 'The routing address cannot be empty.',
                 trigger: 'blur'
             }
         ]
@@ -107,7 +108,7 @@ export default () => {
         menuOptions.value = []
         await listMenu().then((response: any) => {
             const data = response.data
-            const menu = { menuId: 0, menuName: '主类目', children: [] }
+            const menu = { menuId: 0, menuName: useAppStore().language == 'zh' ? '主类目' : 'Main Category', children: [] }
             menu.children = proxy.handleTree(data, 'menuId')
             menuOptions.value.push(menu)
         })
@@ -181,7 +182,7 @@ export default () => {
             form.value.parentId = 0
         }
         open.value = true
-        title.value = '添加菜单'
+        title.value = $t('dialog.addTitle')
     }
     // 多选框选中数据
     const multipleSelection = (selection: any) => {
@@ -189,26 +190,6 @@ export default () => {
         single.value = selection.length != 1
         multiple.value = !selection.length
     }
-    /**
-     * 切换表格数据
-     */
-    const witchTable = () => {
-        ids.value = []
-        pageTable.value = !pageTable.value
-        refreshTable.value = !refreshTable.value
-        if (!pageTable.value && refreshTable.value) {
-            total.value = 0
-            tableSwitch.value = '分页表格'
-            switchIcon.value = 'list'
-            getList()
-        } else {
-            tableSwitch.value = '树形表格'
-            switchIcon.value = 'grid'
-            getPage()
-        }
-    }
-    // 切换表格增加防抖
-    const handleSwitch = lodashFunc(witchTable, 700)
 
     /** 展开/折叠操作 */
     const toggleExpandAll = () => {
@@ -237,7 +218,7 @@ export default () => {
 				}
 			})
 			.finally(() => {
-				title.value = "修改菜单";
+				title.value = $t('dialog.editTitle')
 				open.value = true;
 			});
     }
@@ -248,7 +229,7 @@ export default () => {
                 if (form.value.menuId !== undefined) {
                     updateMenu(form.value).then((response: any) => {
                         if (response.code === 200) {
-                            proxy.$modal.msgSuccess('修改成功')
+                            proxy.$modal.msgSuccess($t('components.message.edit'))
                             open.value = false
                             handleQuery()
                         }
@@ -256,7 +237,7 @@ export default () => {
                 } else {
                     addMenu(form.value).then((response: any) => {
                         if (response.code === 200) {
-                            proxy.$modal.msgSuccess('新增成功')
+                            proxy.$modal.msgSuccess($t('components.message.add'))
                             open.value = false
                             handleQuery()
                         }
@@ -270,41 +251,23 @@ export default () => {
         // 设置当前行被选中
         proxy.setTableRowSelected(pageTableRef, row, true)
         // prettier-ignore
-        proxy.$modal.confirm('是否确认删除名称为"' + row.menuName + '"的数据项?')
-			.then(() => {
-				return delMenu(row.menuId);
-			})
-			.then((response: any) => {
-				if (response.code === 200) {
-					proxy.$modal.msgSuccess("删除成功");
-                    getList();
-				}
-			})
-			.catch(() => {
-                proxy.setTableRowSelected(pageTableRef, row, false);
-				console.log("取消了删除");
-			});
-    }
-
-    /** 批量删除按钮操作 */
-    const batchDelete = () => {
-        const menuIds = ids.value
-        // prettier-ignore
-        proxy.$modal.confirm('是否确认删除编号为【"' + menuIds + '"】的数据?')
-			.then(() => {
-				return batchDelMenu(menuIds);
-			})
-			.then((response: any) => {
-				if (response.code === 200) {
-					proxy.$modal.msgSuccess("批量删除成功");
-                    getPage();
-				}
-			})
-			.catch(() => {
-                // 取消表格选中项
-                cleanSelect();
-				console.log("取消了批量删除");
-			});
+        proxy.$modal
+            .confirm($t('components.message.delete.content'), {
+                confirmButtonText: $t('components.btn.confirmButton'),
+                cancelButtonText: $t('components.btn.cancelButton')
+            })
+            .then(() => {
+                return delMenu(row.menuId)
+            })
+            .then((response: any) => {
+                if (response.code === 200) {
+                    proxy.$modal.msgSuccess($t('components.message.delete'))
+                    getList()
+                }
+            })
+            .catch(() => {
+                proxy.setTableRowSelected(pageTableRef, row, false)
+            })
     }
 
     onMounted(() => {
@@ -316,6 +279,6 @@ export default () => {
         loading, open, queryRef, showSearch, title, total, menuList, menuOptions, isExpandAll, refreshTable, showChooseIcon, iconSelectRef, menuRef,
         queryParams, form, rules, sys_show_hide, sys_normal_disable, dateRange, elTreeProps, menuPage, pageTable, single, multiple, pageLoading,
         getList, cancel, showSelectIcon, selected, hideSelectIcon, handleQuery, resetQuery, handleAdd, toggleExpandAll, handleUpdate, submitForm,
-        handleDelete, handleSwitch, getPage, multipleSelection, batchDelete, switchIcon, tableSwitch, ids, pageTableRef, cleanSelect, dateRange2,
+        handleDelete, getPage, multipleSelection, switchIcon, tableSwitch, ids, pageTableRef, cleanSelect, dateRange2,
     }
 }

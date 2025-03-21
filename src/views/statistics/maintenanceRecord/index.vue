@@ -1,18 +1,18 @@
 <template>
     <div class="app-container">
         <el-form :model="queryParams" ref="queryFormRef" :inline="true" v-show="showSearch">
-            <el-form-item label="年份" prop="year">
+            <el-form-item :label="$t('maintenanceRecord.searchBar.year.label')" prop="year">
                 <el-date-picker v-model="queryParams.year" type="year" value-format="YYYY" :placeholder="$t('components.input.placeholder')" clearable style="width: 200px" @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="月份" prop="mon">
+            <el-form-item :label="$t('maintenanceRecord.searchBar.mon.label')" prop="mon">
                 <el-date-picker v-model="queryParams.mon" type="month" value-format="MM" :placeholder="$t('components.input.placeholder')" clearable style="width: 200px" @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="车牌号" prop="carNumber">
+            <el-form-item :label="$t('maintenanceRecord.searchBar.carNumber.label')" prop="carNumber">
                 <el-input maxlength="100" v-model="queryParams.carNumber" :placeholder="$t('components.input.placeholder')" clearable style="width: 200px" @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="车型" prop="carType">
+            <el-form-item :label="$t('maintenanceRecord.searchBar.carType.label')" prop="carType">
                 <el-select v-model="queryParams.carType" :placeholder="$t('components.select.placeholder')" clearable style="width: 200px">
-                    <el-option v-for="dict in truck_type" :key="dict.value" :label="dict.label" :value="dict.value" />
+                    <el-option v-for="dict in truck_type" :key="dict.value" :label="useAppStore().language == 'zh' ? dict.label : dict.labelEn" :value="dict.value" />
                 </el-select>
             </el-form-item>
             <form-search @reset="resetQuery" @search="handleQuery" />
@@ -27,17 +27,17 @@
 
         <el-table stripe border v-loading="loading" :data="tableData">
             <el-table-column type="index" width="80" :label="$t('tableColumn.index')" align="center" />
-            <el-table-column label="年/月份" align="center" prop="time" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="车牌号" align="center" prop="carNumber" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="车型" align="center" prop="carType" min-width="120" show-overflow-tooltip>
+            <el-table-column :label="$t('maintenanceRecord.tableColumn[0].label')" align="center" prop="time" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('maintenanceRecord.tableColumn[1].label')" align="center" prop="carNumber" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('maintenanceRecord.tableColumn[2].label')" align="center" prop="carType" min-width="120" show-overflow-tooltip>
                 <template #default="scope">
                     <dict-tag :options="truck_type" :value="scope.row.carType" />
                 </template>
             </el-table-column>
-            <el-table-column label="维修次数" align="center" prop="num" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="油耗" align="center" prop="youhao" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="公里数" align="center" prop="kilo" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="维修费用" align="center" prop="money" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('maintenanceRecord.tableColumn[3].label')" align="center" prop="num" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('maintenanceRecord.tableColumn[4].label')" align="center" prop="youhao" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('maintenanceRecord.tableColumn[5].label')" align="center" prop="kilo" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('maintenanceRecord.tableColumn[6].label')" align="center" prop="money" min-width="120" show-overflow-tooltip></el-table-column>
         </el-table>
 
         <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getPageList" />
@@ -49,6 +49,7 @@ import { getMaintenanceRecordList } from '@/api/statistics/index'
 import { ref, reactive, toRefs, getCurrentInstance } from 'vue'
 import { dayjs, ElForm, ElTable } from 'element-plus'
 import { $t } from '@/lang'
+import useAppStore from '@/store/modules/app'
 
 const { proxy } = getCurrentInstance() as any
 
@@ -65,8 +66,8 @@ const total = ref(0)
 const data = reactive({
     queryParams: {
         pageNum: 1,
-        pageSize: 1,
-        year: dayjs(new Date().setDate(new Date().getDate() - 1)).format('YYYY-MM-DD'),
+        pageSize: 10,
+        year: dayjs(new Date().setDate(new Date().getDate() - 1)).format('YYYY'),
         mon: null,
         carNumber: null,
         carType: null

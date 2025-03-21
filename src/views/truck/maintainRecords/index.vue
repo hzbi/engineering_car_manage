@@ -11,11 +11,11 @@
             </el-form-item>
             <el-form-item :label="$t('maintainRecords.searchBar.maintenanceType.label')" prop="maintenanceType">
                 <el-select v-model="queryParams.maintenanceType" :placeholder="$t('components.select.placeholder')" clearable style="width: 200px">
-                    <el-option v-for="dict in maintenance_type" :key="dict.value" :label="dict.label" :value="dict.value" />
+                    <el-option v-for="dict in maintenance_type" :key="dict.value" :label="useAppStore().language == 'zh' ? dict.label : dict.labelEn" :value="dict.value" />
                 </el-select>
             </el-form-item>
             <el-form-item :label="$t('maintainRecords.searchBar.startDate.label')" prop="startTime">
-                <el-date-picker clearable v-model="queryParams.startTime" type="date" value-format="YYYY-MM-DD" :placeholder="$t('components.datePicker.placeholder')"></el-date-picker>
+                <el-date-picker clearable v-model="queryParams.startTime" type="date" value-format="YYYY-MM-DD" :disabled-date="disabledStartDate" :placeholder="$t('components.datePicker.placeholder')"></el-date-picker>
             </el-form-item>
             <el-form-item :label="$t('maintainRecords.searchBar.endDate.label')" prop="endTime">
                 <el-date-picker clearable v-model="queryParams.endTime" type="date" value-format="YYYY-MM-DD" :disabled-date="disabledEndDate" :placeholder="$t('components.datePicker.placeholder')"></el-date-picker>
@@ -108,7 +108,7 @@
                     </el-form-item>
                     <el-form-item :label="$t('maintainRecords.fields[3].label')" prop="maintenanceType">
                         <el-select v-model="form.maintenanceType" :placeholder="$t('components.select.placeholder')" clearable>
-                            <el-option v-for="dict in maintenance_type" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
+                            <el-option v-for="dict in maintenance_type" :key="dict.value" :label="useAppStore().language == 'zh' ? dict.label : dict.labelEn" :value="dict.value"></el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item :label="$t('maintainRecords.fields[4].label')" prop="oilConsumption">
@@ -176,7 +176,7 @@
                     </el-form-item>
                     <el-form-item :label="$t('maintainRecords.fields[11].label')" prop="monetaryUnit">
                         <el-select v-model="form.monetaryUnit" :placeholder="$t('components.select.placeholder')" clearable>
-                            <el-option v-for="dict in currency_unit_type" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
+                            <el-option v-for="dict in currency_unit_type" :key="dict.value" :label="useAppStore().language == 'zh' ? dict.label : dict.labelEn" :value="dict.value"></el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item :label="$t('maintainRecords.fields[12].label')" prop="amount">
@@ -186,8 +186,8 @@
                         <span>{{ form.maintenanceMode == 0 ? $t('maintainRecords.fields[7].options[0]') : $t('maintainRecords.fields[7].options[1]') }}</span>
                     </el-form-item>
                     <template v-if="form.maintenanceMode == 0">
-                        <el-form-item :label="$t('maintainRecords.fields[8].label')" prop="maintenanceProvider">
-                            <span>{{ form.maintenanceProvider }}</span>
+                        <el-form-item :label="$t('maintainRecords.fields[8].label')" prop="upkeep">
+                            <span>{{ form.upkeep }}</span>
                         </el-form-item>
                     </template>
                     <template v-if="form.maintenanceMode == 1">
@@ -209,7 +209,7 @@
         </el-dialog>
 
         <!-- 维护记录详情对话框 -->
-        <el-drawer :title="title" size="80%" v-model="openInfo">
+        <el-drawer :title="title" size="80%" v-model="openInfo" append-to-body>
             <el-divider content-position="left">{{ $t('maintainRecords.basicInfo.title') }}</el-divider>
             <table class="info-table" border="1">
                 <tbody>
@@ -291,7 +291,7 @@
                     </el-form-item>
                     <el-form-item :label="$t('accessoryUse.fields[3].label')" prop="accessoryType">
                         <el-select v-model="formAccessoryUse.accessoryType" :placeholder="$t('components.select.placeholder')" @change="handleChangeAccessoryType" clearable>
-                            <el-option v-for="dict in accessory_type" :key="dict.value" :label="dict.label" :value="dict.value" />
+                            <el-option v-for="dict in accessory_type" :key="dict.value" :label="useAppStore().language == 'zh' ? dict.label : dict.labelEn" :value="dict.value" />
                         </el-select>
                     </el-form-item>
                     <el-form-item :label="$t('accessoryUse.fields[4].label')" prop="accessoryName">
@@ -325,9 +325,9 @@
             </template>
         </el-dialog>
 
-        <el-dialog title="选择配件" v-model="selectAccessoryOpen" width="50%" append-to-body>
+        <el-dialog :title="$t('dialog.accessoryTitle')" v-model="selectAccessoryOpen" width="50%" append-to-body>
             <el-form :model="accessoryQueryParams" ref="accessoryQueryFormRef" :inline="true">
-                <el-form-item label="配件名称" prop="accessoryName">
+                <el-form-item :label="$t('accessoryStock.searchBar.partName.label')" prop="accessoryName">
                     <el-input maxlength="100" v-model="accessoryQueryParams.accessoryName" :placeholder="$t('components.input.placeholder')" clearable style="width: 200px" />
                 </el-form-item>
                 <form-search @reset="resetAccessoryQuery" @search="handleAccessoryQuery" />
@@ -358,15 +358,6 @@
                 </el-table-column>
                 v
             </el-table>
-
-            <!-- <pagination v-show="truckTableTotal > 0" :total="truckTableTotal" v-model:page="truckQueryParams.pageNum" v-model:limit="truckQueryParams.pageSize" @pagination="getTruckPageList" /> -->
-
-            <template #footer>
-                <div class="dialog-footer">
-                    <!-- <el-button type="primary" @click="submitFormTruck">{{ $t('components.btn.confirmButton') }}</el-button>
-                    <el-button @click="cancelTruck">{{ $t('components.btn.cancelButton') }}</el-button> -->
-                </div>
-            </template>
         </el-dialog>
 
         <!-- 列表导入对话框 -->
@@ -521,7 +512,7 @@ const dataAccessoryUse = reactive({
         siteName: [{ required: true, message: $t('components.input.placeholder'), trigger: 'blur' }],
         carNumber: [{ required: true, message: $t('components.input.placeholder'), trigger: 'blur' }],
         accessoryType: [{ required: true, message: $t('components.select.placeholder'), trigger: 'blur' }],
-        accessoryName: [{ required: true, message: $t('components.select.placeholder'), trigger: 'change' }],
+        accessoryName: [{ required: true, message: $t('components.select.placeholder'), trigger: 'blur' }],
         supplier: [{ required: true, message: $t('components.input.placeholder'), trigger: 'blur' }],
         num: [
             { required: true, message: $t('components.input.placeholder'), trigger: 'blur' },
@@ -551,9 +542,16 @@ const getPageList = () => {
     })
 }
 
+const disabledStartDate = (time: any) => {
+    if (queryParams.value.endTime) {
+        return time.getTime() > new Date(queryParams.value.endTime).getTime()
+    }
+    return false
+}
+
 const disabledEndDate = (time: any) => {
     if (queryParams.value.startTime) {
-        return time.getTime() < new Date(queryParams.value.startTime).getTime()
+        return time.getTime() < new Date(queryParams.value.startTime).getTime() - 8.64e7
     }
     return false
 }
@@ -578,8 +576,8 @@ getSiteOptions()
 
 const accessoryUseData = ref([]) as any
 
-const getAccessoryUseData = (carNumber: any) => {
-    getAccessoryUseList({ carNumber }).then((res: any) => {
+const getAccessoryUseData = (maintenanceId: any) => {
+    getAccessoryUseList({ maintenanceId }).then((res: any) => {
         accessoryUseData.value = res.rows
     })
 }
@@ -624,7 +622,7 @@ const handleInfo = (row: any) => {
     title.value = $t('dialog.infoTitle')
     formRef.value?.resetFields()
     const id = row.id
-    getAccessoryUseData(row.carNumber)
+    getAccessoryUseData(row.id)
     getMaintainRecordsInfo(id).then((res) => {
         form.value = res.data
     })
@@ -722,6 +720,7 @@ const handleAddAccessoryUse = () => {
         siteName: form.value.siteName,
         carNumber: form.value.carNumber
     }
+    formRefAccessoryUse.value?.clearValidate()
 }
 
 /** 详情-更新配件使用 */
@@ -738,9 +737,11 @@ const handleUpdateAccessoryUse = (row: any) => {
 }
 
 const handleChangeAccessoryType = (value: any) => {
-    formAccessoryUse.value.outNum = formAccessoryUse.value.accessoryId = ''
-    formAccessoryUse.value.accessoryName = ''
+    formAccessoryUse.value.outNum = ''
+    formAccessoryUse.value.accessoryId = ''
+    formAccessoryUse.value.accessoryName = null
     formAccessoryUse.value.supplier = ''
+    formRefAccessoryUse.value?.clearValidate()
 }
 
 /** 详情-提交按钮 */
@@ -751,13 +752,19 @@ const submitFormAccessoryUse = () => {
                 updateAccessoryUse({ ...formAccessoryUse.value, relevance: 0 }).then(() => {
                     proxy.$modal.msgSuccess($t('components.message.edit'))
                     openAccessoryUse.value = false
-                    getAccessoryUseData(form.value.carNumber)
+                    getAccessoryUseData(form.value.id)
+                    getMaintainRecordsInfo(form.value.id).then((res) => {
+                        form.value = res.data
+                    })
                 })
             } else {
                 addAccessoryUse({ ...formAccessoryUse.value, relevance: 0 }).then(() => {
                     proxy.$modal.msgSuccess($t('components.message.add'))
                     openAccessoryUse.value = false
-                    getAccessoryUseData(form.value.carNumber)
+                    getAccessoryUseData(form.value.id)
+                    getMaintainRecordsInfo(form.value.id).then((res) => {
+                        form.value = res.data
+                    })
                 })
             }
         }
@@ -775,7 +782,10 @@ const handleDeleteAccessoryUse = (row: any) => {
             return delAccessoryUse({ id: row.id, time: form.value.maintenanceTime })
         })
         .then(() => {
-            getAccessoryUseData(form.value.carNumber)
+            getAccessoryUseData(form.value.id)
+            getMaintainRecordsInfo(form.value.id).then((res) => {
+                form.value = res.data
+            })
             proxy.$modal.msgSuccess($t('components.message.delete.text'))
         })
         .catch(() => {})
@@ -810,7 +820,7 @@ const accessoryTableData = ref([])
 const getAccessoryPageList = () => {
     // TODO 查询之前先清空列表(不清空可能会因为数据缓存影响)
     accessoryTableData.value = []
-    getAccessoryStockList({ ...accessoryQueryParams.value, accessoryType: formAccessoryUse.value.accessoryType }).then((res: any) => {
+    getAccessoryStockList({ ...accessoryQueryParams.value, accessoryType: formAccessoryUse.value.accessoryType, siteId: formAccessoryUse.value.siteId }).then((res: any) => {
         accessoryTableData.value = res.rows
         accessoryTableTotal.value = parseInt(res.total)
     })

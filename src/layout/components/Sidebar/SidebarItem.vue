@@ -3,7 +3,7 @@
         <template v-if="hasOneShowingChild(item.children, item) && (!onlyOneChild.children || onlyOneChild.noShowingChildren) && !item.alwaysShow">
             <app-link v-if="onlyOneChild.meta" :to="resolvePath(onlyOneChild.path, onlyOneChild.query)">
                 <el-menu-item :index="resolvePath(onlyOneChild.path)" :class="{ 'submenu-title-noDropdown': !isNest }">
-                    <svg-icon :icon-class="onlyOneChild.meta.icon || (item.meta && item.meta.icon)" />
+                    <svg-icon v-if="!(item.meta && item.meta.icon)" :icon-class="onlyOneChild.meta.icon || (item.meta && item.meta.icon)" />
                     <template #title>
                         <span class="menu-title" :title="hasTitle($t(`menu.${onlyOneChild.name}`))">{{ $t(`menu.${onlyOneChild.name}`) }}</span>
                     </template>
@@ -13,7 +13,7 @@
         <!-- onlyOneChild.meta.title -->
         <el-sub-menu v-else ref="subMenu" :index="resolvePath(item.path)" popper-append-to-body>
             <template v-if="item.meta" #title>
-                <svg-icon :icon-class="item.meta && item.meta.icon" />
+                <svg-icon v-if="item.meta.icon" :icon-class="item.meta && item.meta.icon" />
                 <span class="menu-title" :title="hasTitle($t(`menu.${item.name}`))">{{ $t(`menu.${item.name}`) }}</span>
             </template>
             <!-- item.meta.title -->

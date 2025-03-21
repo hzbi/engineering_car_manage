@@ -1,16 +1,16 @@
 <template>
     <div class="app-container">
         <el-form :model="queryParams" ref="queryFormRef" :inline="true" v-show="showSearch">
-            <el-form-item label="车牌号" prop="carNumber">
+            <el-form-item :label="$t('driverPerformance.searchBar.carNumber.label')" prop="carNumber">
                 <el-input maxlength="100" v-model="queryParams.carNumber" :placeholder="$t('components.input.placeholder')" clearable style="width: 200px" @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="司机姓名" prop="name">
+            <el-form-item :label="$t('driverPerformance.searchBar.name.label')" prop="name">
                 <el-input maxlength="100" v-model="queryParams.name" :placeholder="$t('components.input.placeholder')" clearable style="width: 200px" @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="开始日期" prop="startTime">
-                <el-date-picker clearable v-model="queryParams.startTime" type="date" value-format="YYYY-MM-DD" :placeholder="$t('components.datePicker.placeholder')"></el-date-picker>
+            <el-form-item :label="$t('driverPerformance.searchBar.startTime.label')" prop="startTime">
+                <el-date-picker clearable v-model="queryParams.startTime" type="date" value-format="YYYY-MM-DD" :disabled-date="disabledStartDate" :placeholder="$t('components.datePicker.placeholder')"></el-date-picker>
             </el-form-item>
-            <el-form-item label="结束日期" prop="endTime">
+            <el-form-item :label="$t('driverPerformance.searchBar.endTime.label')" prop="endTime">
                 <el-date-picker clearable v-model="queryParams.endTime" type="date" value-format="YYYY-MM-DD" :disabled-date="disabledEndDate" :placeholder="$t('components.datePicker.placeholder')"></el-date-picker>
             </el-form-item>
             <form-search @reset="resetQuery" @search="handleQuery" />
@@ -32,23 +32,23 @@
         <el-table stripe border v-loading="loading" :data="tableData" @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="50" align="center" />
             <el-table-column type="index" width="80" :label="$t('tableColumn.index')" align="center" />
-            <el-table-column label="日期" align="center" prop="workloadTime" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="车牌号" align="center" prop="carNumber" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="司机姓名" align="center" prop="name" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="表现评分（分）" align="center" prop="performanceScore" min-width="120" show-overflow-tooltip>
+            <el-table-column :label="$t('driverPerformance.tableColumn[0].label')" align="center" prop="workloadTime" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('driverPerformance.tableColumn[1].label')" align="center" prop="carNumber" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('driverPerformance.tableColumn[2].label')" align="center" prop="name" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('driverPerformance.tableColumn[3].label')" align="center" prop="performanceScore" min-width="120" show-overflow-tooltip>
                 <template #default="scope">
                     <dict-tag :options="performance" :value="scope.row.performanceScore" />
                 </template>
             </el-table-column>
-            <el-table-column label="违规类型" align="center" prop="violationType" min-width="120" show-overflow-tooltip>
+            <el-table-column :label="$t('driverPerformance.tableColumn[4].label')" align="center" prop="violationType" min-width="120" show-overflow-tooltip>
                 <template #default="scope">
                     <dict-tag :options="violation_type" :value="scope.row.violationType" />
                 </template>
             </el-table-column>
-            <el-table-column label="偷盗行为记录" align="center" prop="log" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="备注" align="center" prop="remark" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="创建人" align="center" prop="createBy" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="创建时间" align="center" prop="createTime" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('driverPerformance.tableColumn[5].label')" align="center" prop="log" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('driverPerformance.tableColumn[6].label')" align="center" prop="remark" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('driverPerformance.tableColumn[7].label')" align="center" prop="createBy" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('driverPerformance.tableColumn[8].label')" align="center" prop="createTime" min-width="120" show-overflow-tooltip></el-table-column>
             <el-table-column :label="$t('tableColumn.operation')" align="center" class-name="small-padding fixed-width" min-width="200" fixed="right">
                 <template #default="scope">
                     <el-button type="text" @click="handleInfo(scope.row)" v-hasPermi="['driver:driverPerformance:info']">{{ $t('operationButtons.info.label') }}</el-button>
@@ -64,31 +64,31 @@
         <el-dialog :title="title" v-model="open" width="800px" append-to-body>
             <el-row justify="center" style="max-height: 600px; overflow-y: auto">
                 <el-form ref="formRef" :model="form" :rules="rules" label-width="auto" scroll-to-error>
-                    <el-form-item label="日期:" prop="workloadTime">
+                    <el-form-item :label="$t('driverPerformance.fields[0].label')" prop="workloadTime">
                         <el-date-picker clearable v-model="form.workloadTime" type="date" value-format="YYYY-MM-DD" :placeholder="$t('components.datePicker.placeholder')" style="width: 300px"></el-date-picker>
                     </el-form-item>
-                    <el-form-item label="司机姓名:" prop="carNumber">
+                    <el-form-item :label="$t('driverPerformance.fields[1].label')" prop="carNumber">
                         <el-select v-model="form.carNumber" :placeholder="$t('components.select.placeholder')" @change="handleChangeName" clearable>
                             <el-option v-for="dict in driverAndTruckOptions" :key="dict.carNumber" :label="dict.name" :value="dict.carNumber" />
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="卡车编号:" prop="carNumber">
+                    <el-form-item :label="$t('driverPerformance.fields[2].label')" prop="carNumber">
                         <el-input maxlength="100" v-model="form.carNumber" :placeholder="$t('components.input.placeholder')" disabled clearable />
                     </el-form-item>
-                    <el-form-item label="表现评分(总分10分):" prop="performanceScore">
+                    <el-form-item :label="$t('driverPerformance.fields[3].label')" prop="performanceScore">
                         <el-select v-model="form.performanceScore" :placeholder="$t('components.select.placeholder')" clearable>
-                            <el-option v-for="dict in performance" :key="dict.value" :label="dict.label" :value="dict.value" />
+                            <el-option v-for="dict in performance" :key="dict.value" :label="useAppStore().language == 'zh' ? dict.label : dict.labelEn" :value="dict.value" />
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="违规类型:" prop="violationType">
+                    <el-form-item :label="$t('driverPerformance.fields[4].label')" prop="violationType">
                         <el-select v-model="form.violationType" :placeholder="$t('components.select.placeholder')" clearable>
-                            <el-option v-for="dict in violation_type" :key="dict.value" :label="dict.label" :value="dict.value" />
+                            <el-option v-for="dict in violation_type" :key="dict.value" :label="useAppStore().language == 'zh' ? dict.label : dict.labelEn" :value="dict.value" />
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="偷窃行为记录:" prop="log">
+                    <el-form-item :label="$t('driverPerformance.fields[5].label')" prop="log">
                         <el-input maxlength="200" v-model="form.log" type="textarea" :rows="5" :placeholder="$t('components.input.placeholder')" clearable />
                     </el-form-item>
-                    <el-form-item label="备注:" prop="remark">
+                    <el-form-item :label="$t('driverPerformance.fields[6].label')" prop="remark">
                         <el-input maxlength="200" v-model="form.remark" type="textarea" :rows="5" :placeholder="$t('components.input.placeholder')" clearable />
                     </el-form-item>
                 </el-form>
@@ -105,25 +105,25 @@
         <el-dialog :title="title" v-model="openInfo" width="800px" append-to-body>
             <el-row justify="center" style="max-height: 600px; overflow-y: auto">
                 <el-form ref="formRef" :model="form" :rules="rules" label-width="auto">
-                    <el-form-item label="日期:" prop="workloadTime">
+                    <el-form-item :label="$t('driverPerformance.fields[0].label')" prop="workloadTime">
                         <span>{{ form.workloadTime }}</span>
                     </el-form-item>
-                    <el-form-item label="司机姓名:" prop="name">
+                    <el-form-item :label="$t('driverPerformance.fields[1].label')" prop="name">
                         <span>{{ form.name }}</span>
                     </el-form-item>
-                    <el-form-item label="车牌号:" prop="carNumber">
+                    <el-form-item :label="$t('driverPerformance.fields[2].label')" prop="carNumber">
                         <span>{{ form.carNumber }}</span>
                     </el-form-item>
-                    <el-form-item label="表现评分(总分10分):" prop="performanceScore">
+                    <el-form-item :label="$t('driverPerformance.fields[3].label')" prop="performanceScore">
                         <dict-tag :options="performance" :value="form.performanceScore" />
                     </el-form-item>
-                    <el-form-item label="违规类型:" prop="violationType">
+                    <el-form-item :label="$t('driverPerformance.fields[4].label')" prop="violationType">
                         <dict-tag :options="violation_type" :value="form.violationType" />
                     </el-form-item>
-                    <el-form-item label="偷窃行为记录:" prop="log">
+                    <el-form-item :label="$t('driverPerformance.fields[5].label')" prop="log">
                         <span>{{ form.log }}</span>
                     </el-form-item>
-                    <el-form-item label="备注:" prop="remark">
+                    <el-form-item :label="$t('driverPerformance.fields[6].label')" prop="remark">
                         <span>{{ form.remark }}</span>
                     </el-form-item>
                 </el-form>
@@ -240,9 +240,16 @@ const getPageList = () => {
     })
 }
 
+const disabledStartDate = (time: any) => {
+    if (queryParams.value.endTime) {
+        return time.getTime() > new Date(queryParams.value.endTime).getTime()
+    }
+    return false
+}
+
 const disabledEndDate = (time: any) => {
     if (queryParams.value.startTime) {
-        return time.getTime() < new Date(queryParams.value.startTime).getTime()
+        return time.getTime() < new Date(queryParams.value.startTime).getTime() - 8.64e7
     }
     return false
 }

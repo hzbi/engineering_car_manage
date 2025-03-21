@@ -1,15 +1,15 @@
 <template>
     <div class="app-container">
         <el-form :model="queryParams" ref="queryFormRef" :inline="true" v-show="showSearch">
-            <el-form-item label="姓名" prop="name">
+            <el-form-item :label="$t('driverInfo.searchBar.name.label')" prop="name">
                 <el-input maxlength="100" v-model="queryParams.name" :placeholder="$t('components.input.placeholder')" clearable style="width: 200px" @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="证件号码" prop="idNum">
+            <el-form-item :label="$t('driverInfo.searchBar.idNum.label')" prop="idNum">
                 <el-input maxlength="100" v-model="queryParams.idNum" :placeholder="$t('components.input.placeholder')" clearable style="width: 200px" @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="性别" prop="sex">
+            <el-form-item :label="$t('driverInfo.searchBar.sex.label')" prop="sex">
                 <el-select v-model="queryParams.sex" :placeholder="$t('components.select.placeholder')" clearable style="width: 200px">
-                    <el-option v-for="dict in driver_sex" :key="dict.value" :label="dict.label" :value="dict.value" />
+                    <el-option v-for="dict in driver_sex" :key="dict.value" :label="useAppStore().language == 'zh' ? dict.label : dict.labelEn" :value="dict.value" />
                 </el-select>
             </el-form-item>
             <form-search @reset="resetQuery" @search="handleQuery" />
@@ -31,37 +31,41 @@
         <el-table stripe border v-loading="loading" :data="tableData" @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="50" align="center" />
             <el-table-column type="index" width="80" :label="$t('tableColumn.index')" align="center" />
-            <el-table-column label="姓名" align="center" prop="name" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="联系方式" align="center" prop="phone" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="性别" align="center" prop="sex" min-width="120" show-overflow-tooltip>
+            <el-table-column :label="$t('driverInfo.tableColumn[0].label')" align="center" prop="name" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('driverInfo.tableColumn[1].label')" align="center" prop="phone" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('driverInfo.tableColumn[2].label')" align="center" prop="sex" min-width="120" show-overflow-tooltip>
                 <template #default="scope">
                     <dict-tag :options="driver_sex" :value="scope.row.sex" />
                 </template>
             </el-table-column>
-            <el-table-column label="出生日期" align="center" prop="birthTime" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="证件号码" align="center" prop="idNum" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="银行卡号" align="center" prop="bankNum" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="所属银行" align="center" prop="bank" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="入职日期" align="center" prop="entryTime" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="备注" align="center" prop="remark" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="状态" align="center" prop="status" min-width="120" show-overflow-tooltip>
+            <el-table-column :label="$t('driverInfo.tableColumn[3].label')" align="center" prop="birthTime" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('driverInfo.tableColumn[4].label')" align="center" prop="idNum" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('driverInfo.tableColumn[5].label')" align="center" prop="bankNum" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('driverInfo.tableColumn[6].label')" align="center" prop="bank" min-width="120" show-overflow-tooltip>
+                <template #default="scope">
+                    <dict-tag :options="bank_type" :value="scope.row.bank" />
+                </template>
+            </el-table-column>
+            <el-table-column :label="$t('driverInfo.tableColumn[7].label')" align="center" prop="entryTime" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('driverInfo.tableColumn[8].label')" align="center" prop="remark" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('driverInfo.tableColumn[9].label')" align="center" prop="status" min-width="120" show-overflow-tooltip>
                 <template #default="scope">
                     <dict-tag :options="driver_status" :value="scope.row.status" />
                 </template>
             </el-table-column>
-            <el-table-column label="创建人" align="center" prop="createBy" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="创建时间" align="center" prop="createTime" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="分配车辆" align="center" prop="createTime" min-width="120" show-overflow-tooltip>
+            <el-table-column :label="$t('driverInfo.tableColumn[10].label')" align="center" prop="createBy" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('driverInfo.tableColumn[11].label')" align="center" prop="createTime" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('driverInfo.tableColumn[12].label')" align="center" prop="createTime" min-width="120" show-overflow-tooltip>
                 <template #default="scope">
-                    <el-button v-if="scope.row.carNumber" type="text" @click="handleAllocate(scope.row)">{{ scope.row.carNumber }}</el-button>
-                    <el-button v-else type="text" @click="handleAllocate(scope.row)">分配车辆</el-button>
+                    <el-button v-if="scope.row.carNumber" type="text" :style="{ color: scope.row.carStatus == 0 ? '#409eff' : '#C0C4CC' }" @click="handleAllocate(scope.row)">{{ scope.row.carNumber }}</el-button>
+                    <el-button v-else type="text" @click="handleAllocate(scope.row)">{{ $t('driverInfo.tableColumn[12].label') }}</el-button>
                 </template>
             </el-table-column>
             <el-table-column :label="$t('tableColumn.operation')" align="center" class-name="small-padding fixed-width" min-width="200" fixed="right">
                 <template #default="scope">
-                    <el-button type="text" @click="handleInfo(scope.row)" v-hasPermi="['driver:driverPerformance:info']">{{ $t('operationButtons.info.label') }}</el-button>
-                    <el-button type="text" @click="handleUpdate(scope.row)" v-hasPermi="['driver:driverPerformance:edit']">{{ $t('operationButtons.edit.label') }}</el-button>
-                    <el-button type="text" @click="handleDelete(scope.row)" v-hasPermi="['driver:driverPerformance:delete']">{{ $t('operationButtons.delete.label') }}</el-button>
+                    <el-button type="text" @click="handleInfo(scope.row)" v-hasPermi="['driver:driverInfo:info']">{{ $t('operationButtons.info.label') }}</el-button>
+                    <el-button type="text" @click="handleUpdate(scope.row)" v-hasPermi="['driver:driverInfo:edit']">{{ $t('operationButtons.edit.label') }}</el-button>
+                    <el-button type="text" @click="handleDelete(scope.row)" v-hasPermi="['driver:driverInfo:delete']">{{ $t('operationButtons.delete.label') }}</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -72,38 +76,40 @@
         <el-dialog :title="title" v-model="open" width="800px" append-to-body>
             <el-row justify="center" style="max-height: 600px; overflow-y: auto">
                 <el-form ref="formRef" :model="form" :rules="rules" label-width="auto">
-                    <el-form-item label="姓名:" prop="name">
+                    <el-form-item :label="$t('driverInfo.fields[0].label')" prop="name">
                         <el-input maxlength="100" v-model="form.name" :placeholder="$t('components.input.placeholder')" clearable />
                     </el-form-item>
-                    <el-form-item label="联系方式:" prop="phone">
+                    <el-form-item :label="$t('driverInfo.fields[1].label')" prop="phone">
                         <el-input maxlength="100" v-model="form.phone" :placeholder="$t('components.input.placeholder')" clearable />
                     </el-form-item>
-                    <el-form-item label="证件号:" prop="idNum">
+                    <el-form-item :label="$t('driverInfo.fields[2].label')" prop="idNum">
                         <el-input maxlength="100" v-model="form.idNum" :placeholder="$t('components.input.placeholder')" clearable />
                     </el-form-item>
-                    <el-form-item label="性别:" prop="sex">
+                    <el-form-item :label="$t('driverInfo.fields[3].label')" prop="sex">
                         <el-select v-model="form.sex" :placeholder="$t('components.select.placeholder')" clearable>
-                            <el-option v-for="dict in driver_sex" :key="dict.value" :label="dict.label" :value="dict.value" />
+                            <el-option v-for="dict in driver_sex" :key="dict.value" :label="useAppStore().language == 'zh' ? dict.label : dict.labelEn" :value="dict.value" />
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="出生日期:" prop="birthTime">
+                    <el-form-item :label="$t('driverInfo.fields[4].label')" prop="birthTime">
                         <el-date-picker clearable v-model="form.birthTime" type="date" value-format="YYYY-MM-DD" :placeholder="$t('components.datePicker.placeholder')" style="width: 300px"></el-date-picker>
                     </el-form-item>
-                    <el-form-item label="入职日期:" prop="entryTime">
+                    <el-form-item :label="$t('driverInfo.fields[5].label')" prop="entryTime">
                         <el-date-picker clearable v-model="form.entryTime" type="date" value-format="YYYY-MM-DD" :placeholder="$t('components.datePicker.placeholder')" style="width: 300px"></el-date-picker>
                     </el-form-item>
-                    <el-form-item label="状态:" prop="status">
+                    <el-form-item :label="$t('driverInfo.fields[6].label')" prop="status">
                         <el-select v-model="form.status" :placeholder="$t('components.select.placeholder')" clearable>
-                            <el-option v-for="dict in driver_status" :key="dict.value" :label="dict.label" :value="dict.value" />
+                            <el-option v-for="dict in driver_status" :key="dict.value" :label="useAppStore().language == 'zh' ? dict.label : dict.labelEn" :value="dict.value" />
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="银行卡号:" prop="bankNum">
+                    <el-form-item :label="$t('driverInfo.fields[7].label')" prop="bankNum">
                         <el-input maxlength="100" v-model="form.bankNum" :placeholder="$t('components.input.placeholder')" clearable />
                     </el-form-item>
-                    <el-form-item label="所属银行:" prop="bank">
-                        <el-input maxlength="100" v-model="form.bank" :placeholder="$t('components.input.placeholder')" clearable />
+                    <el-form-item :label="$t('driverInfo.fields[8].label')" prop="bank">
+                        <el-select v-model="form.bank" :placeholder="$t('components.select.placeholder')" clearable>
+                            <el-option v-for="dict in bank_type" :key="dict.value" :label="useAppStore().language == 'zh' ? dict.label : dict.labelEn" :value="dict.value" />
+                        </el-select>
                     </el-form-item>
-                    <el-form-item label="备注:" prop="remark">
+                    <el-form-item :label="$t('driverInfo.fields[9].label')" prop="remark">
                         <el-input maxlength="200" v-model="form.remark" type="textarea" :rows="5" :placeholder="$t('components.input.placeholder')" clearable />
                     </el-form-item>
                 </el-form>
@@ -120,34 +126,34 @@
         <el-dialog :title="title" v-model="openInfo" width="800px" append-to-body>
             <el-row justify="center" style="max-height: 600px; overflow-y: auto">
                 <el-form ref="formRef" :model="form" :rules="rules" label-width="auto">
-                    <el-form-item label="姓名:" prop="name">
+                    <el-form-item :label="$t('driverInfo.fields[0].label')" prop="name">
                         <span>{{ form.name }}</span>
                     </el-form-item>
-                    <el-form-item label="联系方式:" prop="phone">
+                    <el-form-item :label="$t('driverInfo.fields[1].label')" prop="phone">
                         <span>{{ form.phone }}</span>
                     </el-form-item>
-                    <el-form-item label="证件号:" prop="idNum">
+                    <el-form-item :label="$t('driverInfo.fields[2].label')" prop="idNum">
                         <span>{{ form.idNum }}</span>
                     </el-form-item>
-                    <el-form-item label="性别:" prop="sex">
+                    <el-form-item :label="$t('driverInfo.fields[3].label')" prop="sex">
                         <dict-tag :options="driver_sex" :value="form.sex" />
                     </el-form-item>
-                    <el-form-item label="出生日期:" prop="birthTime">
+                    <el-form-item :label="$t('driverInfo.fields[4].label')" prop="birthTime">
                         <span>{{ form.birthTime ? parseTime(new Date(form.birthTime), '{y}-{m}-{d}') : '' }}</span>
                     </el-form-item>
-                    <el-form-item label="入职日期:" prop="entryTime">
+                    <el-form-item :label="$t('driverInfo.fields[5].label')" prop="entryTime">
                         <span>{{ form.entryTime ? parseTime(new Date(form.entryTime), '{y}-{m}-{d}') : '' }}</span>
                     </el-form-item>
-                    <el-form-item label="状态:" prop="status">
+                    <el-form-item :label="$t('driverInfo.fields[6].label')" prop="status">
                         <dict-tag :options="driver_status" :value="form.status" />
                     </el-form-item>
-                    <el-form-item label="银行卡号:" prop="bankNum">
+                    <el-form-item :label="$t('driverInfo.fields[7].label')" prop="bankNum">
                         <span>{{ form.bankNum }}</span>
                     </el-form-item>
-                    <el-form-item label="所属银行:" prop="bank">
-                        <span>{{ form.bank }}</span>
+                    <el-form-item :label="$t('driverInfo.fields[8].label')" prop="bank">
+                        <span><dict-tag :options="bank_type" :value="form.bank" /></span>
                     </el-form-item>
-                    <el-form-item label="备注:" prop="remark">
+                    <el-form-item :label="$t('driverInfo.fields[9].label')" prop="remark">
                         <span>{{ form.remark }}</span>
                     </el-form-item>
                 </el-form>
@@ -231,7 +237,7 @@ const queryFormRef = ref<InstanceType<typeof ElForm>>()
 
 const formRef = ref<InstanceType<typeof ElForm>>()
 
-const { driver_sex, driver_status } = proxy.useDict('driver_sex', 'driver_status')
+const { driver_sex, driver_status, bank_type } = proxy.useDict('driver_sex', 'driver_status', 'bank_type')
 
 const tableData = ref([])
 const open = ref(false)
@@ -369,7 +375,7 @@ const handleChangeTruck = (value: any) => {
 /** 分配车辆 */
 const handleAllocate = (row: any) => {
     openAllocate.value = true
-    title.value = '分配车辆'
+    title.value = $t('dialog.truckTitle')
     formRef.value?.resetFields()
     const id = row.id
     getTruckByNoDriveOptions()

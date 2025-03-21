@@ -1,7 +1,10 @@
 <template>
     <div>
         <el-dropdown trigger="click" @command="handleSetLanguage">
-            <div class="icon-size" :style="{ color: color, fontSize: size + 'px' }"><svg-icon icon-class="language" /></div>
+            <div class="icon-size" :style="{ color: color, fontSize: size + 'px' }">
+                <img v-if="language === 'zh'" src="@/assets/images/en-zh.png" />
+                <img v-if="language === 'en'" src="@/assets/images/zh-en.png" />
+            </div>
 
             <template #dropdown>
                 <el-dropdown-menu>
@@ -29,11 +32,10 @@ const i18 = useI18n()
 const language = computed(() => useAppStore().language)
 // 进行语言切换
 const handleSetLanguage = (lang: string) => {
+    window.location.reload()
     i18.locale.value = lang
-
     useAppStore().toggleLanguage(lang)
     localStorage.setItem('language', lang)
-    window.location.reload()
 }
 </script>
 
@@ -42,5 +44,9 @@ const handleSetLanguage = (lang: string) => {
     margin: 10px;
     font-size: 30px;
     color: #fff;
+
+    img {
+        width: 30px;
+    }
 }
 </style>

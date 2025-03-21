@@ -7,5 +7,4 @@
 import En from 'element-plus/es/locale/lang/en'
 import Zh from 'element-plus/es/locale/lang/zh-cn'
 import useAppStore from '@/store/modules/app'
-console.log(useAppStore().language)
 </script>

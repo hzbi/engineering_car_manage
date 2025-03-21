@@ -5,7 +5,7 @@
                 <el-input maxlength="100" v-model="queryParams.carNumber" :placeholder="$t('components.input.placeholder')" clearable style="width: 200px" />
             </el-form-item>
             <el-form-item :label="$t('accessoryUse.searchBar.startDate.label')" prop="startTime">
-                <el-date-picker clearable v-model="queryParams.startTime" type="date" value-format="YYYY-MM-DD" :placeholder="$t('components.datePicker.placeholder')"></el-date-picker>
+                <el-date-picker clearable v-model="queryParams.startTime" type="date" value-format="YYYY-MM-DD" :disabled-date="disabledStartDate" :placeholder="$t('components.datePicker.placeholder')"></el-date-picker>
             </el-form-item>
             <el-form-item :label="$t('accessoryUse.searchBar.endDate.label')" prop="endTime">
                 <el-date-picker clearable v-model="queryParams.endTime" type="date" value-format="YYYY-MM-DD" :disabled-date="disabledEndDate" :placeholder="$t('components.datePicker.placeholder')"></el-date-picker>
@@ -92,9 +92,16 @@ const resetQuery = () => {
     handleQuery()
 }
 
+const disabledStartDate = (time: any) => {
+    if (queryParams.value.endTime) {
+        return time.getTime() > new Date(queryParams.value.endTime).getTime()
+    }
+    return false
+}
+
 const disabledEndDate = (time: any) => {
     if (queryParams.value.startTime) {
-        return time.getTime() < new Date(queryParams.value.startTime).getTime()
+        return time.getTime() < new Date(queryParams.value.startTime).getTime() - 8.64e7
     }
     return false
 }

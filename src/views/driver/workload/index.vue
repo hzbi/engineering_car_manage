@@ -1,16 +1,16 @@
 <template>
     <div class="app-container">
         <el-form :model="queryParams" ref="queryFormRef" :inline="true" v-show="showSearch">
-            <el-form-item label="车牌号" prop="carNumber">
+            <el-form-item :label="$t('workload.searchBar.carNumber.label')" prop="carNumber">
                 <el-input maxlength="100" v-model="queryParams.carNumber" :placeholder="$t('components.input.placeholder')" clearable style="width: 200px" @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="司机姓名" prop="name">
+            <el-form-item :label="$t('workload.searchBar.name.label')" prop="name">
                 <el-input maxlength="100" v-model="queryParams.name" :placeholder="$t('components.input.placeholder')" clearable style="width: 200px" @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="开始日期" prop="startTime">
-                <el-date-picker clearable v-model="queryParams.startTime" type="date" value-format="YYYY-MM-DD" :placeholder="$t('components.datePicker.placeholder')"></el-date-picker>
+            <el-form-item :label="$t('workload.searchBar.startTime.label')" prop="startTime">
+                <el-date-picker clearable v-model="queryParams.startTime" type="date" value-format="YYYY-MM-DD" :disabled-date="disabledStartDate" :placeholder="$t('components.datePicker.placeholder')"></el-date-picker>
             </el-form-item>
-            <el-form-item label="结束日期" prop="endTime">
+            <el-form-item :label="$t('workload.searchBar.endTime.label')" prop="endTime">
                 <el-date-picker clearable v-model="queryParams.endTime" type="date" value-format="YYYY-MM-DD" :disabled-date="disabledEndDate" :placeholder="$t('components.datePicker.placeholder')"></el-date-picker>
             </el-form-item>
             <form-search @reset="resetQuery" @search="handleQuery" />
@@ -32,22 +32,22 @@
         <el-table stripe border v-loading="loading" :data="tableData" @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="50" align="center" />
             <el-table-column type="index" width="80" :label="$t('tableColumn.index')" align="center" />
-            <el-table-column label="日期" align="center" prop="workloadTime" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="车牌号" align="center" prop="carNumber" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="司机姓名" align="center" prop="name" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="工地名称" align="center" prop="siteName" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="工作时间" align="center" prop="workTime" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="车数" align="center" prop="workload" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="货币单位" align="center" prop="monetaryUnit" min-width="120" show-overflow-tooltip v-hasRole="['superAdmin', 'admin']">
+            <el-table-column :label="$t('workload.tableColumn[0].label')" align="center" prop="workloadTime" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('workload.tableColumn[1].label')" align="center" prop="carNumber" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('workload.tableColumn[2].label')" align="center" prop="name" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('workload.tableColumn[3].label')" align="center" prop="siteName" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('workload.tableColumn[4].label')" align="center" prop="workTime" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('workload.tableColumn[5].label')" align="center" prop="workload" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('workload.tableColumn[6].label')" align="center" prop="monetaryUnit" min-width="120" show-overflow-tooltip v-hasRole="['superAdmin', 'admin']">
                 <template #default="scope">
                     <dict-tag :options="currency_unit_type" :value="scope.row.monetaryUnit" />
                 </template>
             </el-table-column>
-            <el-table-column label="单价" align="center" prop="unitPrice" min-width="120" show-overflow-tooltip v-hasRole="['superAdmin', 'admin']"></el-table-column>
-            <el-table-column label="收费金额" align="center" prop="money" min-width="120" show-overflow-tooltip v-hasRole="['superAdmin', 'admin']"></el-table-column>
-            <el-table-column label="备注" align="center" prop="remark" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="创建人" align="center" prop="createBy" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="创建时间" align="center" prop="createTime" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('workload.tableColumn[7].label')" align="center" prop="unitPrice" min-width="120" show-overflow-tooltip v-hasRole="['superAdmin', 'admin']"></el-table-column>
+            <el-table-column :label="$t('workload.tableColumn[8].label')" align="center" prop="money" min-width="120" show-overflow-tooltip v-hasRole="['superAdmin', 'admin']"></el-table-column>
+            <el-table-column :label="$t('workload.tableColumn[9].label')" align="center" prop="remark" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('workload.tableColumn[10].label')" align="center" prop="createBy" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('workload.tableColumn[11].label')" align="center" prop="createTime" min-width="120" show-overflow-tooltip></el-table-column>
             <el-table-column :label="$t('tableColumn.operation')" align="center" class-name="small-padding fixed-width" min-width="200" fixed="right">
                 <template #default="scope">
                     <el-button type="text" @click="handleInfo(scope.row)" v-hasPermi="['driver:workload:info']">{{ $t('operationButtons.info.label') }}</el-button>
@@ -63,40 +63,40 @@
         <!-- 添加或修改对话框 -->
         <el-dialog :title="title" v-model="open" width="800px" append-to-body>
             <el-row justify="center" style="max-height: 600px; overflow-y: auto">
-                <el-form ref="formRef" :model="form" :rules="rules" label-width="120px">
-                    <el-form-item label="日期:" prop="workloadTime">
+                <el-form ref="formRef" :model="form" :rules="rules" label-width="auto">
+                    <el-form-item :label="$t('workload.fields[0].label')" prop="workloadTime">
                         <el-date-picker clearable v-model="form.workloadTime" type="date" value-format="YYYY-MM-DD" :placeholder="$t('components.datePicker.placeholder')" style="width: 300px"></el-date-picker>
                     </el-form-item>
-                    <el-form-item label="司机姓名:" prop="carNumber">
+                    <el-form-item :label="$t('workload.fields[1].label')" prop="carNumber">
                         <el-select v-model="form.carNumber" :placeholder="$t('components.select.placeholder')" @change="handleChangeName" clearable>
                             <el-option v-for="dict in driverAndTruckOptions" :key="dict.carNumber" :label="dict.name" :value="dict.carNumber" />
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="车牌号:" prop="carNumber">
+                    <el-form-item :label="$t('workload.fields[2].label')" prop="carNumber">
                         <el-input maxlength="100" v-model="form.carNumber" :placeholder="$t('components.input.placeholder')" disabled clearable />
                     </el-form-item>
-                    <el-form-item label="工地名称:" prop="siteId">
+                    <el-form-item :label="$t('workload.fields[3].label')" prop="siteId">
                         <el-select v-model="form.siteId" :placeholder="$t('components.select.placeholder')" @change="handleChangeSite" clearable>
                             <el-option v-for="dict in siteOptions" :key="dict.siteId" :label="dict.siteName" :value="dict.siteId" />
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="结算方式:" prop="closeStatus">
-                        <el-radio-group v-model="form.closeStatus">
-                            <el-radio label="0">按工时</el-radio>
-                            <el-radio label="1">按车数</el-radio>
+                    <el-form-item :label="$t('workload.fields[4].label')" prop="closeStatus">
+                        <el-radio-group v-model="form.closeStatus" @click="handleChangeCloseStatus">
+                            <el-radio label="0">{{ $t('workload.fields[4].options[0]') }}</el-radio>
+                            <el-radio label="1">{{ $t('workload.fields[4].options[1]') }}</el-radio>
                         </el-radio-group>
                     </el-form-item>
                     <template v-if="form.closeStatus == 0">
-                        <el-form-item label="工作时间(小时):" prop="workTime">
+                        <el-form-item :label="$t('workload.fields[5].label')" prop="workTime">
                             <el-input maxlength="100" v-model="form.workTime" :placeholder="$t('components.input.placeholder')" clearable />
                         </el-form-item>
                     </template>
                     <template v-if="form.closeStatus == 1">
-                        <el-form-item label="车数:" prop="workload">
+                        <el-form-item :label="$t('workload.fields[6].label')" prop="workload">
                             <el-input maxlength="100" v-model="form.workload" :placeholder="$t('components.input.placeholder')" clearable />
                         </el-form-item>
                     </template>
-                    <el-form-item label="备注:" prop="remark">
+                    <el-form-item :label="$t('workload.fields[7].label')" prop="remark">
                         <el-input maxlength="200" v-model="form.remark" type="textarea" :rows="5" :placeholder="$t('components.input.placeholder')" clearable />
                     </el-form-item>
                 </el-form>
@@ -112,33 +112,33 @@
         <!-- 详情对话框 -->
         <el-dialog :title="title" v-model="openInfo" width="800px" append-to-body>
             <el-row justify="center" style="max-height: 600px; overflow-y: auto">
-                <el-form ref="formRef" :model="form" :rules="rules" label-width="120px">
-                    <el-form-item label="日期:" prop="workloadTime">
+                <el-form ref="formRef" :model="form" :rules="rules" label-width="auto">
+                    <el-form-item :label="$t('workload.fields[0].label')" prop="workloadTime">
                         <span>{{ form.workloadTime }}</span>
                     </el-form-item>
-                    <el-form-item label="司机姓名:" prop="name">
+                    <el-form-item :label="$t('workload.fields[1].label')" prop="name">
                         <span>{{ form.name }}</span>
                     </el-form-item>
-                    <el-form-item label="车牌号:" prop="carNumber">
+                    <el-form-item :label="$t('workload.fields[2].label')" prop="carNumber">
                         <span>{{ form.carNumber }}</span>
                     </el-form-item>
-                    <el-form-item label="工地名称:" prop="siteId">
+                    <el-form-item :label="$t('workload.fields[3].label')" prop="siteId">
                         <span>{{ form.siteName }}</span>
                     </el-form-item>
-                    <el-form-item label="结算方式:" prop="closeStatus">
-                        <span>{{ form.closeStatus == 0 ? '按工时' : '按车数' }}</span>
+                    <el-form-item :label="$t('workload.fields[4].label')" prop="closeStatus">
+                        <span>{{ form.closeStatus == 0 ? $t('workload.fields[4].options[0]') : $t('workload.fields[4].options[1]') }}</span>
                     </el-form-item>
                     <template v-if="form.closeStatus == 0">
-                        <el-form-item label="工作时间(小时):" prop="workTime">
+                        <el-form-item :label="$t('workload.fields[5].label')" prop="workTime">
                             <span>{{ form.workTime }}</span>
                         </el-form-item>
                     </template>
                     <template v-if="form.closeStatus == 1">
-                        <el-form-item label="车数:" prop="workload">
+                        <el-form-item :label="$t('workload.fields[6].label')" prop="workload">
                             <span>{{ form.workload }}</span>
                         </el-form-item>
                     </template>
-                    <el-form-item label="备注:" prop="remark">
+                    <el-form-item :label="$t('workload.fields[7].label')" prop="remark">
                         <span>{{ form.remark }}</span>
                     </el-form-item>
                 </el-form>
@@ -153,41 +153,41 @@
         <!-- 价格维护对话框 -->
         <el-dialog :title="title" v-model="openPrice" width="800px" append-to-body>
             <el-row justify="center" style="max-height: 600px; overflow-y: auto">
-                <el-form ref="formRef" :model="form" :rules="rules" label-width="120px">
-                    <el-form-item label="日期:" prop="workloadTime">
+                <el-form ref="formRef" :model="form" :rules="rules" label-width="auto">
+                    <el-form-item :label="$t('workload.fields[0].label')" prop="workloadTime">
                         <span>{{ form.workloadTime }}</span>
                     </el-form-item>
-                    <el-form-item label="司机姓名:" prop="name">
+                    <el-form-item :label="$t('workload.fields[1].label')" prop="name">
                         <span>{{ form.name }}</span>
                     </el-form-item>
-                    <el-form-item label="车牌号:" prop="carNumber">
+                    <el-form-item :label="$t('workload.fields[2].label')" prop="carNumber">
                         <span>{{ form.carNumber }}</span>
                     </el-form-item>
-                    <el-form-item label="工地名称:" prop="siteId">
+                    <el-form-item :label="$t('workload.fields[3].label')" prop="siteId">
                         <span>{{ form.siteName }}</span>
                     </el-form-item>
-                    <el-form-item label="结算方式:" prop="closeStatus">
-                        <span>{{ form.closeStatus == 0 ? '按工时' : '按车数' }}</span>
+                    <el-form-item :label="$t('workload.fields[4].label')" prop="closeStatus">
+                        <span>{{ form.closeStatus == 0 ? $t('workload.fields[4].options[0]') : $t('workload.fields[4].options[1]') }}</span>
                     </el-form-item>
                     <template v-if="form.closeStatus == 0">
-                        <el-form-item label="工作时间(小时):" prop="workTime">
+                        <el-form-item :label="$t('workload.fields[5].label')" prop="workTime">
                             <span>{{ form.workTime }}</span>
                         </el-form-item>
                     </template>
                     <template v-if="form.closeStatus == 1">
-                        <el-form-item label="车数:" prop="workload">
+                        <el-form-item :label="$t('workload.fields[6].label')" prop="workload">
                             <span>{{ form.workload }}</span>
                         </el-form-item>
                     </template>
-                    <el-form-item label="货币单位:" prop="monetaryUnit">
+                    <el-form-item :label="$t('workload.fields[8].label')" prop="monetaryUnit">
                         <el-select v-model="form.monetaryUnit" :placeholder="$t('components.select.placeholder')" clearable>
-                            <el-option v-for="dict in currency_unit_type" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
+                            <el-option v-for="dict in currency_unit_type" :key="dict.value" :label="useAppStore().language == 'zh' ? dict.label : dict.labelEn" :value="dict.value"></el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="单价:" prop="unitPrice">
+                    <el-form-item :label="$t('workload.fields[9].label')" prop="unitPrice">
                         <el-input maxlength="100" v-model="form.unitPrice" :placeholder="$t('components.input.placeholder')" clearable @input="handleCount()" />
                     </el-form-item>
-                    <el-form-item label="收费金额:" prop="money">
+                    <el-form-item :label="$t('workload.fields[10].label')" prop="money">
                         <el-input maxlength="100" v-model="form.money" :placeholder="$t('components.input.placeholder')" disabled />
                     </el-form-item>
                 </el-form>
@@ -315,9 +315,16 @@ const getPageList = () => {
     })
 }
 
+const disabledStartDate = (time: any) => {
+    if (queryParams.value.endTime) {
+        return time.getTime() > new Date(queryParams.value.endTime).getTime()
+    }
+    return false
+}
+
 const disabledEndDate = (time: any) => {
     if (queryParams.value.startTime) {
-        return time.getTime() < new Date(queryParams.value.startTime).getTime()
+        return time.getTime() < new Date(queryParams.value.startTime).getTime() - 8.64e7
     }
     return false
 }
@@ -395,6 +402,8 @@ const handleAdd = () => {
     title.value = $t('dialog.addTitle')
     formRef.value?.resetFields()
     form.value.id = null
+    form.value.workload = null
+    form.value.workTime = null
     getDriverAndTruckOptions()
     getSiteOptions()
 }
@@ -417,7 +426,7 @@ const handleUpdate = (row: any) => {
 /** 价格维护按钮操作 */
 const handlePrice = (row: any) => {
     openPrice.value = true
-    title.value = '价格维护'
+    title.value = $t('dialog.priceTitle')
     formRef.value?.resetFields()
     const id = row.id
     getWorkloadInfo(id).then((res: any) => {
@@ -425,14 +434,26 @@ const handlePrice = (row: any) => {
     })
 }
 
+const handleChangeCloseStatus = (e: any) => {
+    if (e.target.value == 0) {
+        form.value.workload = null
+    } else if (e.target.value == 1) {
+        form.value.workTime = null
+    }
+}
+
 const handleCount = () => {
     if (form.value.closeStatus == 0) {
         if (form.value.workTime && form.value.unitPrice) {
             form.value.money = form.value.workTime * form.value.unitPrice
+        } else {
+            form.value.money = 0
         }
     } else {
         if (form.value.workload && form.value.unitPrice) {
             form.value.money = form.value.workload * form.value.unitPrice
+        } else {
+            form.value.money = 0
         }
     }
 }

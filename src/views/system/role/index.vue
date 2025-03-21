@@ -1,8 +1,8 @@
 <template>
     <div class="app-container">
-        <el-form :model="queryParams" ref="queryFormRef" v-show="showSearch" :inline="true" label-width="70px">
-            <el-form-item label="角色名称" prop="roleName">
-                <el-input maxlength="100" v-model="queryParams.roleName" placeholder="请输入角色名称" clearable style="width: 240px" @keyup.enter.native="handleQuery()" />
+        <el-form :model="queryParams" ref="queryFormRef" v-show="showSearch" :inline="true" label-width="auto">
+            <el-form-item :label="$t('roleManage.searchBar.roleName.label')" prop="roleName">
+                <el-input maxlength="100" v-model="queryParams.roleName" :placeholder="$t('components.input.placeholder')" clearable style="width: 200px" @keyup.enter.native="handleQuery()" />
             </el-form-item>
             <!-- <el-form-item label="权限字符" prop="roleKey">
                 <el-input maxlength="100" v-model="queryParams.roleKey" placeholder="请输入权限字符" clearable style="width: 240px" @keyup.enter.native="handleQuery()" @change="handleQuery()" />
@@ -19,9 +19,9 @@
         </el-form>
 
         <el-row :gutter="10" class="mb8">
-            <el-col :span="1.5">
+            <!-- <el-col :span="1.5">
                 <el-button type="primary" plain icon="plus" size="small" @click="handleAdd" v-hasPermi="['system:role:add']">{{ $t('operationButtons.add.label') }}</el-button>
-            </el-col>
+            </el-col> -->
             <el-col :span="1.5">
                 <el-button type="primary" plain icon="upload" size="small" @click="handleExport" v-hasPermi="['system:role:export']">{{ $t('operationButtons.export.label') }}</el-button>
             </el-col>
@@ -33,40 +33,47 @@
             <!-- prettier-ignore -->
             <el-table-column type="selection" width="50" align="center" :selectable="checkSelected"/>
             <!-- prettier-ignore -->
-            <el-table-column label="角色编号" prop="roleId" width="80" />
+            <el-table-column :label="$t('roleManage.tableColumn[0].label')" prop="roleId" width="80" />
             <!-- prettier-ignore -->
-            <el-table-column label="角色名称" prop="roleName" min-width="120" :show-overflow-tooltip="true" />
+            <el-table-column :label="$t('roleManage.tableColumn[1].label')" prop="roleName" min-width="120" :show-overflow-tooltip="true" />
             <!-- prettier-ignore -->
-            <el-table-column label="权限字符" prop="roleKey" min-width="120" :show-overflow-tooltip="true" width="200" />
+            <el-table-column :label="$t('roleManage.tableColumn[2].label')" prop="roleKey" min-width="120" :show-overflow-tooltip="true" width="200" />
             <!-- prettier-ignore -->
-            <el-table-column label="显示顺序" prop="roleSort" min-width="120" />
+            <el-table-column :label="$t('roleManage.tableColumn[3].label')" prop="roleSort" min-width="120" />
             <!-- prettier-ignore -->
-            <el-table-column label="备注信息" prop="remark" min-width="120" />
-            <el-table-column label="状态" align="center" min-width="120">
+            <el-table-column :label="$t('roleManage.tableColumn[4].label')" prop="remark" min-width="120" />
+            <el-table-column :label="$t('roleManage.tableColumn[5].label')" align="center" min-width="120">
                 <template #default="scope">
                     <!--默认active颜色#1890FF -->
                     <!-- prettier-ignore -->
-                    <status-switch v-if="scope.row.roleId !== '1'" :status-data.sync="scope.row.status" @handleChange="handleStatusChange(scope.row)" />
+                    <!-- <status-switch v-if="scope.row.roleId !== '1'" :status-data.sync="scope.row.status" @handleChange="handleStatusChange($event,scope.row)" :disabled="true" /> -->
                     <!-- prettier-ignore -->
-                    <status-switch v-else :status-data.sync="scope.row.status" :disabled="true"/>
+                    <!-- <status-switch v-else :status-data.sync="scope.row.status" :disabled="true"/> -->
+                    <dict-tag :options="role_status" :value="scope.row.status" />
                 </template>
             </el-table-column>
             <!-- prettier-ignore -->
-            <el-table-column label="创建时间" align="center" prop="createTime" min-width="120">
+            <el-table-column :label="$t('roleManage.tableColumn[6].label')" align="center" prop="createTime" min-width="120">
 				<template #default="scope">
 					<span>{{ dateTimeSub(scope.row.createTime) }}</span>
 				</template>
 			</el-table-column>
-            <el-table-column label="修改时间" align="center" prop="updateTime" min-width="120">
+            <el-table-column :label="$t('roleManage.tableColumn[7].label')" align="center" prop="updateTime" min-width="120">
                 <template #default="scope">
                     <span>{{ dateTimeSub(scope.row.updateTime) }}</span>
                 </template>
             </el-table-column>
             <el-table-column :label="$t('tableColumn.operation')" align="center" min-width="200" class-name="small-padding fixed-width" fixed="right">
                 <template #default="scope">
-                    <el-link class="el-link-spacing" :underline="false" size="small" type="primary" @click="handleUpdate(scope.row)" v-hasPermi="['system:role:edit']"><span class="table_link_text">修改</span></el-link>
-                    <el-link v-if="scope.row.roleId !== '1'" class="el-link-spacing" :underline="false" size="small" type="primary" @click="handleDataScope(scope.row)" v-hasPermi="['system:role:edit']"><span class="table_link_text">数据权限</span></el-link>
-                    <el-link v-if="scope.row.roleId !== '1'" class="el-link-spacing" :underline="false" size="small" type="primary" @click="handleDelete(scope.row)" v-hasPermi="['system:role:remove']"><span class="table_link_text">删除</span></el-link>
+                    <el-link class="el-link-spacing" :underline="false" size="small" type="primary" @click="handleUpdate(scope.row)" v-hasPermi="['system:role:edit']">
+                        <span class="table_link_text">{{ $t('operationButtons.edit.label') }}</span>
+                    </el-link>
+                    <!-- <el-link v-if="scope.row.roleId !== '1'" class="el-link-spacing" :underline="false" size="small" type="primary" @click="handleDataScope(scope.row)" v-hasPermi="['system:role:edit']">
+                        <span class="table_link_text">{{ $t('operationButtons.permission.label') }}</span>
+                    </el-link>
+                    <el-link v-if="scope.row.roleId !== '1'" class="el-link-spacing" :underline="false" size="small" type="primary" @click="handleDelete(scope.row)" v-hasPermi="['system:role:remove']">
+                        <span class="table_link_text">{{ $t('operationButtons.delete.label') }}</span>
+                    </el-link> -->
                 </template>
             </el-table-column>
         </el-table>
@@ -74,57 +81,57 @@
         <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
 
         <!-- 添加或修改角色配置对话框 -->
-        <el-dialog :title="title" v-model="open" width="30%" append-to-body @close="cleanSelect()">
-            <el-form ref="formRef" :model="form" :rules="rules" label-width="90px">
+        <el-dialog :title="title" v-model="open" width="40%" append-to-body @close="cleanSelect()">
+            <el-form ref="formRef" :model="form" :rules="rules" label-width="ayto">
                 <el-row>
                     <el-col :span="12">
-                        <el-form-item label="角色名称" prop="roleName">
-                            <el-input maxlength="100" v-model="form.roleName" placeholder="请输入角色名称" style="width: 100%" />
+                        <el-form-item :label="$t('roleManage.fields[0].label')" prop="roleName">
+                            <el-input maxlength="100" v-model="form.roleName" :placeholder="$t('components.input.placeholder')" style="width: 100%" disabled />
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
-                        <el-form-item label="权限字符" prop="roleKey">
-                            <el-input maxlength="100" v-model="form.roleKey" placeholder="请输入权限字符" style="width: 100%" />
+                        <el-form-item :label="$t('roleManage.fields[1].label')" prop="roleKey">
+                            <el-input maxlength="100" v-model="form.roleKey" :placeholder="$t('components.input.placeholder')" style="width: 100%" disabled />
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
-                        <el-form-item label="角色顺序" prop="roleSort">
-                            <el-input-number v-model="form.roleSort" controls-position="right" :min="0" style="width: 100%" />
+                        <el-form-item :label="$t('roleManage.fields[2].label')" prop="roleSort">
+                            <el-input-number v-model="form.roleSort" controls-position="right" :min="0" style="width: 100%" disabled />
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
-                        <el-form-item label="角色状态">
-                            <el-radio-group v-model="form.status">
-                                <el-radio v-for="dict in statusOptions" :key="dict.dictValue" :label="dict.dictValue">{{ dict.dictLabel }}</el-radio>
+                        <el-form-item :label="$t('roleManage.fields[3].label')">
+                            <el-radio-group v-model="form.status" disabled>
+                                <el-radio v-for="dict in statusOptions" :key="dict.dictValue" :label="dict.dictValue">{{ useAppStore().language == 'zh' ? dict.dictLabel : dict.dictEngLabel }}</el-radio>
                             </el-radio-group>
                         </el-form-item>
                     </el-col>
                     <el-col :span="24">
-                        <el-form-item label="菜单权限">
+                        <el-form-item :label="$t('roleManage.fields[4].label')">
                             <!-- prettier-ignore -->
                             <el-checkbox
 								v-model="menuExpand"
 								@change="handleCheckedTreeExpand($event, 'menu')"
-								>展开/折叠</el-checkbox
+								>{{$t('roleManage.fields[4].checkboxs[0]')}}</el-checkbox
 							>
                             <!-- prettier-ignore -->
                             <el-checkbox
 								v-model="menuNodeAll"
 								@change="handleCheckedTreeNodeAll($event, 'menu')"
-								>全选/全不选</el-checkbox
+								>{{$t('roleManage.fields[4].checkboxs[1]')}}</el-checkbox
 							>
                             <!-- prettier-ignore -->
                             <el-checkbox
 								v-model="form.menuCheckStrictly"
 								@change="handleCheckedTreeConnect($event, 'menu')"
-								>父子联动</el-checkbox
+								>{{$t('roleManage.fields[4].checkboxs[2]')}}</el-checkbox
 							>
-                            <el-tree class="tree-border" :data="menuOptions" show-checkbox ref="menuRef" node-key="id" :check-strictly="!form.menuCheckStrictly" empty-text="加载中，请稍后" :props="defaultProps" />
+                            <el-tree class="tree-border" :data="menuOptions" show-checkbox ref="menuRef" node-key="id" :check-strictly="!form.menuCheckStrictly" :empty-text="$t('roleManage.fields[4].loading')" :props="defaultProps" />
                         </el-form-item>
                     </el-col>
                     <el-col :span="24">
-                        <el-form-item label="备注">
-                            <el-input maxlength="100" v-model="form.remark" type="textarea" :autosize="{ minRows: 4 }" placeholder="请输入内容" />
+                        <el-form-item :label="$t('roleManage.fields[5].label')">
+                            <el-input maxlength="100" v-model="form.remark" type="textarea" :autosize="{ minRows: 4 }" :placeholder="$t('components.input.placeholder')" />
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -141,22 +148,22 @@
         <!-- 分配角色数据权限对话框 -->
         <el-dialog :title="title" v-model="openDataScope" width="20%" append-to-body @close="cleanSelect()">
             <el-form :model="form" label-width="80px">
-                <el-form-item label="角色名称">
+                <el-form-item :label="$t('roleManage.roleFields[0].label')">
                     <el-input maxlength="100" v-model="form.roleName" :disabled="true" />
                 </el-form-item>
-                <el-form-item label="权限字符">
+                <el-form-item :label="$t('roleManage.roleFields[1].label')">
                     <el-input maxlength="100" v-model="form.roleKey" :disabled="true" />
                 </el-form-item>
-                <el-form-item label="权限范围">
+                <el-form-item :label="$t('roleManage.roleFields[2].label')">
                     <el-select v-model="form.dataScope" @change="dataScopeSelectChange">
                         <el-option v-for="item in dataScopeOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="数据权限" v-show="form.dataScope == 2">
-                    <el-checkbox v-model="deptExpand" @change="handleCheckedTreeExpand($event, 'dept')">展开/折叠</el-checkbox>
-                    <el-checkbox v-model="deptNodeAll" @change="handleCheckedTreeNodeAll($event, 'dept')">全选/全不选</el-checkbox>
-                    <el-checkbox v-model="form.deptCheckStrictly" @change="handleCheckedTreeConnect($event, 'dept')">父子联动</el-checkbox>
-                    <el-tree class="tree-border" :data="deptOptions" show-checkbox default-expand-all ref="deptRef" node-key="id" :check-strictly="!form.deptCheckStrictly" empty-text="加载中，请稍后" :props="defaultProps"></el-tree>
+                <el-form-item :label="$t('roleManage.roleFields[3].label')" v-show="form.dataScope == 2">
+                    <el-checkbox v-model="deptExpand" @change="handleCheckedTreeExpand($event, 'dept')">{{ $t('roleManage.roleFields[3].checkboxs[0]') }}</el-checkbox>
+                    <el-checkbox v-model="deptNodeAll" @change="handleCheckedTreeNodeAll($event, 'dept')">{{ $t('roleManage.roleFields[3].checkboxs[1]') }}</el-checkbox>
+                    <el-checkbox v-model="form.deptCheckStrictly" @change="handleCheckedTreeConnect($event, 'dept')">{{ $t('roleManage.roleFields[3].checkboxs[2]') }}</el-checkbox>
+                    <el-tree class="tree-border" :data="deptOptions" show-checkbox default-expand-all ref="deptRef" node-key="id" :check-strictly="!form.deptCheckStrictly" :empty-text="$t('roleManage.roleFields[3].loading')" :props="defaultProps"></el-tree>
                 </el-form-item>
             </el-form>
             <template #footer>
@@ -172,12 +179,13 @@
 
 <script lang="ts" name="Role" setup>
 import Role from '@/api/request/system/role/role'
+import useAppStore from '@/store/modules/app'
 // prettier-ignore
 const {
-        menuRef, loading, exportLoading, deptRef, single, multiple, showSearch, total, roleList, title, open, openDataScope, menuExpand, menuNodeAll,
-        deptExpand, deptNodeAll, dateRange, statusOptions, dataScopeOptions, menuOptions, deptOptions, queryParams, form, defaultProps, rules, formRef,
-        queryFormRef, getList, handleStatusChange, handleQuery, resetQuery, handleSelectionChange, handleCheckedTreeExpand,
-        handleCheckedTreeNodeAll, handleCheckedTreeConnect, handleAdd, handleUpdate, dataScopeSelectChange, handleDataScope, submitForm, cleanSelect,
-        submitDataScope, handleDelete, handleExport, pageTable, checkSelected
+        menuRef, loading, deptRef, showSearch, total, roleList, title, open, openDataScope, menuExpand, menuNodeAll,
+        deptExpand, deptNodeAll, statusOptions, dataScopeOptions, menuOptions, deptOptions, queryParams, form, defaultProps, rules, formRef,
+        queryFormRef, getList, handleQuery, resetQuery, handleSelectionChange, handleCheckedTreeExpand,
+        handleCheckedTreeNodeAll, handleCheckedTreeConnect, handleUpdate, dataScopeSelectChange, submitForm, cleanSelect,
+        submitDataScope, handleExport, pageTable, checkSelected,role_status
     } = Role();
 </script>

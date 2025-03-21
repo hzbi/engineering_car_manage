@@ -1,13 +1,13 @@
 <template>
     <div class="app-container">
         <el-form :model="queryParams" ref="queryFormRef" :inline="true" v-show="showSearch">
-            <el-form-item label="年份" prop="year">
+            <el-form-item :label="$t('siteStatistics.searchBar.year.label')" prop="year">
                 <el-date-picker v-model="queryParams.year" type="year" value-format="YYYY" :placeholder="$t('components.input.placeholder')" clearable style="width: 200px" @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="月份" prop="mon">
+            <el-form-item :label="$t('siteStatistics.searchBar.mon.label')" prop="mon">
                 <el-date-picker v-model="queryParams.mon" type="month" value-format="MM" :placeholder="$t('components.input.placeholder')" clearable style="width: 200px" @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="工地名称:" prop="siteName">
+            <el-form-item :label="$t('siteStatistics.searchBar.siteName.label')" prop="siteName">
                 <el-select v-model="queryParams.siteName" :placeholder="$t('components.select.placeholder')" clearable style="width: 200px">
                     <el-option v-for="dict in siteOptions" :key="dict.siteId" :label="dict.siteName" :value="dict.siteName" />
                 </el-select>
@@ -24,11 +24,11 @@
 
         <el-table stripe border v-loading="loading" :data="tableData">
             <el-table-column type="index" width="80" :label="$t('tableColumn.index')" align="center" />
-            <el-table-column label="年/月份" align="center" prop="time" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="工地名称" align="center" prop="name" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="总工作量（小时）" align="center" prop="workTime" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="总车数" align="center" prop="carNum" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column label="收费金额" align="center" prop="money" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('siteStatistics.tableColumn[0].label')" align="center" prop="time" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('siteStatistics.tableColumn[1].label')" align="center" prop="name" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('siteStatistics.tableColumn[2].label')" align="center" prop="workTime" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('siteStatistics.tableColumn[3].label')" align="center" prop="carNum" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('siteStatistics.tableColumn[4].label')" align="center" prop="money" min-width="120" show-overflow-tooltip></el-table-column>
         </el-table>
 
         <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getPageList" />
@@ -58,7 +58,7 @@ const data = reactive({
     queryParams: {
         pageNum: 1,
         pageSize: 10,
-        year: dayjs(new Date().setDate(new Date().getDate() - 1)).format('YYYY-MM-DD'),
+        year: dayjs(new Date().setDate(new Date().getDate() - 1)).format('YYYY'),
         mon: null,
         siteName: null
     }
@@ -80,7 +80,7 @@ const siteOptions = ref([]) as any
 
 const getSiteOptions = () => {
     getSiteList({}).then((res: any) => {
-        siteOptions.value = res.rows
+        siteOptions.value = res.rows.filter((item: any) => !(item.status == 1))
     })
 }
 

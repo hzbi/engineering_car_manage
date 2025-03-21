@@ -557,6 +557,765 @@ export default {
             ]
         }
     },
+    driverInfo: {
+        searchBar: {
+            name: {
+                label: '姓名'
+            },
+            idNum: {
+                label: '证件号码'
+            },
+            sex: {
+                label: '性别'
+            }
+        },
+        tableColumn: [
+            {
+                label: '姓名'
+            },
+            {
+                label: '联系方式'
+            },
+            {
+                label: '性别'
+            },
+            {
+                label: '出生日期'
+            },
+            {
+                label: '证件号码'
+            },
+            {
+                label: '银行卡号'
+            },
+            {
+                label: '所属银行'
+            },
+            {
+                label: '入职日期'
+            },
+            {
+                label: '备注'
+            },
+            {
+                label: '状态'
+            },
+            {
+                label: '创建人'
+            },
+            {
+                label: '创建时间'
+            },
+            {
+                label: '分配车辆'
+            }
+        ],
+        fields: [
+            {
+                label: '姓名'
+            },
+            {
+                label: '联系方式'
+            },
+            {
+                label: '证件号'
+            },
+            {
+                label: '性别'
+            },
+            {
+                label: '出生日期'
+            },
+            {
+                label: '入职日期'
+            },
+            {
+                label: '状态'
+            },
+            {
+                label: '银行卡号'
+            },
+            {
+                label: '所属银行'
+            },
+            {
+                label: '备注'
+            }
+        ]
+    },
+    driverPerformance: {
+        searchBar: {
+            carNumber: {
+                label: '车牌号'
+            },
+            name: {
+                label: '司机姓名'
+            },
+            startTime: {
+                label: '开始日期'
+            },
+            endTime: {
+                label: '结束日期'
+            }
+        },
+        tableColumn: [
+            {
+                label: '日期'
+            },
+            {
+                label: '车牌号'
+            },
+            {
+                label: '司机姓名'
+            },
+            {
+                label: '表现评分（分）'
+            },
+            {
+                label: '违规类型'
+            },
+            {
+                label: '偷盗行为记录'
+            },
+            {
+                label: '备注'
+            },
+            {
+                label: '创建人'
+            },
+            {
+                label: '创建时间'
+            }
+        ],
+        fields: [
+            {
+                label: '日期'
+            },
+            {
+                label: '司机姓名'
+            },
+            {
+                label: '车牌号'
+            },
+            {
+                label: '表现评分(总分10分)'
+            },
+            {
+                label: '违规类型'
+            },
+            {
+                label: '偷窃行为记录'
+            },
+            {
+                label: '备注'
+            }
+        ]
+    },
+    workload: {
+        searchBar: {
+            carNumber: {
+                label: '车牌号'
+            },
+            name: {
+                label: '司机姓名'
+            },
+            startTime: {
+                label: '开始日期'
+            },
+            endTime: {
+                label: '结束日期'
+            }
+        },
+        tableColumn: [
+            {
+                label: '日期'
+            },
+            {
+                label: '车牌号'
+            },
+            {
+                label: '司机姓名'
+            },
+            {
+                label: '工地名称'
+            },
+            {
+                label: '工作时间'
+            },
+            {
+                label: '车数'
+            },
+            {
+                label: '货币单位'
+            },
+            {
+                label: '单价'
+            },
+            {
+                label: '收费金额'
+            },
+            {
+                label: '备注'
+            },
+            {
+                label: '创建人'
+            },
+            {
+                label: '创建时间'
+            }
+        ],
+        fields: [
+            {
+                label: '日期'
+            },
+            {
+                label: '司机姓名'
+            },
+            {
+                label: '车牌号'
+            },
+            {
+                label: '工地名称'
+            },
+            {
+                label: '结算方式',
+                options: ['按工时', '按车数']
+            },
+            {
+                label: '工作时间(小时)'
+            },
+            {
+                label: '车数'
+            },
+            {
+                label: '备注'
+            },
+            {
+                label: '货币单位'
+            },
+            {
+                label: '单价'
+            },
+            {
+                label: '收费金额'
+            }
+        ]
+    },
+    truckStatistics: {
+        searchBar: {
+            year: {
+                label: '年份'
+            },
+            mon: {
+                label: '月份'
+            },
+            carNumber: {
+                label: '车牌号'
+            },
+            carType: {
+                label: '车型'
+            }
+        },
+        tableColumn: [
+            {
+                label: '年/月份'
+            },
+            {
+                label: '车牌号'
+            },
+            {
+                label: '车型'
+            },
+            {
+                label: '总工作量（小时）'
+            },
+            {
+                label: '收费金额'
+            },
+            {
+                label: '油耗'
+            },
+            {
+                label: '维修费用'
+            }
+        ]
+    },
+    siteStatistics: {
+        searchBar: {
+            year: {
+                label: '年份'
+            },
+            mon: {
+                label: '月份'
+            },
+            siteName: {
+                label: '工地名称'
+            }
+        },
+        tableColumn: [
+            {
+                label: '年/月份'
+            },
+            {
+                label: '工地名称'
+            },
+            {
+                label: '总工作量（小时）'
+            },
+            {
+                label: '总车数'
+            },
+            {
+                label: '收费金额'
+            }
+        ]
+    },
+    maintenanceRecord: {
+        searchBar: {
+            year: {
+                label: '年份'
+            },
+            mon: {
+                label: '月份'
+            },
+            carNumber: {
+                label: '车牌号'
+            },
+            carType: {
+                label: '车型'
+            }
+        },
+        tableColumn: [
+            {
+                label: '年/月份'
+            },
+            {
+                label: '车牌号'
+            },
+            {
+                label: '车型'
+            },
+            {
+                label: '维修次数'
+            },
+            {
+                label: '油耗'
+            },
+            {
+                label: '公里数'
+            },
+            {
+                label: '维修费用'
+            }
+        ]
+    },
+    accessoryNum: {
+        searchBar: {
+            siteName: {
+                label: '工地名称'
+            }
+        },
+        tableColumn: [
+            {
+                label: '配件类型'
+            },
+            {
+                label: '剩余总量'
+            }
+        ]
+    },
+    userManage: {
+        searchBar: {
+            nickName: {
+                label: '姓名'
+            },
+            sex: {
+                label: '性别'
+            }
+        },
+        tableColumn: [
+            {
+                label: '编号'
+            },
+            {
+                label: '用户账号'
+            },
+            {
+                label: '姓名'
+            },
+            {
+                label: '性别'
+            },
+            {
+                label: '联系电话'
+            },
+            {
+                label: '角色'
+            },
+            {
+                label: '备注'
+            },
+            {
+                label: '管理车辆'
+            },
+            {
+                label: '管理工地'
+            },
+            {
+                label: '状态'
+            }
+        ],
+        fields: [
+            {
+                label: '姓名'
+            },
+            {
+                label: '联系电话'
+            },
+            {
+                label: '用户账号'
+            },
+            {
+                label: '登录密码'
+            },
+            {
+                label: '用户性别'
+            },
+            {
+                label: '用户状态'
+            },
+            {
+                label: '所属角色'
+            },
+            {
+                label: '备注信息'
+            }
+        ],
+        truckDialog: {
+            title: '选择管理的车辆',
+            content: '已选择车辆：'
+        },
+        siteDialog: {
+            title: '选择管理的工地',
+            content: '已选择工地：'
+        }
+    },
+    roleManage: {
+        searchBar: {
+            roleName: {
+                label: '角色名称'
+            }
+        },
+        tableColumn: [
+            {
+                label: '角色编号'
+            },
+            {
+                label: '角色名称'
+            },
+            {
+                label: '权限字符'
+            },
+            {
+                label: '显示顺序'
+            },
+            {
+                label: '备注信息'
+            },
+            {
+                label: '状态'
+            },
+            {
+                label: '创建时间'
+            },
+            {
+                label: '修改时间'
+            }
+        ],
+        fields: [
+            {
+                label: '角色名称'
+            },
+            {
+                label: '权限字符'
+            },
+            {
+                label: '角色顺序'
+            },
+            {
+                label: '角色状态'
+            },
+            {
+                label: '菜单权限',
+                checkboxs: ['展开/折叠', '全选/全不选', '父子联动'],
+                loading: '加载中，请稍后'
+            },
+            {
+                label: '备注'
+            }
+        ],
+        roleFields: [
+            {
+                label: '角色名称'
+            },
+            {
+                label: '权限字符'
+            },
+            {
+                label: '权限范围'
+            },
+            {
+                label: '数据权限',
+                checkboxs: ['展开/折叠', '全选/全不选', '父子联动'],
+                loading: '加载中，请稍后'
+            }
+        ]
+    },
+    menuManage: {
+        searchBar: {
+            menuName: {
+                label: '菜单名称'
+            }
+        },
+        tableColumn: [
+            {
+                label: '菜单名称'
+            },
+            {
+                label: '图标'
+            },
+            {
+                label: '排序'
+            },
+            {
+                label: '权限标识'
+            },
+            {
+                label: '组件路径'
+            },
+            {
+                label: '状态'
+            },
+            {
+                label: '创建时间'
+            },
+            {
+                label: '修改时间'
+            }
+        ],
+        fields: [
+            {
+                label: '上级菜单'
+            },
+            {
+                label: '菜单类型',
+                options: ['目录', '菜单', '按钮']
+            },
+            {
+                label: '菜单图标'
+            },
+            {
+                label: '菜单名称'
+            },
+            {
+                label: '显示排序'
+            },
+            {
+                label: '路由地址'
+            },
+            {
+                label: '组件路径'
+            },
+            {
+                label: '权限字符'
+            },
+            {
+                label: '路由参数'
+            },
+            {
+                label: '是否缓存',
+                options: ['缓存', '不缓存']
+            },
+            {
+                label: '显示状态',
+                tooltip: '选择隐藏则路由将不会出现在侧边栏，但仍然可以访问'
+            },
+            {
+                label: '菜单状态',
+                tooltip: '选择停用则路由将不会出现在侧边栏，也不能被访问'
+            },
+            {
+                label: '菜单权限',
+                checkboxs: ['展开/折叠', '全选/全不选', '父子联动'],
+                loading: '加载中，请稍后'
+            },
+            {
+                label: '备注'
+            }
+        ]
+    },
+    dictManage: {
+        searchBar: {
+            dictName: {
+                label: '字典名称'
+            },
+            dictType: {
+                label: '字典类型'
+            }
+        },
+        tableColumn: [
+            {
+                label: '字典编号'
+            },
+            {
+                label: '字典名称'
+            },
+            {
+                label: '字典英文名称'
+            },
+            {
+                label: '字典类型'
+            },
+            {
+                label: '状态'
+            },
+            {
+                label: '备注'
+            },
+            {
+                label: '创建时间'
+            }
+        ],
+        fields: [
+            {
+                label: '字典名称'
+            },
+            {
+                label: '字典英文名称'
+            },
+            {
+                label: '字典类型'
+            },
+            {
+                label: '状态'
+            },
+            {
+                label: '备注'
+            }
+        ]
+    },
+    dictData: {
+        searchBar: {
+            dictType: {
+                label: '字典名称'
+            },
+            dictLabel: {
+                label: '字典标签'
+            },
+            status: {
+                label: '字典标签'
+            },
+            dateRange: {
+                label: '字典标签'
+            }
+        },
+        tableColumn: [
+            {
+                label: '字典编码'
+            },
+            {
+                label: '字典标签'
+            },
+            {
+                label: '字典英文标签'
+            },
+            {
+                label: '字典键值'
+            },
+            {
+                label: '字典排序'
+            },
+            {
+                label: '启用/停用状态'
+            },
+            {
+                label: '备注'
+            },
+            {
+                label: '创建时间'
+            }
+        ],
+        fields: [
+            {
+                label: '字典类型'
+            },
+            {
+                label: '数据标签'
+            },
+            {
+                label: '数据英文标签'
+            },
+            {
+                label: '数据键值'
+            },
+            {
+                label: '显示排序'
+            },
+            {
+                label: '状态'
+            },
+            {
+                label: '备注'
+            }
+        ]
+    },
+    siteManage: {
+        searchBar: {
+            siteName: {
+                label: '工地名称'
+            }
+        },
+        tableColumn: [
+            {
+                label: '工地编码'
+            },
+            {
+                label: '工地名称'
+            },
+            {
+                label: '地址'
+            },
+            {
+                label: '联系人'
+            },
+            {
+                label: '联系方式'
+            },
+            {
+                label: '状态'
+            }
+        ],
+        fields: [
+            {
+                label: '工地编码'
+            },
+            {
+                label: '工地名称'
+            },
+            {
+                label: '地址'
+            },
+            {
+                label: '联系人'
+            },
+            {
+                label: '联系方式'
+            },
+            {
+                label: '状态'
+            }
+        ]
+    },
     tagsView: {
         refresh: '刷新',
         close: '关闭',
@@ -602,10 +1361,13 @@ export default {
                 text: '删除成功',
                 content: '是否确认删除此数据项？'
             },
-            upload: '上传成功'
+            upload: '上传成功',
+            setting: '设置成功'
         },
         validator: {
-            nickName: '用户昵称不能为空',
+            userName: '用户账号不能为空',
+            nickName: '姓名不能为空',
+            roleIds: '所属角色不能为空',
             email: {
                 empty: '邮箱地址不能为空',
                 error: '请输入正确的邮箱地址'
@@ -614,6 +1376,7 @@ export default {
                 empty: '手机号码不能为空',
                 error: '请输入正确的手机号码'
             },
+            password: '用户密码不能为空',
             oldPassword: '旧密码不能为空',
             newPassword: '新密码不能为空',
             lengthPassword: '长度在 6 到 20 个字符',
@@ -652,13 +1415,34 @@ export default {
         },
         select: {
             label: '选择使用'
+        },
+        entry: {
+            label: '入库'
+        },
+        all: {
+            label: '全部'
+        },
+        settingTruck: {
+            label: '设置管理车辆'
+        },
+        settingSite: {
+            label: '设置管理工地'
+        },
+        reset: {
+            label: '重置密码'
+        },
+        permission: {
+            label: '数据权限'
         }
     },
     dialog: {
         addTitle: '新增',
         editTitle: '编辑',
         infoTitle: '详情',
-        priceTitle: '价格维护'
+        priceTitle: '价格维护',
+        accessoryTitle: '选择配件',
+        truckTitle: '分配车辆',
+        roleTitle: '分配数据权限'
     },
     import: {
         title: '数据导入',

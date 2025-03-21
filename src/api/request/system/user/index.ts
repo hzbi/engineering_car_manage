@@ -1,11 +1,11 @@
-import { getlist } from '@/api/system/logininfor'
 // prettier-ignore
 import { listUser, getUser, delUser, addUser, updateUser, resetUserPwd, changeUserStatus} from "@/api/system/user";
 import { getToken } from '@/utils/auth'
 import { treeselect } from '@/api/system/dept'
-import { ref, getCurrentInstance, watch, toRefs, nextTick, reactive } from 'vue'
-import { ElForm, ElTable, ElUpload, FormItemRule, UploadUserFile } from 'element-plus'
+import { ref, getCurrentInstance, watch } from 'vue'
+import { ElForm, ElMessageBox, ElTable, ElUpload, UploadUserFile } from 'element-plus'
 import { $t } from '@/lang'
+import useAppStore from '@/store/modules/app'
 const baseURL = import.meta.env.VITE_APP_BASE_API
 
 export default () => {
@@ -20,7 +20,7 @@ export default () => {
     const formRef = ref<InstanceType<typeof ElForm>>()
     const pageTableRef = ref<InstanceType<typeof ElTable>>()
     // prettier-ignore
-    const { sys_normal_disable, sys_user_sex, truck_type, truck_status, site_status } = proxy.useDict('sys_normal_disable', 'sys_user_sex', 'truck_type', 'truck_status', 'site_status')
+    const { sys_normal_disable, sys_user_sex, truck_type, truck_status, site_status, user_status } = proxy.useDict('sys_normal_disable', 'sys_user_sex', 'truck_type', 'truck_status', 'site_status', 'user_status')
 
     // 非单个禁用
     const single = ref<boolean>(true)
@@ -81,52 +81,43 @@ export default () => {
         deptId: undefined,
         sex: undefined
     })
-    // 列信息
-    const columns = [
-        { key: 0, label: `用户编号`, visible: true },
-        { key: 1, label: `用户名称`, visible: true },
-        { key: 2, label: `用户昵称`, visible: true },
-        { key: 3, label: `部门`, visible: true },
-        { key: 4, label: `手机号码`, visible: true },
-        { key: 5, label: `状态`, visible: true },
-        { key: 6, label: `创建时间`, visible: true }
-    ]
+
     // 表单校验
     const rules = ref<any>({
         userName: [
             {
                 required: true,
-                message: '用户名称不能为空',
+                message: $t('components.validator.userName'),
                 trigger: 'blur'
             }
         ],
         nickName: [
             {
                 required: true,
-                message: '用户昵称不能为空',
+                message: $t('components.validator.nickName'),
                 trigger: 'blur'
             }
         ],
         password: [
             {
                 required: true,
-                message: '用户密码不能为空',
+                message: $t('components.validator.password'),
                 trigger: 'blur'
-            }
-        ],
-        email: [
-            {
-                type: 'email',
-                message: "'请输入正确的邮箱地址",
-                trigger: ['blur', 'change']
             }
         ],
         phonenumber: [
             {
                 required: true,
                 pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
-                message: '请输入正确的手机号码',
+                message: $t('components.validator.phonenumber.error'),
                 trigger: 'blur'
+            }
+        ],
+        roleIds: [
+            {
+                required: true,
+                message: $t('components.validator.roleIds'),
+                trigger: 'change'
             }
         ]
     })
@@ -168,10 +159,10 @@ export default () => {
     }
 
     const updateUserStatus = async (userId: string, val: string) => {
-        const text = val === '0' ? '启用' : '停用'
+        const text = val === '0' ? (useAppStore().language == 'zh' ? '启用' : 'Enable') : useAppStore().language == 'zh' ? '停用' : 'Disable'
         await changeUserStatus(userId, val).then((response: any) => {
             if (response.code === 200) {
-                proxy.$modal.msgSuccess(text + '成功')
+                proxy.$modal.msgSuccess(`${text}${useAppStore().language == 'zh' ? '成功' : ' Success'}`)
                 getPageList()
             }
         })
@@ -185,17 +176,18 @@ export default () => {
      */
     const handleStatusChange = async (val: any, row: any) => {
         proxy.setTableRowSelected(pageTableRef, row, true)
-        const text = val === '0' ? '启用' : '停用'
+        const text = val == '0' ? (useAppStore().language == 'zh' ? '启用"' : 'Enable "') : useAppStore().language == 'zh' ? '停用"' : 'Disable "'
         // prettier-ignore
-        await proxy.$modal.confirm('确认要"' + text + '""' + row.userName + '"用户吗?',"警告")
+        await ElMessageBox.confirm((useAppStore().language == 'zh' ? '确认要' : 'Confirm to ') + text + row.userName + (useAppStore().language == 'zh' ? '"用户吗?' : '" users?'), useAppStore().language == 'zh' ? '警告' : 'Warning', {
+            confirmButtonText: $t('components.btn.confirmButton'),
+            cancelButtonText: $t('components.btn.cancelButton')
+        })
             .then(() => {
-                updateUserStatus(row.userId, val);
+                updateUserStatus(row.userId, val)
             })
             .catch(() => {
-                proxy.setTableRowSelected(pageTableRef, row, false);
-                row.status = row.status === "0" ? "1" : "0";
-                return;
-            });
+                getPageList()
+            })
         //updateUserStatus(row.userId, val);
     }
     // 取消按钮
@@ -217,7 +209,7 @@ export default () => {
             status: '0',
             remark: undefined,
             postIds: [],
-            roleIds: []
+            roleIds: ''
         }
         proxy.resetForm(formRef)
     }
@@ -257,7 +249,7 @@ export default () => {
                     postOptions.value = data.posts
                     roleOptions.value = data.roles
                     form.value.postIds = data.postIds
-                    form.value.roleIds = data.roleIds
+                    form.value.roleIds = parseInt(data.roleIds.join(''))
                     /* form.value = {
                         userId: formData.userId,
                         userName: formData.userName,
@@ -293,7 +285,7 @@ export default () => {
         reset()
         getTreeselect()
 
-        getUserBaseInfo('添加用户', null)
+        getUserBaseInfo($t('dialog.addTitle'), null)
     }
     /** 修改按钮操作 */
     const handleUpdate = (row: any) => {
@@ -301,33 +293,38 @@ export default () => {
         reset()
         getTreeselect()
         const userId = row.userId || ids.value[0]
-        getUserBaseInfo('修改用户', userId)
+        getUserBaseInfo($t('dialog.editTitle'), userId)
     }
     /** 重置密码按钮操作 */
     const handleResetPwd = async (row: { userName: string; userId: any }) => {
         proxy.setTableRowSelected(pageTableRef, row, true)
         // prettier-ignore
-        await proxy.$modal.prompt('请输入"' + row.userName + '"的新密码', "提示")
-            .then(({ value }: any)  => {
+        await ElMessageBox.prompt(useAppStore().language == 'zh' ? `请输入"${row.userName}"的新密码` : `Please enter the new password for "${row.userName}"`, useAppStore().language == 'zh' ? '提示' : 'Prompt', {
+            confirmButtonText: $t('components.btn.confirmButton'),
+            cancelButtonText: $t('components.btn.cancelButton')
+        })
+            .then(({ value }: any) => {
                 resetUserPwd(row.userId, value).then((response: any) => {
                     if (response.code === 200) {
-                        getPageList();
-                        proxy.setTableRowSelected(pageTableRef, row, false);
-                        proxy.$modal.msgSuccess("修改成功，新密码是：" + value);
+                        getPageList()
+                        proxy.setTableRowSelected(pageTableRef, row, false)
+                        proxy.$modal.msgSuccess(useAppStore().language == 'zh' ? `修改成功，新密码是：${value}` : `Modification successful, the new password is ${value}`)
                     }
-                });
+                })
             })
             .catch(() => {
-                proxy.setTableRowSelected(pageTableRef, row, false);
-                console.log("密码重置取消");
-            });
+                proxy.setTableRowSelected(pageTableRef, row, false)
+            })
     }
     /** 提交按钮 */
     const submitForm = () => {
         formRef.value?.validate((valid: boolean) => {
             if (valid) {
                 if (form.value.userId) {
-                    updateUser(form.value).then((response: any) => {
+                    updateUser({
+                        ...form.value,
+                        roleIds: [form.value.roleIds]
+                    }).then((response: any) => {
                         if (response.code === 200) {
                             proxy.$modal.msgSuccess($t('components.message.edit'))
                             getPageList()
@@ -335,7 +332,10 @@ export default () => {
                         }
                     })
                 } else {
-                    addUser(form.value)
+                    addUser({
+                        ...form.value,
+                        roleIds: [form.value.roleIds]
+                    })
                         .then((response: any) => {
                             if (response.code === 200) {
                                 proxy.$modal.msgSuccess($t('components.message.add'))
@@ -366,37 +366,40 @@ export default () => {
         }
 
         if (isAdmin) {
-            proxy.$modal.msgError('超级管理员不允许删除')
+            proxy.$modal.msgError(useAppStore().language == 'zh' ? '超级管理员不允许删除' : 'Super administrator is not allowed to delete')
             return
         }
 
         if (userIds === '1') {
-            proxy.$modal.msgError('超级管理员不允许删除')
+            proxy.$modal.msgError(useAppStore().language == 'zh' ? '超级管理员不允许删除' : 'Super administrator is not allowed to delete')
             return
         }
         proxy.setTableRowSelected(pageTableRef, row, true)
         // prettier-ignore
-        proxy.$modal.confirm('是否确认删除用户编号为"' + userIds + '"的数据项?', "警告")
+        ElMessageBox.confirm(useAppStore().language == 'zh' ? `是否确认删除用户编号为"${userIds}"的数据项?` : `Are you sure you want to delete the data item with user ID "${userIds}"?`, useAppStore().language == 'zh' ? '警告' : 'Warning', {
+            confirmButtonText: $t('components.btn.confirmButton'),
+            cancelButtonText: $t('components.btn.cancelButton')
+        })
             .then(() => {
-                return delUser(userIds);
+                return delUser(userIds)
             })
             .then((response: any) => {
                 if (response.code === 200) {
-                    getPageList();
-                    proxy.$modal.msgSuccess("删除成功");
+                    getPageList()
+                    proxy.$modal.msgSuccess($t('components.message.delete.text'))
                 }
-            }).catch(() => {
-                cleanSelect();
-                console.log("取消了删除");
-            });
+            })
+            .catch(() => {
+                cleanSelect()
+            })
     }
     /** 导出按钮操作 */
     const handleExport = () => {
-        proxy.download('/system/user/exportByStream', { ...queryParams.value }, `用户数据${new Date().getTime()}.xlsx`)
+        proxy.download('/system/user/exportByStream', { ...queryParams.value, ids: ids.value.join(',') }, `${$t('menu.User')}${new Date().getTime()}.xlsx`)
     }
     /** 导入按钮操作 */
     const handleImport = () => {
-        upload.value.title = '用户导入'
+        upload.value.title = $t('import.title')
         upload.value.open = true
     }
     /**
@@ -472,7 +475,6 @@ export default () => {
         defaultProps,
         upload,
         queryParams,
-        columns,
         rules,
         pageTableRef,
         uploadRef,
@@ -502,6 +504,7 @@ export default () => {
         cleanUploadRef,
         truck_type,
         truck_status,
-        site_status
+        site_status,
+        user_status
     }
 }

@@ -1,7 +1,7 @@
 <template>
     <div class="app-container">
         <el-form :model="queryParams" ref="queryFormRef" :inline="true" v-show="showSearch">
-            <el-form-item label="工地名称:" prop="siteId">
+            <el-form-item :label="$t('accessoryNum.searchBar.siteName.label')" prop="siteId">
                 <el-select v-model="queryParams.siteId" :placeholder="$t('components.select.placeholder')" clearable style="width: 200px">
                     <el-option v-for="dict in siteOptions" :key="dict.siteId" :label="dict.siteName" :value="dict.siteId" />
                 </el-select>
@@ -20,12 +20,12 @@
 
         <el-table stripe border v-loading="loading" :data="tableData">
             <el-table-column type="index" width="80" :label="$t('tableColumn.index')" align="center" />
-            <el-table-column label="配件类型" align="center" prop="accessoryType" min-width="120" show-overflow-tooltip>
+            <el-table-column :label="$t('accessoryNum.tableColumn[0].label')" align="center" prop="accessoryType" min-width="120" show-overflow-tooltip>
                 <template #default="scope">
                     <dict-tag :options="accessory_type" :value="scope.row.accessoryType" />
                 </template>
             </el-table-column>
-            <el-table-column label="剩余总量" align="center" prop="num" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('accessoryNum.tableColumn[1].label')" align="center" prop="num" min-width="120" show-overflow-tooltip></el-table-column>
         </el-table>
 
         <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getPageList" />
@@ -39,6 +39,7 @@ import { ref, reactive, toRefs, getCurrentInstance, onMounted } from 'vue'
 import { dayjs, ElForm, ElTable } from 'element-plus'
 import * as echarts from 'echarts'
 import { $t } from '@/lang'
+import useAppStore from '@/store/modules/app'
 
 const { proxy } = getCurrentInstance() as any
 
@@ -58,7 +59,7 @@ const data = reactive({
     queryParams: {
         pageNum: 1,
         pageSize: 10,
-        year: dayjs(new Date().setDate(new Date().getDate() - 1)).format('YYYY-MM-DD'),
+        year: dayjs(new Date().setDate(new Date().getDate() - 1)).format('YYYY'),
         mon: null,
         carNumber: null,
         carType: null
@@ -80,7 +81,7 @@ const getPageList = () => {
 
         commandstatsIntance.setOption({
             title: {
-                text: '库存数量'
+                text: useAppStore().language == 'zh' ? '库存数量' : 'Inventory quantity'
             },
             grid: {
                 left: '20',
@@ -94,6 +95,12 @@ const getPageList = () => {
             },
             yAxis: {
                 type: 'value'
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                }
             },
             series: [
                 {
@@ -138,9 +145,9 @@ const handleExport = () => {
 }
 
 onMounted(() => {
-    getPageList()
     proxy.getDicts('accessory_type').then((response: any) => {
         accessoryTypeOptions.value = response.data
+        getPageList()
     })
 })
 </script>
