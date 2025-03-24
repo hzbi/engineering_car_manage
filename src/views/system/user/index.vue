@@ -50,7 +50,7 @@
                     <el-table-column :label="$t('userManage.tableColumn[6].label')" min-width="120" align="center" key="remark" prop="remark" />
                     <el-table-column :label="$t('userManage.tableColumn[7].label')" min-width="200" align="center">
                         <template #default="scope">
-                            <div v-if="scope.row.roleidArray.includes('1') || scope.row.roleidArray.includes('2')">{{ $t('operationButtons.all.label') }}</div>
+                            <div v-if="scope.row.roleidArray && (scope.row.roleidArray.includes('1') || scope.row.roleidArray.includes('2'))">{{ $t('operationButtons.all.label') }}</div>
                             <div v-else>
                                 <template v-if="scope.row.carInfoList && scope.row.carInfoList.length > 0" v-for="(item, index) in scope.row.carInfoList" :key="index">
                                     <span :style="{ color: item.carStatus == 0 ? '#409eff' : '#C0C4CC', cursor: 'pointer' }" @click="handleSettingTruck(scope.row)">{{ (index == scope.row.carInfoList.length - 1 && item.carNumber) || item.carNumber + ',' }}</span>
@@ -61,7 +61,7 @@
                     </el-table-column>
                     <el-table-column :label="$t('userManage.tableColumn[8].label')" min-width="200" align="center">
                         <template #default="scope">
-                            <div v-if="scope.row.roleidArray.includes('1') || scope.row.roleidArray.includes('2')">{{ $t('operationButtons.all.label') }}</div>
+                            <div v-if="scope.row.roleidArray && (scope.row.roleidArray.includes('1') || scope.row.roleidArray.includes('2'))">{{ $t('operationButtons.all.label') }}</div>
                             <div v-else>
                                 <template v-if="scope.row.siteInfoList && scope.row.siteInfoList.length > 0" v-for="(item, index) in scope.row.siteInfoList" :key="index">
                                     <span :style="{ color: item.status == 0 ? '#409eff' : '#C0C4CC', cursor: 'pointer' }" @click="handleSettingSite(scope.row)">{{ (index == scope.row.siteInfoList.length - 1 && item.siteName) || item.siteName + ',' }}</span>

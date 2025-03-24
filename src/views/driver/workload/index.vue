@@ -241,7 +241,7 @@ import { getWorkloadList, getWorkloadInfo, addWorkload, updateWorkload, delWorkl
 import { getSiteList } from '@/api/site/siteManage'
 import { getDriverAndTruck } from '@/api/driver/driverInfo'
 import { ref, reactive, toRefs, getCurrentInstance } from 'vue'
-import { ElForm, ElTable, ElUpload, UploadUserFile } from 'element-plus'
+import { dayjs, ElForm, ElTable, ElUpload, UploadUserFile } from 'element-plus'
 import { getToken } from '@/utils/auth'
 import { $t } from '@/lang'
 import useAppStore from '@/store/modules/app'
@@ -278,7 +278,7 @@ const data = reactive({
     },
     form: {
         id: null,
-        workloadTime: null,
+        workloadTime: dayjs(new Date().setDate(new Date().getDate())).format('YYYY-MM-DD'),
         name: null,
         carNumber: null,
         siteId: null,

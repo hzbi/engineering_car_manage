@@ -15,7 +15,6 @@ const useDict = (...args: any[]) => {
                 res.value[dictType] = dicts
             } else {
                 getDicts(dictType).then((resp) => {
-                    console.log(resp)
                     res.value[dictType] = resp.data.map((p: { dictEngLabel: any; dictLabel: any; dictValue: any; listClass: any; cssClass: any }) => ({
                         labelEn: p.dictEngLabel,
                         label: p.dictLabel,

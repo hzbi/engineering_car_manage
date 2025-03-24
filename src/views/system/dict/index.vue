@@ -18,7 +18,7 @@
             <right-toolbar v-model:showSearch="showSearch" @queryTable="getList" />
         </el-row>
 
-        <el-table stripe border height="560px" v-loading="loading" ref="pageTableRef" :data="typeList">
+        <el-table stripe border v-loading="loading" ref="pageTableRef" :data="typeList">
             <el-table-column :label="$t('dictManage.tableColumn[0].label')" align="center" prop="dictId" min-width="120" />
             <el-table-column :label="$t('dictManage.tableColumn[1].label')" align="center" prop="dictName" min-width="120" :show-overflow-tooltip="true" />
             <el-table-column :label="$t('dictManage.tableColumn[2].label')" align="center" prop="dictEngName" min-width="120" :show-overflow-tooltip="true" />

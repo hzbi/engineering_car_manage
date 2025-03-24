@@ -298,7 +298,7 @@ import { getAccessoryStockList, getAccessoryStockInfo, addAccessoryStock, update
 import { getAccessoryOutList, getAccessoryOutInfo, addAccessoryOut, updateAccessoryOut, delAccessoryOut } from '@/api/truck/accessoryOut'
 import { getSiteList } from '@/api/site/siteManage'
 import { ref, reactive, toRefs, getCurrentInstance } from 'vue'
-import { ElForm, ElTable, ElUpload, UploadUserFile } from 'element-plus'
+import { dayjs, ElForm, ElTable, ElUpload, UploadUserFile } from 'element-plus'
 import { getToken } from '@/utils/auth'
 import { $t } from '@/lang'
 import useAppStore from '@/store/modules/app'
@@ -348,7 +348,7 @@ const data = reactive({
         monetaryUnit: null,
         price: null,
         num: null,
-        time: null,
+        time: dayjs(new Date().setDate(new Date().getDate())).format('YYYY-MM-DD'),
         by: null
     },
     rules: {
@@ -373,7 +373,7 @@ const dataAccessoryOut = reactive({
         accessoryId: null,
         accessoryName: null,
         num: null,
-        putTime: null,
+        putTime: dayjs(new Date().setDate(new Date().getDate())).format('YYYY-MM-DD'),
         putBy: null,
         remark: null
     },
@@ -564,6 +564,7 @@ const handleAddAccessoryOut = () => {
     openAccessoryOut.value = true
     titleAccessoryOut.value = $t('dialog.addTitle')
     formAccessoryOut.value = {
+        ...formAccessoryOut.value,
         id: null,
         accessoryType: form.value.accessoryType,
         accessoryId: form.value.id,

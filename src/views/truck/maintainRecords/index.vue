@@ -403,7 +403,7 @@ import { getTruckList } from '@/api/truck/truckInfo'
 import { getAccessoryStockList } from '@/api/truck/accessoryStock'
 import { getAccessoryUseList, getAccessoryUseInfo, addAccessoryUse, updateAccessoryUse, delAccessoryUse } from '@/api/truck/accessoryUse'
 import { ref, reactive, toRefs, getCurrentInstance } from 'vue'
-import { ElForm, ElTable, ElUpload, TableV2Instance, UploadUserFile } from 'element-plus'
+import { dayjs, ElForm, ElTable, ElUpload, TableV2Instance, UploadUserFile } from 'element-plus'
 import { getToken } from '@/utils/auth'
 import { $t } from '@/lang'
 import useAppStore from '@/store/modules/app'
@@ -446,7 +446,7 @@ const data = reactive({
     },
     form: {
         id: null,
-        maintenanceTime: null,
+        maintenanceTime: dayjs(new Date().setDate(new Date().getDate())).format('YYYY-MM-DD'),
         carNumber: null,
         siteId: null,
         siteName: null,

@@ -1,4 +1,5 @@
-﻿import lodash from 'lodash'
+﻿import useAppStore from '@/store/modules/app'
+import lodash from 'lodash'
 /**
  * 通用ts方法封装处理
  * Copyright (c) 2019 ruoyi
@@ -159,7 +160,7 @@ export const selectDictLabel = (datas: any, value: string | undefined, separator
     let actions: any = []
     Object.keys(datas).some((key) => {
         if (datas[key].dictValue == '' + value) {
-            actions.push(datas[key].dictLabel)
+            actions.push(useAppStore().language == 'zh' ? datas[key].dictLabel : datas[key].dictEngLabel)
             return true
         }
     })

@@ -23,7 +23,6 @@ const props = defineProps({
 })
 
 props.options.map((item) => {
-    console.log(item)
     if (props.options.length == 2 && item.value == 0) {
         item.elTagType = 'primary'
     } else if (props.options.length == 2 && item.value == 1) {
