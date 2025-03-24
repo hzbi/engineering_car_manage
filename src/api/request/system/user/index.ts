@@ -323,7 +323,9 @@ export default () => {
                 if (form.value.userId) {
                     updateUser({
                         ...form.value,
-                        roleIds: [form.value.roleIds]
+                        roleIds: [form.value.roleIds],
+                        siteId: form.value.siteId ? form.value.siteId : form.value.roleIds == 1 || form.value.roleIds == 2 ? '*' : null,
+                        carId: form.value.siteId ? form.value.siteId : form.value.roleIds == 1 || form.value.roleIds == 2 ? '*' : null
                     }).then((response: any) => {
                         if (response.code === 200) {
                             proxy.$modal.msgSuccess($t('components.message.edit'))
@@ -334,7 +336,9 @@ export default () => {
                 } else {
                     addUser({
                         ...form.value,
-                        roleIds: [form.value.roleIds]
+                        roleIds: [form.value.roleIds],
+                        siteId: form.value.roleIds == 1 || form.value.roleIds == 2 ? '*' : null,
+                        carId: form.value.roleIds == 1 || form.value.roleIds == 2 ? '*' : null
                     })
                         .then((response: any) => {
                             if (response.code === 200) {

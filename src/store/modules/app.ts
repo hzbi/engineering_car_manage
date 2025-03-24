@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 
 const useAppStore = defineStore('app', {
     state: () => ({
-        language: localStorage.getItem('language') || 'zh',
+        language: localStorage.getItem('language') || 'en',
         sidebar: {
             opened: Cookies.get('sidebarStatus') ? Cookies.get('sidebarStatus') : true,
             withoutAnimation: false,

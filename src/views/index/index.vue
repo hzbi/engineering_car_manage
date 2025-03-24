@@ -1,7 +1,7 @@
 <template>
     <div class="app-container home">
         <el-row :gutter="20">
-            <el-col :span="checkRole(['admin']) ? 18 : 24">
+            <el-col :span="24">
                 <el-card>
                     <template #header>
                         <el-form :model="queryParams" ref="queryFormRef" :inline="true" v-show="showSearch">
@@ -56,7 +56,10 @@
                     </el-row>
                 </el-card>
             </el-col>
-            <el-col :span="6" v-hasRole="['admin']">
+        </el-row>
+
+        <el-row style="margin-top: 20px" :gutter="20">
+            <el-col :span="24" v-hasRole="['admin']">
                 <el-card>
                     <div class="title-cont">
                         <span class="title-cont-label">{{ $t('index.partsInventory.title') }}</span>
@@ -76,6 +79,7 @@
                 </el-card>
             </el-col>
         </el-row>
+
         <!-- <el-row :gutter="20" style="margin-top: 20px">
             <el-col :span="18">
                 <el-card>
@@ -231,7 +235,7 @@ getPageStatistics()
 
 <style scoped lang="scss">
 .home {
-    min-width: 1720px;
+    min-width: 1200px;
 }
 
 .title-cont {
