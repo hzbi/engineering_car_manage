@@ -13,7 +13,14 @@
             <form-search @reset="resetQuery" @search="handleQuery" />
         </el-form>
 
-        <el-table stripe border v-loading="loading" :data="infoList">
+        <el-row :gutter="10" class="mb8">
+            <el-col :span="1.5">
+                <el-button type="primary" plain icon="upload" size="small" @click="handleExport" v-hasPermi="['truck:accessoryUse:export']">{{ $t('operationButtons.export.label') }}</el-button>
+            </el-col>
+            <right-toolbar v-model:showSearch="showSearch" @queryTable="getPageList"></right-toolbar>
+        </el-row>
+
+        <el-table stripe border v-loading="loading" :data="infoList" @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="50" align="center" />
             <el-table-column type="index" width="80" :label="$t('tableColumn.index')" align="center" />
             <el-table-column :label="$t('accessoryUse.tableColumn[0].label')" align="center" prop="maintenanceTime" min-width="120" show-overflow-tooltip></el-table-column>
@@ -52,6 +59,7 @@ const { accessory_type } = proxy.useDict('accessory_type')
 const infoList = ref([])
 const loading = ref(true)
 const showSearch = ref(true)
+const ids = ref([])
 const total = ref(0)
 
 const data = reactive({
@@ -92,6 +100,11 @@ const resetQuery = () => {
     handleQuery()
 }
 
+// 多选框选中数据
+const handleSelectionChange = (selection: any) => {
+    ids.value = selection.map((item: { id: any }) => item.id)
+}
+
 const disabledStartDate = (time: any) => {
     if (queryParams.value.endTime) {
         return time.getTime() > new Date(queryParams.value.endTime).getTime()
@@ -104,6 +117,11 @@ const disabledEndDate = (time: any) => {
         return time.getTime() < new Date(queryParams.value.startTime).getTime() - 8.64e7
     }
     return false
+}
+
+/** 导出按钮操作 */
+const handleExport = () => {
+    proxy.download('truck/AccessoryUse/export', { ...queryParams.value, ids: ids.value.join(',') }, `${$t('menu.AccessoryUse')}${new Date().getTime()}.xlsx`)
 }
 
 getPageList()

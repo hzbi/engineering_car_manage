@@ -1,8 +1,11 @@
 <template>
     <div class="app-container">
-        <el-form :model="queryParams" ref="queryFormRef" :inline="true" v-show="showSearch" label-width="auto">
+        <el-form :model="queryParams" ref="queryFormRef" :inline="true" v-show="showSearch">
             <el-form-item :label="$t('dictManage.searchBar.dictName.label')" prop="dictName">
                 <el-input maxlength="100" v-model="queryParams.dictName" :placeholder="$t('components.input.placeholder')" clearable style="width: 200px" />
+            </el-form-item>
+            <el-form-item :label="$t('dictManage.searchBar.dictEngName.label')" prop="dictEngName">
+                <el-input maxlength="100" v-model="queryParams.dictEngName" :placeholder="$t('components.input.placeholder')" clearable style="width: 200px" />
             </el-form-item>
             <el-form-item :label="$t('dictManage.searchBar.dictType.label')" prop="dictType">
                 <el-input maxlength="100" v-model="queryParams.dictType" :placeholder="$t('components.input.placeholder')" clearable style="width: 200px" />

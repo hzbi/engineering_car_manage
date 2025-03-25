@@ -1,6 +1,6 @@
 <template>
     <div class="app-container">
-        <el-form :model="queryParams" ref="queryFormRef" :inline="true" v-show="showSearch" label-width="auto">
+        <el-form :model="queryParams" ref="queryFormRef" :inline="true" v-show="showSearch">
             <el-form-item :label="$t('dictData.searchBar.dictType.label')" prop="dictType">
                 <el-select v-model="queryParams.dictType" :placeholder="$t('components.select.placeholder')" clearable filterable @change="handleQuery()" style="width: 200px">
                     <el-option v-for="item in typeOptions" :key="item.dictId" :label="useAppStore().language == 'zh' ? item.dictName : item.dictEngName" :value="item.dictType" />
@@ -8,6 +8,9 @@
             </el-form-item>
             <el-form-item :label="$t('dictData.searchBar.dictLabel.label')" prop="dictLabel">
                 <el-input maxlength="100" v-model="queryParams.dictLabel" :placeholder="$t('components.input.placeholder')" clearable @keyup.enter.native="handleQuery()" style="width: 200px" />
+            </el-form-item>
+            <el-form-item :label="$t('dictData.searchBar.dictEngLabel.label')" prop="dictEngLabel">
+                <el-input maxlength="100" v-model="queryParams.dictEngLabel" :placeholder="$t('components.input.placeholder')" clearable @keyup.enter.native="handleQuery()" style="width: 200px" />
             </el-form-item>
             <el-form-item :label="$t('dictData.searchBar.status.label')" prop="status">
                 <el-select v-model="queryParams.status" :placeholder="$t('components.select.placeholder')" clearable @change="handleQuery()" style="width: 200px">

@@ -1159,6 +1159,9 @@ export default {
             dictName: {
                 label: '字典名称'
             },
+            dictEngName: {
+                label: '字典英文名称'
+            },
             dictType: {
                 label: '字典类型'
             }
@@ -1212,11 +1215,14 @@ export default {
             dictLabel: {
                 label: '字典标签'
             },
+            dictEngLabel: {
+                label: '字典英文标签'
+            },
             status: {
-                label: '字典标签'
+                label: '状态'
             },
             dateRange: {
-                label: '字典标签'
+                label: '创建时间'
             }
         },
         tableColumn: [

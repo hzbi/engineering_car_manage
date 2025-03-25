@@ -1,6 +1,6 @@
 <template>
     <div class="app-container">
-        <el-form :model="queryParams" ref="queryFormRef" v-show="showSearch" :inline="true" label-width="auto">
+        <el-form :model="queryParams" ref="queryFormRef" v-show="showSearch" :inline="true">
             <el-form-item :label="$t('roleManage.searchBar.roleName.label')" prop="roleName">
                 <el-input maxlength="100" v-model="queryParams.roleName" :placeholder="$t('components.input.placeholder')" clearable style="width: 200px" @keyup.enter.native="handleQuery()" />
             </el-form-item>

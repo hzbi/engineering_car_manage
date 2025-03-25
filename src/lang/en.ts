@@ -1159,6 +1159,9 @@ export default {
             dictName: {
                 label: 'Dictionary Name'
             },
+            dictEngName: {
+                label: 'Dictionary En Name'
+            },
             dictType: {
                 label: 'Dictionary Type'
             }
@@ -1212,11 +1215,14 @@ export default {
             dictLabel: {
                 label: 'Dictionary Label'
             },
+            dictEngLabel: {
+                label: 'Dictionary En Label'
+            },
             status: {
-                label: 'Dictionary Label'
+                label: 'Status'
             },
             dateRange: {
-                label: 'Dictionary Label'
+                label: 'Creation Time'
             }
         },
         tableColumn: [

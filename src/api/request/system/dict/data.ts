@@ -41,6 +41,8 @@ export default () => {
         pageSize: 10,
         dictName: undefined,
         dictType: undefined,
+        dictLabel: undefined,
+        dictEngLabel: undefined,
         status: undefined
     })
     // 表单参数

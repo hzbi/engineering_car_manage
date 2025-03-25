@@ -33,6 +33,7 @@ export default () => {
         pageNum: 1,
         pageSize: 10,
         dictName: undefined,
+        dictEngName: undefined,
         dictType: undefined,
         status: undefined
     })
