@@ -28,7 +28,7 @@ import { $t } from '@/lang'
 const { proxy } = getCurrentInstance() as any
 const formRef = ref<InstanceType<typeof ElForm>>()
 const equalToPassword = (rule: any, value: any, callback: any) => {
-    if (proxy.user.newPassword !== value) {
+    if (user.value.newPassword !== value) {
         callback(new Error($t('components.validator.equalToPassword')))
     } else {
         callback()
