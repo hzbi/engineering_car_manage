@@ -675,7 +675,7 @@ export default {
                 label: '违规类型'
             },
             {
-                label: '偷盗行为记录'
+                label: '不当行为记录'
             },
             {
                 label: '备注'
@@ -704,7 +704,7 @@ export default {
                 label: '违规类型'
             },
             {
-                label: '偷窃行为记录'
+                label: '不当行为记录'
             },
             {
                 label: '备注'
@@ -828,6 +828,9 @@ export default {
             },
             {
                 label: '总工作量（小时）'
+            },
+            {
+                label: '总车数'
             },
             {
                 label: '收费金额'

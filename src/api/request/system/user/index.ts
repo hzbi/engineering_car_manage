@@ -108,8 +108,7 @@ export default () => {
         phonenumber: [
             {
                 required: true,
-                pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
-                message: $t('components.validator.phonenumber.error'),
+                message: $t('components.validator.phonenumber.empty'),
                 trigger: 'blur'
             }
         ],

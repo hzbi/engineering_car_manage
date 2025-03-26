@@ -104,7 +104,7 @@
                         <el-radio v-for="dict in statusOptions" :key="dict.dictValue" :label="dict.dictValue">{{ useAppStore().language == 'zh' ? dict.dictLabel : dict.dictEngLabel }}</el-radio>
                     </el-radio-group>
                 </el-form-item>
-                <el-form-item :label="$t('dictData.fields[5].label')" prop="remark">
+                <el-form-item :label="$t('dictData.fields[6].label')" prop="remark">
                     <el-input maxlength="100" v-model="form.remark" type="textarea" :placeholder="$t('components.input.placeholder')"></el-input>
                 </el-form-item>
             </el-form>

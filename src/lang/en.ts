@@ -675,7 +675,7 @@ export default {
                 label: 'Violation Type'
             },
             {
-                label: 'Theft Record'
+                label: 'Misconduct Record'
             },
             {
                 label: 'Remarks'
@@ -704,7 +704,7 @@ export default {
                 label: 'Violation Type'
             },
             {
-                label: 'Theft Record'
+                label: 'Misconduct Record'
             },
             {
                 label: 'Remarks'
@@ -828,6 +828,9 @@ export default {
             },
             {
                 label: 'Total Workload (Hours)'
+            },
+            {
+                label: 'Total Number of Vehicles'
             },
             {
                 label: 'Amount'

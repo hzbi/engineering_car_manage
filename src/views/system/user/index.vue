@@ -145,7 +145,8 @@
 							<el-input
 								v-model="form.phonenumber"
 								:placeholder="$t('components.input.placeholder')"
-								maxlength="11"
+								maxlength="20"
+                                oninput="value=value.replace(/^\.+|[^\d.]/g,'')"
 							/>
 						</el-form-item>
 					</el-col>

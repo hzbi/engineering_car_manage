@@ -78,7 +78,7 @@ service.interceptors.request.use(
 				const interval = 1000; // 间隔时间(ms)，小于此时间视为重复提交
                  // prettier-ignore
 				if (s_data === requestObj.data && requestObj.time - s_time < interval && s_url === requestObj.url) {
-					const message = "数据正在处理，请勿重复提交";
+					const message = useAppStore().language == 'zh' ? '数据正在处理，请勿重复提交' : 'Data is being processed, please do not submit repeatedly'
 					console.warn(`[${s_url}]: ` + message);
 					return Promise.reject(new Error(message));
 				} else {
@@ -111,27 +111,25 @@ service.interceptors.response.use((res: AxiosResponse) => {
 			if (!isRelogin.show) {
 				isRelogin.show = true;
 				// prettier-ignore
-				ElMessageBox.confirm(
-					"登录状态已过期，您可以继续留在该页面，或者重新登录",
-					"系统提示",
-					{
-						confirmButtonText: "重新登录",
-						cancelButtonText: "取消",
-						type: "warning"
-					}
-				)
-                .then(() => {
-                    isRelogin.show = false;
-                    useUserStore().logOut().then(() => {
-                        location.href = "/index";
-                    });
+				ElMessageBox.confirm(useAppStore().language == 'zh' ? '登录状态已过期，您可以继续留在该页面，或者重新登录' : 'Your login status has expired. You can stay on this page or log in again', useAppStore().language == 'zh' ? '系统提示' : 'System prompt', {
+                    confirmButtonText: useAppStore().language == 'zh' ? '重新登录' : 'Re-login',
+                    cancelButtonText: useAppStore().language == 'zh' ? '取消' : 'Cancel',
+                    type: 'warning'
                 })
-                .catch(() => {
-                    isRelogin.show = false;
-                });
+                    .then(() => {
+                        isRelogin.show = false
+                        useUserStore()
+                            .logOut()
+                            .then(() => {
+                                location.href = '/index'
+                            })
+                    })
+                    .catch(() => {
+                        isRelogin.show = false
+                    })
 			}
              // prettier-ignore
-			return Promise.reject("无效的会话，或者会话已过期，请重新登录。");
+			return Promise.reject(useAppStore().language == 'zh' ? '无效的会话，或者会话已过期，请重新登录。' : 'Invalid session, or the session has expired, please log in again')
 		} else if (code === 500) {
 			ElMessage({
 				message: msg,
@@ -151,11 +149,9 @@ service.interceptors.response.use((res: AxiosResponse) => {
 		console.log("err", error);
 		let { message } = error;
 		if (message == "Network Error") {
-			message = "后端接口连接异常";
+			message = useAppStore().language == 'zh' ? '后端接口连接异常' : 'Backend interface connection exception'
 		} else if (message.includes("timeout")) {
-			message = "系统接口请求超时";
-		} else if (message.includes("Request failed with status code")) {
-			message = "系统接口" + message.substr(message.length - 3) + "异常";
+			message = useAppStore().language == 'zh' ? '系统接口请求超时' : 'System interface request timeout'
 		}
 		ElMessage({
 			message: message,
@@ -168,7 +164,7 @@ service.interceptors.response.use((res: AxiosResponse) => {
 
 export const download = async (url: string, params: any, filename: string) => {
     // prettier-ignore
-    const downloadLoadingInstance = ElLoading.service({ text: "正在下载数据，请稍候", spinner: "loading", background: "rgba(0, 0, 0, 0.7)", });
+    const downloadLoadingInstance = ElLoading.service({ text: useAppStore().language == 'zh' ? '正在下载数据，请稍候' : 'Downloading data, please wait', spinner: 'loading', background: 'rgba(0, 0, 0, 0.7)' })
     let req = null
     if (params) {
         req = service.post(url, params, {
@@ -209,7 +205,7 @@ export const download = async (url: string, params: any, filename: string) => {
         })
         .catch((r) => {
             console.error(r)
-            ElMessage.error('下载文件出现错误，请联系管理员！')
+            ElMessage.error(useAppStore().language == 'zh' ? '下载文件出现错误，请联系管理员！' : 'An error occurred while downloading the file, please contact the administrator!')
             downloadLoadingInstance.close()
         })
 }

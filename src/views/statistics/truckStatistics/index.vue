@@ -35,9 +35,10 @@
                 </template>
             </el-table-column>
             <el-table-column :label="$t('truckStatistics.tableColumn[3].label')" align="center" prop="workTime" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column :label="$t('truckStatistics.tableColumn[4].label')" align="center" prop="money" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column :label="$t('truckStatistics.tableColumn[5].label')" align="center" prop="youHao" min-width="120" show-overflow-tooltip></el-table-column>
-            <el-table-column :label="$t('truckStatistics.tableColumn[6].label')" align="center" prop="amount" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('truckStatistics.tableColumn[4].label')" align="center" prop="cars" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('truckStatistics.tableColumn[5].label')" align="center" prop="money" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('truckStatistics.tableColumn[6].label')" align="center" prop="youHao" min-width="120" show-overflow-tooltip></el-table-column>
+            <el-table-column :label="$t('truckStatistics.tableColumn[7].label')" align="center" prop="amount" min-width="120" show-overflow-tooltip></el-table-column>
         </el-table>
 
         <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getPageList" />

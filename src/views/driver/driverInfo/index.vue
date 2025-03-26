@@ -80,7 +80,7 @@
                         <el-input maxlength="100" v-model="form.name" :placeholder="$t('components.input.placeholder')" clearable />
                     </el-form-item>
                     <el-form-item :label="$t('driverInfo.fields[1].label')" prop="phone">
-                        <el-input maxlength="100" v-model="form.phone" :placeholder="$t('components.input.placeholder')" clearable />
+                        <el-input maxlength="20" v-model="form.phone" :placeholder="$t('components.input.placeholder')" oninput="value=value.replace(/^\.+|[^\d.]/g,'')" clearable />
                     </el-form-item>
                     <el-form-item :label="$t('driverInfo.fields[2].label')" prop="idNum">
                         <el-input maxlength="100" v-model="form.idNum" :placeholder="$t('components.input.placeholder')" clearable />

@@ -4,7 +4,7 @@
             <el-input maxlength="100" v-model="user.nickName" />
         </el-form-item>
         <el-form-item :label="$t('navbar.basicInfo.phone')" prop="phonenumber">
-            <el-input v-model="user.phonenumber" maxlength="11" />
+            <el-input v-model="user.phonenumber" maxlength="20" oninput="value=value.replace(/^\.+|[^\d.]/g,'')" />
         </el-form-item>
         <el-form-item :label="$t('navbar.basicInfo.gender')">
             <el-radio-group v-model="user.sex">
@@ -60,11 +60,6 @@ export default {
                 {
                     required: true,
                     message: $t('components.validator.phonenumber.empty'),
-                    trigger: 'blur'
-                },
-                {
-                    pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
-                    message: $t('components.validator.phonenumber.error'),
                     trigger: 'blur'
                 }
             ]

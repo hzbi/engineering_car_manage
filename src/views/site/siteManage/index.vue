@@ -94,7 +94,7 @@
                         <el-input maxlength="100" v-model="form.contactPerson" :placeholder="$t('components.input.placeholder')" clearable />
                     </el-form-item>
                     <el-form-item :label="$t('siteManage.fields[4].label')" prop="contactPhone">
-                        <el-input maxlength="100" v-model="form.contactPhone" :placeholder="$t('components.input.placeholder')" clearable />
+                        <el-input maxlength="20" v-model="form.contactPhone" :placeholder="$t('components.input.placeholder')" oninput="value=value.replace(/^\.+|[^\d.]/g,'')" clearable />
                     </el-form-item>
                     <el-form-item :label="$t('siteManage.fields[5].label')" prop="status">
                         <el-select v-model="form.status" :placeholder="$t('components.select.placeholder')" clearable>
