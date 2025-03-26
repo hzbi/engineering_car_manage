@@ -73,7 +73,7 @@
                         </el-select>
                     </el-form-item>
                     <el-form-item :label="$t('workload.fields[2].label')" prop="carNumber">
-                        <el-input maxlength="100" v-model="form.carNumber" :placeholder="$t('components.input.placeholder')" disabled clearable />
+                        <el-input maxlength="100" v-model="form.carNumber" :placeholder="$t('components.select.placeholder')" disabled clearable />
                     </el-form-item>
                     <el-form-item :label="$t('workload.fields[3].label')" prop="siteId">
                         <el-select v-model="form.siteId" :placeholder="$t('components.select.placeholder')" @change="handleChangeSite" clearable>

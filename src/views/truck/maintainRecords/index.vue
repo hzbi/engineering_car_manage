@@ -465,7 +465,7 @@ const data = reactive({
         maintenanceTime: [{ required: true, message: $t('components.select.placeholder'), trigger: 'blur' }],
         carNumber: [{ required: true, message: $t('components.select.placeholder'), trigger: 'blur' }],
         siteId: [{ required: true, message: $t('components.select.placeholder'), trigger: 'blur' }],
-        maintenanceType: [{ required: true, message: $t('components.input.placeholder'), trigger: 'blur' }],
+        maintenanceType: [{ required: true, message: $t('components.select.placeholder'), trigger: 'blur' }],
         oilConsumption: [{ required: true, message: $t('components.input.placeholder'), trigger: 'blur' }],
         kilometres: [{ required: true, message: $t('components.input.placeholder'), trigger: 'blur' }],
         maintenanceMode: [{ required: true, message: $t('components.select.placeholder'), trigger: 'blur' }],
