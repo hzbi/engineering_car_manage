@@ -24,27 +24,27 @@
         <ul v-show="visible" :style="{ left: left + 'px', top: top + 'px' }" class="contextmenu">
             <li @click="refreshSelectedTag(selectedTag)">
                 <refresh-right style="width: 1em; height: 1em" />
-                刷新页面
+                {{ useAppStore().language == 'zh' ? '刷新页面' : 'Refresh the page' }}
             </li>
             <li v-if="!isAffix(selectedTag)" @click="closeSelectedTag(selectedTag)">
                 <close style="width: 1em; height: 1em" />
-                关闭当前
+                {{ useAppStore().language == 'zh' ? '关闭当前' : 'Close current page' }}
             </li>
             <li @click="closeOthersTags">
                 <circle-close style="width: 1em; height: 1em" />
-                关闭其他
+                {{ useAppStore().language == 'zh' ? '关闭其他' : 'Close others page' }}
             </li>
             <li v-if="!isFirstView()" @click="closeLeftTags">
                 <back style="width: 1em; height: 1em" />
-                关闭左侧
+                {{ useAppStore().language == 'zh' ? '关闭左侧' : 'Close the left side' }}
             </li>
             <li v-if="!isLastView()" @click="closeRightTags">
                 <right style="width: 1em; height: 1em" />
-                关闭右侧
+                {{ useAppStore().language == 'zh' ? '关闭右侧' : 'Close the right side' }}
             </li>
             <li @click="closeAllTags(selectedTag)">
                 <circle-close style="width: 1em; height: 1em" />
-                全部关闭
+                {{ useAppStore().language == 'zh' ? '全部关闭' : 'Closed all page' }}
             </li>
         </ul>
     </div>
@@ -59,6 +59,7 @@ import { getNormalPath } from '@/utils/ruoyi'
 import useTagsViewStore from '@/store/modules/tagsView'
 import useSettingsStore from '@/store/modules/settings'
 import usePermissionStore from '@/store/modules/permission'
+import useAppStore from '@/store/modules/app'
 
 const visible = ref(false)
 const top = ref(0)
